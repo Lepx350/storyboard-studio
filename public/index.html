@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>StoryBoard Studio</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;min-height:100dvh;-webkit-text-size-adjust:100%}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+
+/* LOGIN */
+.login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:24px;animation:fadeIn .5s ease}
+.login-box{width:100%;max-width:360px;text-align:center}
+.login-title{font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:4px}
+.login-title span{color:#B22222}
+.login-sub{font-size:11px;color:#555;letter-spacing:1px;margin-bottom:40px}
+.login-input{width:100%;background:#111;border:1px solid #222;border-radius:10px;padding:14px 16px;color:#fff;font-size:16px;text-align:center;letter-spacing:2px;-webkit-appearance:none;margin-bottom:12px}
+.login-input:focus{outline:none;border-color:#B22222}
+.login-input::placeholder{letter-spacing:0;color:#444}
+.login-btn{width:100%;background:linear-gradient(135deg,#B22222,#8B0000);border:none;color:#fff;padding:14px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+.login-btn:disabled{opacity:.4}
+.login-err{margin-top:12px;font-size:12px;color:#ff6b6b;display:none}
+.login-hint{margin-top:24px;font-size:10px;color:#333}
+
+/* APP */
+.app{display:none;min-height:100vh;min-height:100dvh}
+
+/* HEADER */
+.hdr{padding:14px 20px;border-bottom:1px solid #1a1a1a;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#000;z-index:100}
+.hdr h1{font-size:16px;font-weight:800;letter-spacing:-.5px}
+.hdr h1 span{color:#B22222}
+.hdr-right{display:flex;gap:8px;align-items:center}
+.btn-out{background:none;border:1px solid #222;color:#666;padding:6px 12px;border-radius:6px;font-size:10px;cursor:pointer;-webkit-appearance:none}
+.model-badge{font-size:9px;color:#6bff8a;background:#0a1a0a;border:1px solid #1a3a1a;padding:3px 8px;border-radius:4px;font-weight:700}
+
+/* PANELS */
+.panel{padding:16px 20px;border-bottom:1px solid #1a1a1a}
+.lbl{font-size:10px;font-weight:700;color:#555;letter-spacing:1px;margin-bottom:6px}
+textarea{width:100%;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;padding:12px;color:#ccc;font-size:11px;font-family:‘SF Mono’,Menlo,monospace;line-height:1.5;resize:vertical;-webkit-appearance:none}
+textarea:focus{outline:none;border-color:#B22222}
+
+/* PIPELINE */
+.pipe{display:flex;gap:8px;margin:12px 0}
+.pipe-card{flex:1;border-radius:8px;padding:10px;position:relative;overflow:hidden}
+.pipe-card::before{content:’’;position:absolute;top:0;left:0;right:0;height:2px}
+.pipe-a{background:#060a14;border:1px solid #0d1a3a}.pipe-a::before{background:#6b8aff}
+.pipe-b{background:#060f06;border:1px solid #0d3a0d}.pipe-b::before{background:#6bff8a}
+.pipe-card .s{font-size:9px;font-weight:700;letter-spacing:.5px;margin-bottom:2px}
+.pipe-a .s{color:#6b8aff}.pipe-b .s{color:#6bff8a}
+.pipe-card .n{font-size:12px;color:#bbb;font-weight:600}
+.pipe-card .d{font-size:9px;color:#444;margin-top:1px}
+
+/* ACTIONS */
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:none;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+.btn-gen{background:linear-gradient(135deg,#B22222,#8B0000);color:#fff}
+.btn-gen:disabled{opacity:.3;cursor:not-allowed}
+.btn-stp{background:#1a1a1a;border:1px solid #333;color:#ff6b6b;display:none}
+.btn-dl{background:#111;border:1px solid #222;color:#aaa;font-size:11px;padding:8px 14px;display:none}
+
+.prog{display:none;width:100%;margin-top:10px}
+.prog-bar{width:100%;height:3px;background:#111;border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;border-radius:2px;transition:width .4s ease;width:0}
+.prog-fill.p{background:#6b8aff}.prog-fill.g{background:#6bff8a}
+.prog-txt{font-size:10px;color:#555;margin-top:4px;animation:pulse 1.5s ease infinite}
+
+.err{background:#1a0808;border:1px solid #3a1515;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:none}
+.err p{font-size:12px;color:#ff6b6b}
+
+/* STORYBOARD */
+.board{padding:16px 20px;display:none}
+.board-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.board-hdr h2{font-size:12px;font-weight:700;color:#666;letter-spacing:1px}
+.board-hdr .c{font-size:10px;color:#333}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
+
+/* SCENE CARD */
+.sc{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:10px;overflow:hidden;animation:fadeIn .3s ease}
+.sc-img{width:100%;aspect-ratio:9/16;background:#050505;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.sc-img img{width:100%;height:100%;object-fit:cover}
+.bdg{position:absolute;padding:2px 6px;border-radius:3px;font-size:8px;font-weight:700;background:rgba(0,0,0,.85)}
+.bdg-t{top:6px;left:6px;color:#ff6b6b;font-family:monospace}
+.bdg-n{top:6px;right:6px;color:#fff}
+.sp{width:24px;height:24px;border:2px solid #222;border-top-color:#6bff8a;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 6px}
+.sc-i{padding:8px 10px}
+.sc-i h3{font-size:10px;font-weight:700;color:#ccc;margin-bottom:3px;display:flex;justify-content:space-between;align-items:center}
+.sc-i p{font-size:8px;color:#555;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.st{padding:2px 6px;border-radius:3px;font-size:8px;font-weight:700;letter-spacing:.5px}
+.st-w{background:#1a1a1a;color:#444}.st-g{background:#0a1a0a;color:#6bff8a}.st-d{background:#0a2a0a;color:#4ade80}.st-e{background:#1a0a0a;color:#ff6b6b}
+.btn-r{background:#B22222;border:none;color:#fff;padding:4px 10px;border-radius:4px;font-size:9px;font-weight:700;cursor:pointer;margin-top:4px;-webkit-appearance:none}
+
+/* EMPTY */
+.empty{padding:50px 20px;text-align:center}
+.empty h3{font-size:14px;color:#444;margin:8px 0 4px}
+.empty p{font-size:10px;color:#2a2a2a;line-height:1.5}
+
+/* OPTIMIZED PROMPT VIEWER */
+.opt-toggle{font-size:9px;color:#444;cursor:pointer;text-decoration:underline;margin-top:4px;display:inline-block}
+.opt-prompt{display:none;margin-top:4px;padding:6px 8px;background:#080808;border:1px solid #151515;border-radius:4px;font-size:8px;font-family:monospace;color:#4a4a4a;line-height:1.4;max-height:120px;overflow-y:auto;word-break:break-word}
+</style>
+
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+
+<div class="login" id="loginScreen">
+  <div class="login-box">
+    <h1 class="login-title"><span>▸</span> STORYBOARD STUDIO</h1>
+    <p class="login-sub">YOUR PERSONAL AI FILMMAKING TOOL</p>
+    <input type="password" class="login-input" id="pw" placeholder="Enter password" autofocus>
+    <button class="login-btn" id="loginBtn" onclick="login()">ENTER STUDIO</button>
+    <p class="login-err" id="loginErr"></p>
+    <p class="login-hint">This is your private tool. Only you have the password.</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+
+<div class="app" id="app">
+  <!-- Header -->
+  <div class="hdr">
+    <h1><span>▸</span> STUDIO</h1>
+    <div class="hdr-right">
+      <span class="model-badge">NANO BANANA PRO</span>
+      <button class="btn-out" onclick="logout()">Log out</button>
+    </div>
+  </div>
+
+  <!-- Script Panel -->
+
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <p class="lbl" style="margin:0">SCRIPT</p>
+      <span style="font-size:9px;color:#222" id="cc">0</span>
+    </div>
+    <textarea id="script" rows="6" placeholder="Paste your script here... or use the pre-loaded one."></textarea>
+
+```
+<div class="pipe">
+  <div class="pipe-card pipe-a">
+    <p class="s">STEP 1 — DIRECTOR</p>
+    <p class="n">Gemini 3.1 Pro</p>
+    <p class="d">Parses script, writes optimized image prompts, builds character bible</p>
+  </div>
+  <div class="pipe-card pipe-b">
+    <p class="s">STEP 2 — ARTIST</p>
+    <p class="n">Gemini 3 Pro Image</p>
+    <p class="d">Nano Banana Pro — max quality with thinking mode</p>
+  </div>
+</div>
+
+<div class="err" id="errBox"><p id="errTxt"></p></div>
+
+<div class="acts">
+  <button class="btn btn-gen" id="btnGo" onclick="run()">▸ GENERATE</button>
+  <button class="btn btn-stp" id="btnStop" onclick="stop()">■ STOP</button>
+  <button class="btn btn-dl" id="btnDl" onclick="dlAll()">↓ Download All</button>
+</div>
+<div class="prog" id="prog">
+  <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+  <p class="prog-txt" id="progTxt"></p>
+</div>
+```
+
+  </div>
+
+  <!-- Storyboard -->
+
+  <div class="board" id="board">
+    <div class="board-hdr">
+      <h2 id="boardTitle">STORYBOARD</h2>
+      <span class="c" id="boardCount"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- Empty state -->
+
+  <div class="empty" id="empty">
+    <div style="font-size:28px">🎬</div>
+    <h3>Ready to Create</h3>
+    <p>Paste a script and hit Generate.<br>Gemini 3.1 Pro directs. Nano Banana Pro paints.</p>
+  </div>
+</div>
+
+<script>
+/* ===== CONFIG ===== */
+const PARSE_MODEL = 'gemini-3.1-pro-preview';
+const IMAGE_MODEL = 'gemini-3-pro-image-preview';
+let API_KEY = '';
+let scenes = [];
+let aborted = false;
+
+const CHARACTER_BIBLE = `CHARACTER CONSISTENCY RULES (apply to EVERY prompt):
+- THE FATHER: Caucasian male, early 30s, short dark brown hair, light stubble, grey crew-neck t-shirt, tired eyes. Athletic build. This is the SAME person in every frame.
+- THE BABY: Wrapped in a cream/white cotton swaddle. Only the shape of the bundle is visible. NEVER show the baby's face.
+- THE FIGURE: A pure black void in human shape. Darker than any shadow. No face, no features, no texture, no reflection. Slightly wrong proportions — arms too long. Edges bleed into surroundings like a smudge in reality.
+
+GLOBAL VISUAL STYLE:
+- Photorealistic cinematography, NOT illustration or cartoon
+- Heavy film grain (ISO 3200+ look)
+- 9:16 portrait aspect ratio
+- Crushed blacks — details disappear into shadow
+- No text overlays, no watermarks, no borders
+- Horror film color science: desaturated with selective color accents`;
+
+const PARSE_PROMPT = `You are a film director and cinematographer. Given a script, you will:
+
+1. Break it into individual scenes
+2. For EACH scene, write an OPTIMIZED image generation prompt that will produce the best possible photorealistic storyboard frame
+
+Your optimized prompts should:
+- Specify exact camera angle (wide, medium, close-up, extreme close-up, POV, low angle, high angle)
+- Specify exact lighting setup (key light direction, color temperature in kelvin, practical lights, motivated lighting)
+- Specify composition (rule of thirds placement, leading lines, negative space, depth layers)
+- Specify lens characteristics (focal length feel, depth of field, bokeh)
+- Specify film stock look (grain, contrast, color science)
+- Include the character descriptions from the bible below for any character in the scene
+- Include specific color hex codes for the dominant palette
+- End with "photorealistic, cinematic, horror film, 9:16 portrait"
+
+${CHARACTER_BIBLE}
+
+Return ONLY a valid JSON array. No markdown. No backticks. No explanation.
+Each object: {"scene_number":1,"timecode":"0:00 - 0:05","title":"SHORT TITLE","description":"original description","optimized_prompt":"your cinematographer-level prompt"}
+
+SCRIPT:
+`;
+
+const DEFAULT_SCRIPT = `SCENE 1 (0:00 - 0:05) — THE DARK ROOM
+A dark living room at 3AM. A man in his 30s lies on a leather couch, half asleep. The only light source is the cold blue-white glow of his phone screen resting on his chest, casting harsh upward shadows on his face. The room is almost completely black. Heavy film grain. Low camera angle from floor level looking up at him. Cinematic horror atmosphere.
+
+SCENE 2 (0:05 - 0:10) — THE MONITOR
+Close-up of the phone screen filling the frame. A baby monitor app showing a night-vision green infrared camera feed. A nursery seen from a ceiling corner angle. A baby sleeps peacefully in a white swaddle inside a crib. Grainy, low resolution WiFi camera quality with slight static noise. Everything looks completely normal.
+
+SCENE 3 (0:10 - 0:17) — THE PAUSE
+Medium close-up of the man's face lit from below by the phone screen. Blue-white horror uplighting creating deep shadows in his eye sockets. His expression shifts from sleepy to frozen alert. His eyes narrow as he stares at the screen. Dark background, cinematic horror lighting.
+
+SCENE 4 (0:17 - 0:22) — THE FIGURE
+Phone screen showing the baby monitor feed again. Same nursery, same sleeping baby. But now in the far corner of the room, half hidden in shadow, a dark featureless human silhouette stands perfectly still facing the crib. The figure is darker than the shadows around it. No face, no features, just a void in human shape. More static and scan lines. Horror atmosphere.
+
+SCENE 5 (0:22 - 0:28) — THE RUN
+A man running through a dark hallway toward a staircase at night, seen from behind. Handheld camera perspective with motion blur. Phone screen in his hand casting blue light flashes on walls. Bare feet on hardwood floor. Dark house interior. Extreme urgency, horror cinematography, heavy grain.
+
+SCENE 6 (0:28 - 0:32) — THE DOOR
+View from inside a dark nursery looking at the door being slammed open. Man silhouetted in the doorway. Moonlight through venetian blinds creating horizontal light stripes on floor and walls. Dark hallway behind him. Dramatic entrance with blue-silver moonlight.
+
+SCENE 7 (0:32 - 0:35) — THE EMPTY CORNER
+Nursery corner at night, moonlight through venetian blinds. Small wooden dresser with a stuffed grey elephant toy. Empty corner, plain wall, peaceful. White crib with sleeping baby in cream swaddle nearby. Blue-silver moonlight. The corner is clearly empty.
+
+SCENE 8 (0:35 - 0:42) — FALSE SAFETY
+Father picking up baby from crib at night. Side profile silhouette of man holding swaddled baby against chest. Warm amber moonlight through blinds. One hand cradling baby's head. Warm color temperature, soft intimate lighting. Peaceful and emotional.
+
+SCENE 9 (0:42 - 0:50) — THE CALM
+Extreme close-up of man's face in profile, eyes closed, peaceful expression. Warm amber side lighting. Venetian blind stripe shadows across his face. Soft cream blur of baby on his shoulder in foreground. Shallow depth of field, warm color temperature.
+
+SCENE 10 (0:50 - 0:55) — THE NOTIFICATION
+Close-up of man's face, eyes open and alert. Holding baby in one arm, phone in other hand. Cold blue-white phone light from below mixed with warm amber moonlight from side. Split lighting. The warmth is fading. Horror returning.
+
+SCENE 11 (0:55 - 0:58) — THE SCREEN
+Phone screen extreme close-up. Baby monitor app dark mode. Warning notification: camera disconnected at 11:47 PM, last image saved. Below shows last captured night vision frame of nursery. Baby clearly visible in crib. Timestamp 11:47 PM. Frozen image.
+
+SCENE 12 (0:58 - 1:00) — THE END
+Extreme close-up of man's face lit from below by cold blue-white phone light. Horrified expression of slow dawning realization. Skull-like shadows, deep eye sockets. Eyes looking downward in terror. Harshest coldest lighting. Horror. Heavy grain.`;
+
+/* ===== INIT ===== */
+const $s = document.getElementById('script');
+$s.value = DEFAULT_SCRIPT;
+updCC();
+$s.addEventListener('input', updCC);
+document.getElementById('pw').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+
+function updCC(){ document.getElementById('cc').textContent = $s.value.length.toLocaleString()+' chars'; }
+
+/* ===== AUTH ===== */
+async function login(){
+  const pw = document.getElementById('pw').value;
+  if(!pw){ showLoginErr('Enter your password'); return; }
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'Connecting...';
+  hideLoginErr();
+  try {
+    const r = await fetch('/api/auth', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password:pw})
+    });
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error||'Auth failed');
+    API_KEY = d.key;
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').style.display='block';
+  } catch(e){
+    showLoginErr(e.message);
+  }
+  btn.disabled = false; btn.textContent = 'ENTER STUDIO';
+}
+
+function logout(){ API_KEY=''; location.reload(); }
+function showLoginErr(m){ const e=document.getElementById('loginErr'); e.style.display='block'; e.textContent=m; }
+function hideLoginErr(){ document.getElementById('loginErr').style.display='none'; }
+
+/* ===== GEMINI CALLS ===== */
+async function callGemini(model, contents, config={}){
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+  const r = await fetch(url, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ contents, generationConfig:config })
+  });
+  if(!r.ok){
+    const t = await r.text().catch(()=>'');
+    if(r.status===429) throw new Error('Rate limited — wait 30s');
+    if(r.status===403) throw new Error('API key issue — check Gemini access');
+    if(r.status===400) throw new Error('Safety filter blocked this — try retry');
+    throw new Error(`API ${r.status}: ${t.substring(0,120)}`);
+  }
+  return r.json();
+}
+
+async function parseWithDirector(script){
+  const data = await callGemini(PARSE_MODEL, [
+    { role:'user', parts:[{ text: PARSE_PROMPT + script }] }
+  ], { temperature:0.2 });
+  const text = (data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('');
+  const clean = text.replace(/```json|```/g,'').trim();
+  return JSON.parse(clean);
+}
+
+async function generateFrame(prompt){
+  const data = await callGemini(IMAGE_MODEL, [
+    { role:'user', parts:[{ text: prompt }] }
+  ], { responseModalities:['TEXT','IMAGE'] });
+  const parts = data.candidates?.[0]?.content?.parts||[];
+  for(const p of parts){ if(p.inlineData) return `data:${p.inlineData.mimeType};base64,${p.inlineData.data}`; }
+  const reason = data.candidates?.[0]?.finishReason;
+  if(reason==='SAFETY') throw new Error('Safety filter — hit Retry');
+  throw new Error('No image returned — hit Retry');
+}
+
+/* ===== UI ===== */
+function showErr(m){ document.getElementById('errBox').style.display='block'; document.getElementById('errTxt').textContent=m; }
+function hideErr(){ document.getElementById('errBox').style.display='none'; }
+function setProg(c,t,txt,phase){
+  document.getElementById('prog').style.display='block';
+  const f=document.getElementById('progFill');
+  f.style.width=(t>0?(c/t)*100:0)+'%';
+  f.className='prog-fill '+(phase||'g');
+  document.getElementById('progTxt').textContent=txt;
+}
+
+function render(){
+  const g=document.getElementById('grid'); g.innerHTML='';
+  const done=scenes.filter(s=>s.status==='done').length;
+  document.getElementById('boardTitle').textContent=`STORYBOARD — ${scenes.length} FRAMES`;
+  document.getElementById('boardCount').textContent=`${done}/${scenes.length}`;
+  if(done>0) document.getElementById('btnDl').style.display='inline-block';
+
+  scenes.forEach((s,i)=>{
+    const c=document.createElement('div'); c.className='sc';
+    let img='';
+    if(s.imageUrl) img=`<img src="${s.imageUrl}" alt="${s.title}">`;
+    else if(s.status==='generating') img=`<div style="text-align:center"><div class="sp"></div><p style="color:#444;font-size:9px">Painting...</p></div>`;
+    else if(s.status==='error') img=`<div style="text-align:center;padding:14px"><p style="color:#ff6b6b;font-size:18px">✕</p><p style="color:#ff6b6b;font-size:8px;padding:4px 8px">${s.error||'Failed'}</p></div>`;
+    else if(s.status==='parsing') img=`<div style="text-align:center"><div class="sp" style="border-top-color:#6b8aff"></div><p style="color:#444;font-size:9px">Director writing...</p></div>`;
+    else img=`<div style="text-align:center"><p style="color:#1a1a1a;font-size:22px;font-weight:800">${String(s.scene_number).padStart(2,'0')}</p></div>`;
+
+    const stC={pending:'st-w',parsing:'st-g',generating:'st-g',done:'st-d',error:'st-e'}[s.status]||'st-w';
+    const stL={pending:'WAIT',parsing:'PARSE',generating:'GEN',done:'DONE',error:'ERR'}[s.status]||'—';
+
+    const optId = `opt-${i}`;
+    const hasOpt = s.optimized_prompt && s.optimized_prompt !== s.description;
+
+    c.innerHTML=`
+      <div class="sc-img">
+        ${img}
+        <div class="bdg bdg-t">${s.timecode}</div>
+        <div class="bdg bdg-n">#${String(s.scene_number).padStart(2,'0')}</div>
+      </div>
+      <div class="sc-i">
+        <h3>${s.title} <span class="st ${stC}">${stL}</span></h3>
+        <p>${s.description}</p>
+        ${hasOpt?`<span class="opt-toggle" onclick="document.getElementById('${optId}').style.display=document.getElementById('${optId}').style.display==='block'?'none':'block'">View AI prompt ▾</span><div class="opt-prompt" id="${optId}">${s.optimized_prompt}</div>`:''}
+        ${s.status==='error'?`<button class="btn-r" onclick="retry(${i})">Retry</button>`:''}
+      </div>`;
+    g.appendChild(c);
+  });
+}
+
+/* ===== MAIN PIPELINE ===== */
+async function run(){
+  const script = $s.value.trim();
+  if(!script){ showErr('Paste a script first'); return; }
+  hideErr(); aborted=false;
+
+  document.getElementById('btnGo').style.display='none';
+  document.getElementById('btnStop').style.display='inline-block';
+  document.getElementById('empty').style.display='none';
+  document.getElementById('board').style.display='block';
+
+  /* STEP 1: Gemini 3.1 Pro parses & optimizes */
+  setProg(0,1,'Gemini 3.1 Pro analyzing your script...','p');
+  let parsed;
+  try{
+    parsed = await parseWithDirector(script);
+    if(!Array.isArray(parsed)||parsed.length===0) throw new Error('No scenes found');
+  }catch(e){
+    // Fallback to local parse if API fails
+    console.warn('3.1 Pro parse failed, falling back to local:', e.message);
+    parsed = localParse(script);
+    if(parsed.length===0){ showErr('Could not parse script: '+e.message); resetBtns(); return; }
+  }
+
+  scenes = parsed.map(s=>({
+    scene_number: s.scene_number,
+    timecode: s.timecode,
+    title: s.title,
+    description: s.description || s.visual_description || '',
+    optimized_prompt: s.optimized_prompt || s.visual_description || s.description || '',
+    status:'pending', imageUrl:null, error:null
+  }));
+  render();
+
+  /* STEP 2: Gemini 3 Pro Image generates frames */
+  for(let i=0;i<scenes.length;i++){
+    if(aborted) break;
+    scenes[i].status='generating'; render();
+    setProg(i+1,scenes.length,`Painting frame ${i+1}/${scenes.length}...`,'g');
+
+    try{
+      scenes[i].imageUrl = await generateFrame(scenes[i].optimized_prompt);
+      scenes[i].status='done';
+    }catch(e){
+      scenes[i].status='error';
+      scenes[i].error=e.message;
+    }
+    render();
+    if(i<scenes.length-1 && !aborted) await new Promise(r=>setTimeout(r,2500));
+  }
+  resetBtns();
+  setProg(scenes.length,scenes.length,'Done!','g');
+}
+
+/* Fallback local parser */
+function localParse(script){
+  const results=[];
+  const blocks=script.split(/(?=SCENE\s+\d+)/i).filter(b=>b.trim());
+  for(const block of blocks){
+    const m=block.match(/SCENE\s+(\d+)\s*\(([^)]+)\)\s*[—\-–]+\s*(.+)/i);
+    if(!m) continue;
+    const desc=block.split('\n').slice(1).filter(l=>l.trim()).join(' ').trim();
+    if(desc) results.push({scene_number:parseInt(m[1]),timecode:m[2].trim(),title:m[3].trim(),description:desc,optimized_prompt:desc});
+  }
+  return results;
+}
+
+async function retry(i){
+  scenes[i].status='generating'; scenes[i].error=null; render();
+  try{
+    scenes[i].imageUrl = await generateFrame(scenes[i].optimized_prompt);
+    scenes[i].status='done';
+  }catch(e){ scenes[i].status='error'; scenes[i].error=e.message; }
+  render();
+}
+
+function stop(){ aborted=true; resetBtns(); }
+function resetBtns(){
+  document.getElementById('btnGo').style.display='inline-block';
+  document.getElementById('btnStop').style.display='none';
+}
+
+function dlAll(){
+  scenes.forEach((s,i)=>{
+    if(!s.imageUrl) return;
+    const a=document.createElement('a');
+    a.href=s.imageUrl;
+    a.download=`frame_${String(i+1).padStart(2,'0')}_${s.title.replace(/[^a-zA-Z0-9]/g,'_')}.png`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  });
+}
+</script>
+
+</body>
+</html>
