@@ -6,12 +6,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>StoryBoard Studio</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;min-height:100dvh;-webkit-text-size-adjust:100%;overflow-x:hidden}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{transform:translateX(-100%)}to{transform:translateX(0)}}
 
 /* LOGIN */
 .login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:24px;animation:fadeIn .5s ease}
@@ -35,6 +37,8 @@ body{background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Se
 .hdr h1{font-size:15px;font-weight:800;letter-spacing:-.5px}
 .hdr h1 span{color:#B22222}
 .hdr-r{display:flex;gap:6px;align-items:center}
+.btn-icon{background:#111;border:1px solid #222;color:#888;width:32px;height:32px;border-radius:6px;font-size:14px;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center}
+.btn-icon.active{border-color:#B22222;color:#ff6b6b}
 .btn-out{background:none;border:1px solid #222;color:#555;padding:5px 10px;border-radius:5px;font-size:9px;cursor:pointer;-webkit-appearance:none}
 
 /* PANELS */
@@ -52,24 +56,32 @@ textarea:focus{outline:none;border-color:#B22222}
 .preset-name{font-size:9px;font-weight:700;color:#888;letter-spacing:.5px;white-space:nowrap}
 .preset.active .preset-name{color:#ff6b6b}
 
-/* SETTINGS ROW */
+/* CHARACTER LOCK */
+.char-lock{margin:10px 0;padding:10px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px}
+.char-lock-row{display:flex;align-items:center;gap:10px}
+.char-thumb{width:48px;height:48px;border-radius:8px;object-fit:cover;border:2px solid #222}
+.char-thumb-empty{width:48px;height:48px;border-radius:8px;border:2px dashed #333;display:flex;align-items:center;justify-content:center;font-size:20px;color:#333;cursor:pointer;flex-shrink:0}
+.char-info{flex:1}
+.char-info p{font-size:10px;color:#666;line-height:1.4}
+.char-info .char-name{font-size:11px;color:#ccc;font-weight:700}
+.char-actions{display:flex;gap:4px}
+.char-btn{background:#1a1a1a;border:1px solid #222;color:#888;padding:4px 8px;border-radius:4px;font-size:9px;cursor:pointer;-webkit-appearance:none}
+.char-btn.remove{color:#ff6b6b;border-color:#3a1515}
+input[type=“file”]{display:none}
+
+/* SETTINGS */
 .settings-row{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap;align-items:center}
 .setting{display:flex;align-items:center;gap:6px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px;padding:6px 8px}
 .setting-label{font-size:8px;color:#555;font-weight:700;letter-spacing:.5px;white-space:nowrap}
-
-/* TOGGLE BUTTONS (shared for AR and Quality) */
 .tog-options{display:flex;gap:3px}
 .tog-btn{background:#111;border:1px solid #222;color:#666;padding:4px 8px;border-radius:4px;font-size:9px;font-weight:700;cursor:pointer;-webkit-appearance:none;transition:all .2s}
 .tog-btn.active{background:#B22222;border-color:#B22222;color:#fff}
-
-/* TRIPLE SHOT TOGGLE */
 .toggle-wrap{display:flex;align-items:center;gap:6px;cursor:pointer}
 .toggle{width:36px;height:20px;background:#222;border-radius:10px;position:relative;transition:background .2s}
 .toggle.on{background:#B22222}
 .toggle-knob{width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s}
 .toggle.on .toggle-knob{left:18px}
 .toggle-text{font-size:9px;color:#555;font-weight:600}
-.toggle.on+.toggle-text{color:#ff6b6b}
 
 /* PIPELINE */
 .pipe{display:flex;gap:6px;margin:10px 0}
@@ -88,21 +100,22 @@ textarea:focus{outline:none;border-color:#B22222}
 .btn-gen{background:linear-gradient(135deg,#B22222,#8B0000);color:#fff}
 .btn-gen:disabled{opacity:.3;cursor:not-allowed}
 .btn-stp{background:#1a1a1a;border:1px solid #333;color:#ff6b6b;display:none}
-.btn-dl{background:#111;border:1px solid #222;color:#aaa;font-size:11px;padding:8px 14px;display:none}
+.btn-sm{background:#111;border:1px solid #222;color:#aaa;font-size:11px;padding:8px 14px;border-radius:6px;cursor:pointer;-webkit-appearance:none}
+.btn-sm:disabled{opacity:.3}
 
 .prog{display:none;width:100%;margin-top:10px}
 .prog-bar{width:100%;height:3px;background:#111;border-radius:2px;overflow:hidden}
 .prog-fill{height:100%;border-radius:2px;transition:width .4s ease;width:0}
 .prog-fill.p{background:#6b8aff}.prog-fill.g{background:#6bff8a}
 .prog-txt{font-size:10px;color:#555;margin-top:4px;animation:pulse 1.5s ease infinite}
-
 .err{background:#1a0808;border:1px solid #3a1515;border-radius:8px;padding:10px 12px;margin-bottom:10px;display:none}
 .err p{font-size:12px;color:#ff6b6b}
 
 /* STORYBOARD */
 .board{padding:14px 16px;display:none}
-.board-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.board-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
 .board-hdr h2{font-size:11px;font-weight:700;color:#555;letter-spacing:1px}
+.board-acts{display:flex;gap:6px;align-items:center}
 .board-hdr .c{font-size:10px;color:#333}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
 
@@ -122,6 +135,15 @@ textarea:focus{outline:none;border-color:#B22222}
 .st-w{background:#1a1a1a;color:#444}.st-g{background:#0a1a0a;color:#6bff8a}.st-d{background:#0a2a0a;color:#4ade80}.st-e{background:#1a0a0a;color:#ff6b6b}
 .btn-r{background:#B22222;border:none;color:#fff;padding:4px 10px;border-radius:4px;font-size:9px;font-weight:700;cursor:pointer;margin-top:4px;-webkit-appearance:none}
 
+/* SOUND DESIGN */
+.sound-panel{margin-top:6px;padding:6px 8px;background:#080812;border:1px solid #151530;border-radius:6px;display:none}
+.sound-panel.show{display:block}
+.sound-row{display:flex;gap:4px;align-items:flex-start;margin-bottom:4px}
+.sound-icon{font-size:10px;flex-shrink:0;margin-top:1px}
+.sound-label{font-size:7px;font-weight:700;color:#6b8aff;letter-spacing:.5px;min-width:30px}
+.sound-text{font-size:8px;color:#555;line-height:1.3;flex:1}
+.sound-copy{background:#1a1a2a;border:1px solid #2a2a3a;color:#6b8aff;padding:2px 6px;border-radius:3px;font-size:7px;cursor:pointer;-webkit-appearance:none;flex-shrink:0}
+
 /* TRIPLE SHOT */
 .triple{display:flex;gap:4px;margin-top:6px}
 .triple-opt{flex:1;border-radius:4px;overflow:hidden;border:2px solid #1a1a1a;cursor:pointer;position:relative}
@@ -130,10 +152,10 @@ textarea:focus{outline:none;border-color:#B22222}
 .triple-opt .pick-badge{position:absolute;bottom:4px;right:4px;background:#4ade80;color:#000;font-size:7px;font-weight:800;padding:2px 5px;border-radius:3px;display:none}
 .triple-opt.picked .pick-badge{display:block}
 
-/* FEEDBACK MODAL */
+/* MODAL */
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
-.modal{width:100%;max-width:400px;background:#111;border:1px solid #222;border-radius:12px;overflow:hidden;animation:fadeIn .2s ease}
-.modal-img{width:100%;max-height:40vh;object-fit:contain;background:#000}
+.modal{width:100%;max-width:400px;background:#111;border:1px solid #222;border-radius:12px;overflow:hidden;animation:fadeIn .2s ease;max-height:90vh;overflow-y:auto}
+.modal-img{width:100%;max-height:35vh;object-fit:contain;background:#000}
 .modal-body{padding:14px}
 .modal-title{font-size:13px;font-weight:700;margin-bottom:8px}
 .modal-desc{font-size:10px;color:#666;margin-bottom:10px;line-height:1.4}
@@ -146,7 +168,25 @@ textarea:focus{outline:none;border-color:#B22222}
 .modal-btn-cancel{background:#1a1a1a;color:#888;border:1px solid #222}
 .modal-btn:disabled{opacity:.4}
 
-/* PROMPT VIEWER */
+/* PROJECTS SIDEBAR */
+.sidebar-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:150;display:none}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:280px;background:#0a0a0a;border-right:1px solid #1a1a1a;z-index:151;display:none;flex-direction:column;animation:slideIn .2s ease}
+.sidebar.show,.sidebar-overlay.show{display:flex}
+.sidebar-overlay.show{display:block}
+.sb-hdr{padding:16px;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center}
+.sb-hdr h2{font-size:14px;font-weight:700}
+.sb-close{background:none;border:none;color:#666;font-size:20px;cursor:pointer;-webkit-appearance:none}
+.sb-list{flex:1;overflow-y:auto;padding:8px}
+.sb-item{padding:10px 12px;border-radius:8px;border:1px solid #1a1a1a;margin-bottom:6px;cursor:pointer;transition:all .2s}
+.sb-item:hover,.sb-item.active{border-color:#B22222;background:#1a0808}
+.sb-item-name{font-size:12px;font-weight:700;color:#ccc;margin-bottom:2px}
+.sb-item-meta{font-size:9px;color:#444}
+.sb-item-acts{display:flex;gap:4px;margin-top:4px}
+.sb-del{background:none;border:none;color:#ff6b6b;font-size:9px;cursor:pointer;-webkit-appearance:none;text-decoration:underline}
+.sb-footer{padding:12px;border-top:1px solid #1a1a1a}
+.sb-new{width:100%;background:#B22222;border:none;color:#fff;padding:10px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+
+/* PROMPT/TOGGLE */
 .opt-toggle{font-size:8px;color:#333;cursor:pointer;text-decoration:underline;margin-top:3px;display:inline-block}
 .opt-prompt{display:none;margin-top:4px;padding:5px 7px;background:#080808;border:1px solid #131313;border-radius:4px;font-size:7px;font-family:monospace;color:#3a3a3a;line-height:1.3;max-height:80px;overflow-y:auto;word-break:break-word}
 
@@ -174,12 +214,30 @@ textarea:focus{outline:none;border-color:#B22222}
   </div>
 </div>
 
+<!-- PROJECTS SIDEBAR -->
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sb-hdr">
+    <h2>💾 Projects</h2>
+    <button class="sb-close" onclick="closeSidebar()">✕</button>
+  </div>
+  <div class="sb-list" id="projectList"></div>
+  <div class="sb-footer">
+    <button class="sb-new" onclick="newProject()">+ New Project</button>
+  </div>
+</div>
+
 <!-- APP -->
 
 <div class="app" id="app">
   <div class="hdr">
-    <h1><span>▸</span> STUDIO</h1>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="btn-icon" onclick="openSidebar()" title="Projects">💾</button>
+      <h1><span>▸</span> <span id="projectTitle">STUDIO</span></h1>
+    </div>
     <div class="hdr-r">
+      <button class="btn-icon" id="soundToggleBtn" onclick="toggleSoundPanels()" title="Sound Design">🎵</button>
       <button class="btn-out" onclick="logout()">Log out</button>
     </div>
   </div>
@@ -201,9 +259,26 @@ textarea:focus{outline:none;border-color:#B22222}
     <textarea id="script" rows="5" placeholder="Paste your script or just describe your idea..."></textarea>
 
 ```
+<!-- CHARACTER LOCK -->
+<div class="char-lock" id="charLock">
+  <span class="lbl">🎭 CHARACTER LOCK</span>
+  <div class="char-lock-row">
+    <div class="char-thumb-empty" id="charThumbEmpty" onclick="document.getElementById('charUpload').click()">👤</div>
+    <img class="char-thumb" id="charThumbImg" src="" style="display:none">
+    <div class="char-info">
+      <p class="char-name" id="charStatus">No reference uploaded</p>
+      <p>Upload a face photo — every frame will use this face for consistency</p>
+    </div>
+    <div class="char-actions">
+      <button class="char-btn" onclick="document.getElementById('charUpload').click()">Upload</button>
+      <button class="char-btn remove" id="charRemoveBtn" onclick="removeChar()" style="display:none">✕</button>
+    </div>
+  </div>
+  <input type="file" id="charUpload" accept="image/*" onchange="handleCharUpload(event)">
+</div>
+
 <!-- SETTINGS -->
 <div class="settings-row">
-  <!-- Aspect Ratio -->
   <div class="setting">
     <span class="setting-label">RATIO</span>
     <div class="tog-options">
@@ -212,7 +287,6 @@ textarea:focus{outline:none;border-color:#B22222}
       <button class="tog-btn" data-group="ar" onclick="setAR('1:1',this)">1:1</button>
     </div>
   </div>
-  <!-- Quality -->
   <div class="setting">
     <span class="setting-label">OUTPUT</span>
     <div class="tog-options">
@@ -221,27 +295,17 @@ textarea:focus{outline:none;border-color:#B22222}
       <button class="tog-btn" data-group="q" onclick="setQ('4K',this)">4K</button>
     </div>
   </div>
-  <!-- Triple Shot -->
   <div class="setting">
     <div class="toggle-wrap" onclick="toggleTriple()">
       <div class="toggle" id="tripleToggle"><div class="toggle-knob"></div></div>
-      <span class="toggle-text">TRIPLE SHOT</span>
+      <span class="toggle-text">DUAL SHOT</span>
     </div>
   </div>
 </div>
 
-<!-- Pipeline -->
 <div class="pipe">
-  <div class="pipe-card pipe-a">
-    <p class="s">DIRECTOR</p>
-    <p class="n">Gemini 3.1 Pro</p>
-    <p class="d">Parses + optimizes prompts</p>
-  </div>
-  <div class="pipe-card pipe-b">
-    <p class="s">ARTIST</p>
-    <p class="n">Nano Banana Pro</p>
-    <p class="d">Max quality images</p>
-  </div>
+  <div class="pipe-card pipe-a"><p class="s">DIRECTOR</p><p class="n">Gemini 3.1 Pro</p><p class="d">Parses + optimizes prompts</p></div>
+  <div class="pipe-card pipe-b"><p class="s">ARTIST</p><p class="n">Nano Banana Pro</p><p class="d">Max quality images</p></div>
 </div>
 
 <div class="err" id="errBox"><p id="errTxt"></p></div>
@@ -249,7 +313,6 @@ textarea:focus{outline:none;border-color:#B22222}
 <div class="acts">
   <button class="btn btn-gen" id="btnGo" onclick="run()">▸ GENERATE</button>
   <button class="btn btn-stp" id="btnStop" onclick="stop()">■ STOP</button>
-  <button class="btn btn-dl" id="btnDl" onclick="dlAll()">↓ Download All</button>
 </div>
 <div class="prog" id="prog">
   <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
@@ -264,8 +327,14 @@ textarea:focus{outline:none;border-color:#B22222}
   <div class="board" id="board">
     <div class="board-hdr">
       <h2 id="boardTitle">STORYBOARD</h2>
-      <span class="c" id="boardCount"></span>
+      <div class="board-acts">
+        <button class="btn-sm" id="btnSndAll" onclick="genAllSound()" style="display:none">🎵 Sound Design</button>
+        <button class="btn-sm" id="btnPdf" onclick="exportPDF()" style="display:none">📤 Export PDF</button>
+        <button class="btn-sm" id="btnDl" onclick="dlAll()" style="display:none">↓ Download</button>
+        <button class="btn-sm" id="btnSave" onclick="saveProject()">💾 Save</button>
+      </div>
     </div>
+    <p class="c" id="boardCount" style="font-size:10px;color:#333;margin-bottom:10px"></p>
     <div class="grid" id="grid"></div>
   </div>
 
@@ -283,8 +352,8 @@ textarea:focus{outline:none;border-color:#B22222}
     <img class="modal-img" id="modalImg" src="">
     <div class="modal-body">
       <p class="modal-title" id="modalTitle">Refine This Frame</p>
-      <p class="modal-desc" id="modalDesc">Tell the AI what to change. It rewrites the prompt and regenerates.</p>
-      <input class="modal-input" id="modalInput" placeholder="e.g. make it darker, add more fog, zoom in..." autofocus>
+      <p class="modal-desc">Tell the AI what to change. It rewrites the prompt and regenerates.</p>
+      <input class="modal-input" id="modalInput" placeholder="e.g. make it darker, add fog, zoom in...">
       <div class="modal-acts">
         <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancel</button>
         <button class="modal-btn modal-btn-go" id="modalGo" onclick="submitFeedback()">Regenerate</button>
@@ -295,498 +364,450 @@ textarea:focus{outline:none;border-color:#B22222}
 
 <script>
 /* ===== CONFIG ===== */
-const PARSE_MODEL = 'gemini-3.1-pro-preview';
-const IMAGE_MODEL = 'gemini-3-pro-image-preview';
-let API_KEY = '';
-let scenes = [];
-let aborted = false;
-let currentAR = '9:16';
-let currentQ = '2K';
-let tripleMode = false;
-let activePreset = 'horror';
-let feedbackIndex = -1;
+const PARSE_MODEL='gemini-3.1-pro-preview', IMAGE_MODEL='gemini-3-pro-image-preview';
+let API_KEY='',scenes=[],aborted=false,currentAR='9:16',currentQ='2K',tripleMode=false,activePreset='horror',feedbackIndex=-1;
+let showSound=false, charRefBase64=null, charRefMime=null, currentProjectId=null;
 
-/* ===== QUALITY MAP ===== */
-const Q_MAP = {
-  '1K': 'standard detail, clean image, 1024px resolution',
-  '2K': 'ultra detailed, high resolution 2048px, sharp focus, fine textures, intricate details visible',
-  '4K': 'maximum resolution 4096px, hyper-detailed, 4K UHD clarity, every texture pore and fiber visible, extremely sharp focus, micro-detail rendering, photographic precision'
-};
+const Q_MAP={'1K':'standard detail, clean image, 1024px resolution','2K':'ultra detailed, high resolution 2048px, sharp focus, fine textures, intricate details visible','4K':'maximum resolution 4096px, hyper-detailed, 4K UHD clarity, every texture pore and fiber visible, extremely sharp focus, micro-detail rendering, photographic precision'};
 
-/* ===== STYLE PRESETS ===== */
-const PRESETS = {
-  horror: {
-    icon: '🎬', name: 'HORROR',
-    bible: 'CHARACTER STYLE: Photorealistic. Heavy film grain (ISO 3200+). Crushed blacks. Horror film color science — desaturated with cold blue accents. Motivated practical lighting only. Deep shadows consume detail. Every frame should feel like a still from a Blumhouse film.',
-    suffix: 'photorealistic, cinematic horror, film grain, dark shadows, 35mm film look'
-  },
-  cyberpunk: {
-    icon: '🌆', name: 'CYBERPUNK',
-    bible: 'CHARACTER STYLE: Neo-noir cyberpunk aesthetic. Rain-slicked streets reflecting neon. Color palette: electric blue (#00D4FF), hot pink (#FF0080), toxic green (#39FF14), deep purple. Volumetric fog and light rays. High contrast. Blade Runner meets Akira. Chromatic aberration on edges.',
-    suffix: 'cyberpunk, neon-lit, rain, volumetric lighting, cinematic, photorealistic'
-  },
-  anime: {
-    icon: '🌸', name: 'ANIME',
-    bible: 'CHARACTER STYLE: High-quality anime/manga art style. Clean line art with cel shading. Vibrant saturated colors. Expressive eyes and dynamic poses. Studio Ghibli level background detail with atmospheric perspective. Soft ambient lighting with dramatic highlights.',
-    suffix: 'anime style, cel shaded, vibrant colors, detailed background, studio quality'
-  },
-  noir: {
-    icon: '🖤', name: 'NOIR',
-    bible: 'CHARACTER STYLE: Classic film noir. Black and white or very desaturated. Extreme contrast with deep blacks and bright highlights. Venetian blind shadows. Low-key lighting. Dutch angles. Cigarette smoke. Wet pavement reflections. 1940s detective aesthetic.',
-    suffix: 'film noir, black and white, high contrast, dramatic shadows, 1940s cinematic'
-  },
-  golden: {
-    icon: '🌅', name: 'GOLDEN HR',
-    bible: 'CHARACTER STYLE: Golden hour cinematography. Warm amber and honey tones. Lens flare from sun position. Soft diffused backlight creating rim lighting on subjects. Anamorphic lens bokeh. Color temperature 3500K-4500K. Nostalgic, dreamy, Terrence Malick aesthetic.',
-    suffix: 'golden hour, warm tones, lens flare, cinematic, anamorphic, dreamy'
-  },
-  musicvid: {
-    icon: '🎵', name: 'MUSIC VID',
-    bible: 'CHARACTER STYLE: High-fashion music video aesthetic. Bold stylized lighting with colored gels — magenta, teal, amber. Smoke/haze for atmosphere. Dutch angles and wide lenses for distortion. High contrast, crushed blacks, lifted shadows. Think Hype Williams meets Dave Meyers.',
-    suffix: 'music video aesthetic, colored lighting, smoke, high fashion, stylized, cinematic'
-  },
-  social: {
-    icon: '📱', name: 'SOCIAL',
-    bible: 'CHARACTER STYLE: Clean, modern, social media optimized. Bright and well-lit. Slightly elevated saturation. Flat lay compositions or lifestyle photography feel. Clean backgrounds. Trendy color palettes — earth tones, pastels, or bold primaries. Influencer aesthetic.',
-    suffix: 'social media aesthetic, bright, clean, modern, well-lit, lifestyle photography'
-  },
-  comic: {
-    icon: '💥', name: 'COMIC',
-    bible: 'CHARACTER STYLE: Graphic novel / comic book art style. Bold black outlines. Halftone dot patterns for shading. Dynamic panel-style composition. Dramatic foreshortening. Speed lines for action. Limited but bold color palette. Frank Miller meets Moebius.',
-    suffix: 'comic book style, bold outlines, halftone, graphic novel, dynamic composition'
-  },
-  pixar: {
-    icon: '🧸', name: '3D ANIM',
-    bible: 'CHARACTER STYLE: Pixar/Disney 3D animation style. Soft subsurface scattering on skin. Stylized but appealing character proportions. Rich detailed environments. Warm inviting lighting with strong key light. Subtle ambient occlusion. Hyper-detailed textures with painterly quality.',
-    suffix: '3D animation style, Pixar quality, soft lighting, detailed textures, stylized'
-  },
-  doc: {
-    icon: '📷', name: 'DOCU',
-    bible: 'CHARACTER STYLE: Documentary/photojournalism realism. Natural available light only. Handheld camera feel with slight motion blur. Shallow depth of field. Raw, unprocessed color. No stylization. 35mm or 50mm focal length feel. Intimate, observational distance.',
-    suffix: 'documentary photography, natural light, raw, realistic, photojournalism, 35mm'
-  }
+const PRESETS={
+  horror:{icon:'🎬',name:'HORROR',bible:'Photorealistic. Heavy film grain (ISO 3200+). Crushed blacks. Horror film color science — desaturated with cold blue accents. Deep shadows. Blumhouse film aesthetic.',suffix:'photorealistic, cinematic horror, film grain, dark shadows, 35mm'},
+  cyberpunk:{icon:'🌆',name:'CYBERPUNK',bible:'Neo-noir cyberpunk. Rain-slicked neon streets. Electric blue, hot pink, toxic green, deep purple. Volumetric fog. Blade Runner meets Akira. Chromatic aberration.',suffix:'cyberpunk, neon-lit, rain, volumetric lighting, cinematic'},
+  anime:{icon:'🌸',name:'ANIME',bible:'High-quality anime/manga. Clean line art, cel shading. Vibrant colors. Expressive eyes. Studio Ghibli backgrounds. Atmospheric perspective.',suffix:'anime style, cel shaded, vibrant colors, studio quality'},
+  noir:{icon:'🖤',name:'NOIR',bible:'Classic film noir. Black and white. Extreme contrast. Venetian blind shadows. Low-key lighting. Dutch angles. 1940s detective aesthetic.',suffix:'film noir, black and white, high contrast, dramatic shadows'},
+  golden:{icon:'🌅',name:'GOLDEN HR',bible:'Golden hour cinematography. Warm amber tones. Lens flare. Soft backlight rim lighting. Anamorphic bokeh. Terrence Malick aesthetic.',suffix:'golden hour, warm tones, lens flare, cinematic, dreamy'},
+  musicvid:{icon:'🎵',name:'MUSIC VID',bible:'High-fashion music video. Bold colored gels — magenta, teal, amber. Smoke/haze. Dutch angles. Hype Williams meets Dave Meyers.',suffix:'music video aesthetic, colored lighting, smoke, stylized'},
+  social:{icon:'📱',name:'SOCIAL',bible:'Clean, modern social media. Bright, well-lit. Elevated saturation. Lifestyle photography. Trendy color palettes. Influencer aesthetic.',suffix:'social media aesthetic, bright, clean, modern, lifestyle'},
+  comic:{icon:'💥',name:'COMIC',bible:'Graphic novel style. Bold black outlines. Halftone dots. Dynamic composition. Speed lines. Frank Miller meets Moebius.',suffix:'comic book style, bold outlines, halftone, graphic novel'},
+  pixar:{icon:'🧸',name:'3D ANIM',bible:'Pixar/Disney 3D animation. Soft subsurface scattering. Stylized proportions. Rich environments. Warm lighting. Hyper-detailed textures.',suffix:'3D animation, Pixar quality, soft lighting, stylized'},
+  doc:{icon:'📷',name:'DOCU',bible:'Documentary realism. Natural light only. Handheld feel. Shallow depth of field. Raw color. 35mm focal length. Observational.',suffix:'documentary, natural light, raw, realistic, 35mm'}
 };
 
 /* ===== INIT ===== */
-function initPresets() {
-  const container = document.getElementById('presets');
-  Object.entries(PRESETS).forEach(([key, p]) => {
-    const btn = document.createElement('button');
-    btn.className = 'preset' + (key === activePreset ? ' active' : '');
-    btn.innerHTML = `<span class="preset-icon">${p.icon}</span><span class="preset-name">${p.name}</span>`;
-    btn.onclick = () => {
-      document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activePreset = key;
-    };
-    container.appendChild(btn);
-  });
-}
+function initPresets(){const c=document.getElementById('presets');Object.entries(PRESETS).forEach(([k,p])=>{const b=document.createElement('button');b.className='preset'+(k===activePreset?' active':'');b.innerHTML=`<span class="preset-icon">${p.icon}</span><span class="preset-name">${p.name}</span>`;b.onclick=()=>{document.querySelectorAll('.preset').forEach(x=>x.classList.remove('active'));b.classList.add('active');activePreset=k};c.appendChild(b)})}
 
-/* ===== SETTINGS ===== */
-function setAR(ar, btn) {
-  currentAR = ar;
-  btn.parentElement.querySelectorAll('.tog-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  render();
-}
-
-function setQ(q, btn) {
-  currentQ = q;
-  btn.parentElement.querySelectorAll('.tog-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-function getARValue() {
-  if (currentAR === '16:9') return '16/9';
-  if (currentAR === '1:1') return '1/1';
-  return '9/16';
-}
-
-function toggleTriple() {
-  tripleMode = !tripleMode;
-  document.getElementById('tripleToggle').classList.toggle('on', tripleMode);
-}
-
-/* ===== DEFAULT SCRIPT ===== */
-const DEFAULT_SCRIPT = `SCENE 1 (0:00 - 0:05) — THE DARK ROOM
+const DEFAULT_SCRIPT=`SCENE 1 (0:00 - 0:05) — THE DARK ROOM
 A dark living room at 3AM. A man in his 30s lies on a leather couch, half asleep. The only light source is the cold blue-white glow of his phone screen resting on his chest, casting harsh upward shadows on his face. The room is almost completely black. Heavy film grain. Low camera angle from floor level looking up at him. Cinematic horror atmosphere.
 
 SCENE 2 (0:05 - 0:10) — THE MONITOR
-Close-up of the phone screen filling the frame. A baby monitor app showing a night-vision green infrared camera feed. A nursery seen from a ceiling corner angle. A baby sleeps peacefully in a white swaddle inside a crib. Grainy, low resolution WiFi camera quality with slight static noise. Everything looks completely normal.
+Close-up of the phone screen filling the frame. A baby monitor app showing a night-vision green infrared camera feed. A nursery seen from a ceiling corner angle. A baby sleeps peacefully in a white swaddle inside a crib. Grainy, low resolution WiFi camera quality with slight static noise.
 
 SCENE 3 (0:10 - 0:17) — THE PAUSE
-Medium close-up of the man's face lit from below by the phone screen. Blue-white horror uplighting creating deep shadows in his eye sockets. His expression shifts from sleepy to frozen alert. His eyes narrow as he stares at the screen. Dark background, cinematic horror lighting.
+Medium close-up of the man's face lit from below by the phone screen. Blue-white horror uplighting creating deep shadows in his eye sockets. His expression shifts from sleepy to frozen alert. Dark background, cinematic horror lighting.
 
 SCENE 4 (0:17 - 0:22) — THE FIGURE
-Phone screen showing the baby monitor feed again. Same nursery, same sleeping baby. But now in the far corner of the room, half hidden in shadow, a dark featureless human silhouette stands perfectly still facing the crib. The figure is darker than the shadows around it. No face, no features, just a void in human shape. More static and scan lines. Horror atmosphere.
+Phone screen showing the baby monitor feed. Same nursery, same sleeping baby. But now in the far corner, a dark featureless human silhouette stands perfectly still facing the crib. Darker than shadows. No face, no features, a void in human shape. More static and scan lines.
 
 SCENE 5 (0:22 - 0:28) — THE RUN
-A man running through a dark hallway toward a staircase at night, seen from behind. Handheld camera perspective with motion blur. Phone screen in his hand casting blue light flashes on walls. Bare feet on hardwood floor. Dark house interior. Extreme urgency, horror cinematography, heavy grain.
+A man running through a dark hallway toward a staircase at night, seen from behind. Handheld camera with motion blur. Phone casting blue light on walls. Bare feet on hardwood. Extreme urgency, horror cinematography.
 
 SCENE 6 (0:28 - 0:32) — THE DOOR
-View from inside a dark nursery looking at the door being slammed open. Man silhouetted in the doorway. Moonlight through venetian blinds creating horizontal light stripes on floor and walls. Dark hallway behind him. Dramatic entrance with blue-silver moonlight.
+View from inside a dark nursery. Door slammed open. Man silhouetted in doorway. Moonlight through venetian blinds creating horizontal stripes on floor. Blue-silver moonlight.
 
 SCENE 7 (0:32 - 0:35) — THE EMPTY CORNER
-Nursery corner at night, moonlight through venetian blinds. Small wooden dresser with a stuffed grey elephant toy. Empty corner, plain wall, peaceful. White crib with sleeping baby in cream swaddle nearby. Blue-silver moonlight. The corner is clearly empty.
+Nursery corner at night. Moonlight through blinds. Small dresser with stuffed elephant. Empty corner. White crib with sleeping baby nearby. The corner is clearly empty.
 
 SCENE 8 (0:35 - 0:42) — FALSE SAFETY
-Father picking up baby from crib at night. Side profile silhouette of man holding swaddled baby against chest. Warm amber moonlight through blinds. One hand cradling baby's head. Warm color temperature, soft intimate lighting. Peaceful and emotional.
+Father picking up baby from crib. Side profile silhouette holding swaddled baby against chest. Warm amber moonlight. Soft intimate lighting. Peaceful and emotional.
 
 SCENE 9 (0:42 - 0:50) — THE CALM
-Extreme close-up of man's face in profile, eyes closed, peaceful expression. Warm amber side lighting. Venetian blind stripe shadows across his face. Soft cream blur of baby on his shoulder in foreground. Shallow depth of field, warm color temperature.
+Extreme close-up of man's face in profile, eyes closed, peaceful. Warm amber side lighting. Venetian blind stripes across face. Soft blur of baby on shoulder. Shallow depth of field.
 
 SCENE 10 (0:50 - 0:55) — THE NOTIFICATION
-Close-up of man's face, eyes open and alert. Holding baby in one arm, phone in other hand. Cold blue-white phone light from below mixed with warm amber moonlight from side. Split lighting. The warmth is fading. Horror returning.
+Close-up of man's face, eyes open alert. Holding baby in one arm, phone in other. Cold blue phone light mixed with warm moonlight. Split lighting. Horror returning.
 
 SCENE 11 (0:55 - 0:58) — THE SCREEN
-Phone screen extreme close-up. Baby monitor app dark mode. Warning notification: camera disconnected at 11:47 PM, last image saved. Below shows last captured night vision frame of nursery. Baby clearly visible in crib. Timestamp 11:47 PM. Frozen image.
+Phone screen close-up. Baby monitor app. Warning: camera disconnected 11:47 PM. Last image shows baby in crib. Timestamp 11:47 PM. Frozen.
 
 SCENE 12 (0:58 - 1:00) — THE END
-Extreme close-up of man's face lit from below by cold blue-white phone light. Horrified expression of slow dawning realization. Skull-like shadows, deep eye sockets. Eyes looking downward in terror. Harshest coldest lighting. Horror. Heavy grain.`;
+Extreme close-up of man's face. Cold blue phone light from below. Horrified realization. Skull-like shadows. Eyes looking down in terror. Harshest coldest lighting. Heavy grain.`;
 
-const $s = document.getElementById('script');
-$s.value = DEFAULT_SCRIPT;
-updCC();
-$s.addEventListener('input', updCC);
-document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+const $s=document.getElementById('script');
+$s.value=DEFAULT_SCRIPT;updCC();
+$s.addEventListener('input',updCC);
+document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+document.getElementById('modalInput').addEventListener('keydown',e=>{if(e.key==='Enter')submitFeedback()});
 initPresets();
 
-function updCC() { document.getElementById('cc').textContent = $s.value.length.toLocaleString() + ' chars'; }
+function updCC(){document.getElementById('cc').textContent=$s.value.length.toLocaleString()+' chars'}
+function setAR(a,b){currentAR=a;b.parentElement.querySelectorAll('.tog-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()}
+function setQ(q,b){currentQ=q;b.parentElement.querySelectorAll('.tog-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active')}
+function getARV(){return currentAR==='16:9'?'16/9':currentAR==='1:1'?'1/1':'9/16'}
+function toggleTriple(){tripleMode=!tripleMode;document.getElementById('tripleToggle').classList.toggle('on',tripleMode)}
 
-/* ===== AUTH ===== */
-async function login() {
-  const pw = document.getElementById('pw').value;
-  if (!pw) { showLoginErr('Enter your password'); return; }
-  const btn = document.getElementById('loginBtn');
-  btn.disabled = true; btn.textContent = 'Connecting...';
-  hideLoginErr();
-  try {
-    const r = await fetch('/api/auth', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pw })
-    });
-    const d = await r.json();
-    if (!r.ok) throw new Error(d.error || 'Wrong password');
-    API_KEY = d.key;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-  } catch (e) { showLoginErr(e.message); }
-  btn.disabled = false; btn.textContent = 'ENTER STUDIO';
+/* ===== CHARACTER LOCK ===== */
+function handleCharUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    charRefBase64=ev.target.result.split(',')[1];
+    charRefMime=file.type;
+    document.getElementById('charThumbImg').src=ev.target.result;
+    document.getElementById('charThumbImg').style.display='block';
+    document.getElementById('charThumbEmpty').style.display='none';
+    document.getElementById('charStatus').textContent='Character locked ✓';
+    document.getElementById('charRemoveBtn').style.display='inline-block';
+  };
+  reader.readAsDataURL(file);
+}
+function removeChar(){
+  charRefBase64=null;charRefMime=null;
+  document.getElementById('charThumbImg').style.display='none';
+  document.getElementById('charThumbEmpty').style.display='flex';
+  document.getElementById('charStatus').textContent='No reference uploaded';
+  document.getElementById('charRemoveBtn').style.display='none';
+  document.getElementById('charUpload').value='';
 }
 
-function logout() { API_KEY = ''; location.reload(); }
-function showLoginErr(m) { const e = document.getElementById('loginErr'); e.style.display = 'block'; e.textContent = m; }
-function hideLoginErr() { document.getElementById('loginErr').style.display = 'none'; }
+/* ===== AUTH ===== */
+async function login(){
+  const pw=document.getElementById('pw').value;if(!pw){showLoginErr('Enter password');return}
+  const btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='Connecting...';hideLoginErr();
+  try{const r=await fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Wrong password');API_KEY=d.key;document.getElementById('loginScreen').style.display='none';document.getElementById('app').style.display='block';loadProjectList()}catch(e){showLoginErr(e.message)}
+  btn.disabled=false;btn.textContent='ENTER STUDIO';
+}
+function logout(){API_KEY='';location.reload()}
+function showLoginErr(m){const e=document.getElementById('loginErr');e.style.display='block';e.textContent=m}
+function hideLoginErr(){document.getElementById('loginErr').style.display='none'}
 
 /* ===== GEMINI ===== */
-async function callGemini(model, contents, config = {}) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
-  const r = await fetch(url, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents, generationConfig: config })
-  });
-  if (!r.ok) {
-    const t = await r.text().catch(() => '');
-    if (r.status === 429) throw new Error('Rate limited — wait 30s');
-    if (r.status === 403) throw new Error('API key issue');
-    if (r.status === 400) throw new Error('Safety filter blocked');
-    throw new Error(`API ${r.status}: ${t.substring(0, 120)}`);
-  }
+async function callGemini(model,contents,config={}){
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents,generationConfig:config})});
+  if(!r.ok){const t=await r.text().catch(()=>'');if(r.status===429)throw new Error('Rate limited — wait 30s');if(r.status===403)throw new Error('API key issue');if(r.status===400)throw new Error('Safety filter blocked');throw new Error(`API ${r.status}: ${t.substring(0,120)}`)}
   return r.json();
 }
 
-function buildParsePrompt(script) {
-  const preset = PRESETS[activePreset];
-  const qDesc = Q_MAP[currentQ];
-  return `You are an elite film director and cinematographer. Given a script and visual style, break it into scenes and write OPTIMIZED image generation prompts.
+function buildParsePrompt(script){
+  const p=PRESETS[activePreset];
+  return `You are an elite film director. Break this script into scenes and write OPTIMIZED image prompts.
 
-VISUAL STYLE: ${preset.bible}
-ASPECT RATIO: ${currentAR}
-OUTPUT QUALITY: ${currentQ} — ${qDesc}
+STYLE: ${p.bible}
+RATIO: ${currentAR} | QUALITY: ${currentQ} — ${Q_MAP[currentQ]}
 
-For EACH scene, write an optimized prompt that specifies:
-- Exact camera angle and focal length
-- Lighting setup with color temperature
-- Composition and framing for ${currentAR} aspect ratio
-- Color palette with hex codes
-- Lens characteristics and depth of field
-- Image quality: ${qDesc}
-- Must end with: "${preset.suffix}, ${currentAR} aspect ratio, ${qDesc}"
+For each scene write a prompt with: camera angle, focal length, lighting with color temp, composition for ${currentAR}, color hex palette, lens/DOF, ending with "${p.suffix}, ${currentAR}, ${Q_MAP[currentQ]}"
+${charRefBase64?'IMPORTANT: A character reference photo is provided. Every scene with a person must match that face exactly.':''}
 
-Return ONLY a valid JSON array. No markdown. No backticks.
-Each object: {"scene_number":1,"timecode":"0:00-0:05","title":"TITLE","description":"original","optimized_prompt":"your expert prompt"}
+Return ONLY valid JSON array. No markdown. No backticks.
+Each: {"scene_number":1,"timecode":"0:00-0:05","title":"TITLE","description":"original","optimized_prompt":"your prompt"}
 
 SCRIPT:
-${script}`;
+${script}`}
+
+async function parseWithDirector(script){
+  const data=await callGemini(PARSE_MODEL,[{role:'user',parts:[{text:buildParsePrompt(script)}]}],{temperature:.3});
+  const text=(data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('');
+  return JSON.parse(text.replace(/```json|```/g,'').trim());
 }
 
-async function parseWithDirector(script) {
-  const data = await callGemini(PARSE_MODEL, [
-    { role: 'user', parts: [{ text: buildParsePrompt(script) }] }
-  ], { temperature: 0.3 });
-  const text = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('');
-  return JSON.parse(text.replace(/```json|```/g, '').trim());
-}
-
-async function generateFrame(prompt) {
-  const data = await callGemini(IMAGE_MODEL, [
-    { role: 'user', parts: [{ text: prompt }] }
-  ], { responseModalities: ['TEXT', 'IMAGE'] });
-  const parts = data.candidates?.[0]?.content?.parts || [];
-  for (const p of parts) { if (p.inlineData) return `data:${p.inlineData.mimeType};base64,${p.inlineData.data}`; }
-  const reason = data.candidates?.[0]?.finishReason;
-  if (reason === 'SAFETY') throw new Error('Safety filter — retry');
+async function generateFrame(prompt){
+  const parts=[{text:prompt}];
+  if(charRefBase64){parts.unshift({inlineData:{mimeType:charRefMime,data:charRefBase64}});parts[parts.length-1].text='Use the face from the reference image for any person in this scene. '+parts[parts.length-1].text}
+  const data=await callGemini(IMAGE_MODEL,[{role:'user',parts}],{responseModalities:['TEXT','IMAGE']});
+  const ps=data.candidates?.[0]?.content?.parts||[];
+  for(const p of ps){if(p.inlineData)return`data:${p.inlineData.mimeType};base64,${p.inlineData.data}`}
+  if(data.candidates?.[0]?.finishReason==='SAFETY')throw new Error('Safety filter — retry');
   throw new Error('No image — retry');
 }
 
-/* ===== FEEDBACK ===== */
-function openFeedback(index) {
-  if (scenes[index].status !== 'done' || !scenes[index].imageUrl) return;
-  feedbackIndex = index;
-  const s = scenes[index];
-  document.getElementById('modalImg').src = s.imageUrl;
-  document.getElementById('modalTitle').textContent = `Refine: ${s.title}`;
-  document.getElementById('modalInput').value = '';
-  document.getElementById('modalOverlay').style.display = 'flex';
-  setTimeout(() => document.getElementById('modalInput').focus(), 100);
+/* ===== SOUND DESIGN ===== */
+function toggleSoundPanels(){
+  showSound=!showSound;
+  document.getElementById('soundToggleBtn').classList.toggle('active',showSound);
+  document.querySelectorAll('.sound-panel').forEach(p=>p.classList.toggle('show',showSound));
 }
 
-function closeModal() {
-  document.getElementById('modalOverlay').style.display = 'none';
-  feedbackIndex = -1;
-}
+async function genSound(i){
+  const s=scenes[i];if(!s)return;
+  const prompt=`You are a sound designer for film. Given this scene description, provide:
+1. SFX: Specific sound effects needed (with ElevenLabs prompt if applicable)
+2. MUSIC: Music/score description (with Suno AI prompt)
+3. AMBIENCE: Background atmosphere
 
-async function submitFeedback() {
-  const input = document.getElementById('modalInput').value.trim();
-  if (!input || feedbackIndex < 0) return;
-  const i = feedbackIndex;
-  const s = scenes[i];
-  const btn = document.getElementById('modalGo');
-  btn.disabled = true; btn.textContent = 'Rewriting...';
+Scene: "${s.description}"
+Timecode: ${s.timecode}
 
-  try {
-    const rewritePrompt = `You previously wrote this image generation prompt:
-"${s.optimized_prompt}"
-
-The user wants this change: "${input}"
-
-Rewrite the FULL prompt incorporating their feedback. Keep all technical details (camera, lighting, composition) but apply the requested change. Include quality level: ${Q_MAP[currentQ]}. Return ONLY the new prompt text, nothing else.`;
-
-    const data = await callGemini(PARSE_MODEL, [
-      { role: 'user', parts: [{ text: rewritePrompt }] }
-    ], { temperature: 0.3 });
-    const newPrompt = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').trim();
-    if (!newPrompt) throw new Error('No rewrite');
-
-    s.optimized_prompt = newPrompt;
-    s.status = 'generating';
-    s.error = null;
-    closeModal();
-    render();
-
-    if (tripleMode) {
-      s.tripleUrls = [];
-      s.pickedTriple = -1;
-      for (let t = 0; t < 3; t++) {
-        try { s.tripleUrls.push(await generateFrame(newPrompt)); } catch (e) { s.tripleUrls.push(null); }
-        render();
-        if (t < 2) await new Promise(r => setTimeout(r, 2000));
-      }
-      s.status = s.tripleUrls.some(u => u) ? 'done' : 'error';
-      if (!s.imageUrl && s.tripleUrls[0]) s.imageUrl = s.tripleUrls[0];
-    } else {
-      s.imageUrl = await generateFrame(newPrompt);
-      s.status = 'done';
-    }
-  } catch (e) {
-    scenes[i].status = 'error';
-    scenes[i].error = e.message;
-    closeModal();
-  }
-  btn.disabled = false; btn.textContent = 'Regenerate';
+Return ONLY JSON: {"sfx":"description","sfx_prompt":"ElevenLabs prompt","music":"description","music_prompt":"Suno prompt","ambience":"description"}
+No markdown. No backticks.`;
+  try{
+    const data=await callGemini(PARSE_MODEL,[{role:'user',parts:[{text:prompt}]}],{temperature:.4});
+    const text=(data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('');
+    s.sound=JSON.parse(text.replace(/```json|```/g,'').trim());
+  }catch(e){s.sound={sfx:'Error: '+e.message,music:'',ambience:'',sfx_prompt:'',music_prompt:''}}
   render();
 }
 
-document.getElementById('modalInput').addEventListener('keydown', e => { if (e.key === 'Enter') submitFeedback(); });
-
-/* ===== UI ===== */
-function showErr(m) { document.getElementById('errBox').style.display = 'block'; document.getElementById('errTxt').textContent = m; }
-function hideErr() { document.getElementById('errBox').style.display = 'none'; }
-function setProg(c, t, txt, phase) {
-  document.getElementById('prog').style.display = 'block';
-  document.getElementById('progFill').style.width = (t > 0 ? (c / t) * 100 : 0) + '%';
-  document.getElementById('progFill').className = 'prog-fill ' + (phase || 'g');
-  document.getElementById('progTxt').textContent = txt;
+async function genAllSound(){
+  const btn=document.getElementById('btnSndAll');btn.disabled=true;btn.textContent='🎵 Generating...';
+  for(let i=0;i<scenes.length;i++){
+    if(scenes[i].status==='done'&&!scenes[i].sound){await genSound(i);await new Promise(r=>setTimeout(r,1000))}
+  }
+  btn.disabled=false;btn.textContent='🎵 Sound Design';
 }
 
-function render() {
-  const g = document.getElementById('grid'); g.innerHTML = '';
-  const done = scenes.filter(s => s.status === 'done').length;
-  document.getElementById('boardTitle').textContent = `STORYBOARD — ${scenes.length} FRAMES`;
-  document.getElementById('boardCount').textContent = `${done}/${scenes.length}`;
-  if (done > 0) document.getElementById('btnDl').style.display = 'inline-block';
+function copyText(txt){navigator.clipboard.writeText(txt).catch(()=>{})}
 
-  const arStyle = `aspect-ratio:${getARValue()}`;
+/* ===== FEEDBACK ===== */
+function openFeedback(i){
+  if(scenes[i].status!=='done'||!scenes[i].imageUrl)return;
+  feedbackIndex=i;document.getElementById('modalImg').src=scenes[i].imageUrl;
+  document.getElementById('modalTitle').textContent='Refine: '+scenes[i].title;
+  document.getElementById('modalInput').value='';
+  document.getElementById('modalOverlay').style.display='flex';
+  setTimeout(()=>document.getElementById('modalInput').focus(),100);
+}
+function closeModal(){document.getElementById('modalOverlay').style.display='none';feedbackIndex=-1}
 
-  scenes.forEach((s, i) => {
-    const c = document.createElement('div'); c.className = 'sc';
-    let img = '';
-    if (s.imageUrl) {
-      img = `<img src="${s.imageUrl}" alt="${s.title}" style="${arStyle}" onclick="openFeedback(${i})">`;
-    } else if (s.status === 'generating') {
-      img = `<div style="text-align:center;${arStyle};display:flex;align-items:center;justify-content:center;flex-direction:column"><div class="sp"></div><p style="color:#444;font-size:9px">${tripleMode ? 'Triple shot...' : 'Painting...'}</p></div>`;
-    } else if (s.status === 'error') {
-      img = `<div style="text-align:center;${arStyle};display:flex;align-items:center;justify-content:center;flex-direction:column;padding:10px"><p style="color:#ff6b6b;font-size:18px">✕</p><p style="color:#ff6b6b;font-size:8px;margin-top:4px">${s.error || 'Failed'}</p></div>`;
-    } else {
-      img = `<div style="${arStyle};display:flex;align-items:center;justify-content:center"><p style="color:#1a1a1a;font-size:22px;font-weight:800">${String(s.scene_number).padStart(2, '0')}</p></div>`;
+async function submitFeedback(){
+  const input=document.getElementById('modalInput').value.trim();if(!input||feedbackIndex<0)return;
+  const i=feedbackIndex,s=scenes[i],btn=document.getElementById('modalGo');
+  btn.disabled=true;btn.textContent='Rewriting...';
+  try{
+    const rp=`Rewrite this image prompt with the user's change applied:\nOriginal: "${s.optimized_prompt}"\nChange: "${input}"\nQuality: ${Q_MAP[currentQ]}\nReturn ONLY the new prompt.`;
+    const data=await callGemini(PARSE_MODEL,[{role:'user',parts:[{text:rp}]}],{temperature:.3});
+    const np=(data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('').trim();
+    if(!np)throw new Error('No rewrite');
+    s.optimized_prompt=np;s.status='generating';s.error=null;s.sound=null;closeModal();render();
+    if(tripleMode){s.tripleUrls=[];s.pickedTriple=-1;for(let t=0;t<2;t++){try{s.tripleUrls.push(await generateFrame(np))}catch(e){s.tripleUrls.push(null)}render();if(t<1)await new Promise(r=>setTimeout(r,2000))}s.status=s.tripleUrls.some(u=>u)?'done':'error';if(!s.imageUrl&&s.tripleUrls[0])s.imageUrl=s.tripleUrls[0]}
+    else{s.imageUrl=await generateFrame(np);s.status='done'}
+  }catch(e){scenes[i].status='error';scenes[i].error=e.message;closeModal()}
+  btn.disabled=false;btn.textContent='Regenerate';render();
+}
+
+/* ===== SAVE/LOAD PROJECTS ===== */
+function getProjects(){try{return JSON.parse(localStorage.getItem('sb_projects')||'[]')}catch(e){return[]}}
+function saveProjectsData(p){localStorage.setItem('sb_projects',JSON.stringify(p))}
+
+function saveProject(){
+  const name=prompt('Project name:',currentProjectId?getProjects().find(p=>p.id===currentProjectId)?.name||'':'The Baby Monitor');
+  if(!name)return;
+  const projects=getProjects();
+  const proj={
+    id:currentProjectId||Date.now().toString(),
+    name,
+    preset:activePreset,ar:currentAR,q:currentQ,
+    script:$s.value,
+    scenes:scenes.map(s=>({...s,tripleUrls:[]})),
+    updated:new Date().toISOString()
+  };
+  const idx=projects.findIndex(p=>p.id===proj.id);
+  if(idx>=0)projects[idx]=proj;else projects.unshift(proj);
+  currentProjectId=proj.id;
+  try{saveProjectsData(projects);document.getElementById('projectTitle').textContent=name;showToast('Saved ✓')}
+  catch(e){showErr('Storage full — too many projects. Delete old ones.')}
+}
+
+function loadProject(id){
+  const proj=getProjects().find(p=>p.id===id);if(!proj)return;
+  currentProjectId=proj.id;
+  activePreset=proj.preset||'horror';
+  currentAR=proj.ar||'9:16';currentQ=proj.q||'2K';
+  $s.value=proj.script||'';updCC();
+  scenes=proj.scenes||[];
+  document.getElementById('projectTitle').textContent=proj.name;
+  document.querySelectorAll('.preset').forEach(b=>{b.classList.toggle('active',b.querySelector('.preset-name').textContent===PRESETS[activePreset]?.name)});
+  document.querySelectorAll('[data-group="ar"]').forEach(b=>b.classList.toggle('active',b.textContent===currentAR));
+  document.querySelectorAll('[data-group="q"]').forEach(b=>b.classList.toggle('active',b.textContent===currentQ));
+  if(scenes.length>0){document.getElementById('empty').style.display='none';document.getElementById('board').style.display='block'}
+  render();closeSidebar();
+}
+
+function deleteProject(id){
+  if(!confirm('Delete this project?'))return;
+  const projects=getProjects().filter(p=>p.id!==id);saveProjectsData(projects);
+  if(currentProjectId===id){currentProjectId=null;document.getElementById('projectTitle').textContent='STUDIO'}
+  loadProjectList();
+}
+
+function newProject(){
+  currentProjectId=null;scenes=[];
+  $s.value='';updCC();
+  document.getElementById('projectTitle').textContent='STUDIO';
+  document.getElementById('board').style.display='none';document.getElementById('empty').style.display='block';
+  closeSidebar();
+}
+
+function loadProjectList(){
+  const list=document.getElementById('projectList');list.innerHTML='';
+  const projects=getProjects();
+  if(!projects.length){list.innerHTML='<p style="text-align:center;color:#333;font-size:11px;padding:20px">No saved projects yet</p>';return}
+  projects.forEach(p=>{
+    const d=document.createElement('div');d.className='sb-item'+(p.id===currentProjectId?' active':'');
+    const date=new Date(p.updated).toLocaleDateString();
+    const sc=p.scenes?.length||0;
+    d.innerHTML=`<p class="sb-item-name">${p.name}</p><p class="sb-item-meta">${sc} frames • ${PRESETS[p.preset]?.name||'?'} • ${p.q||'2K'} • ${date}</p><div class="sb-item-acts"><button class="sb-del" onclick="event.stopPropagation();deleteProject('${p.id}')">Delete</button></div>`;
+    d.onclick=()=>loadProject(p.id);
+    list.appendChild(d);
+  });
+}
+
+function openSidebar(){loadProjectList();document.getElementById('sidebar').classList.add('show');document.getElementById('sidebarOverlay').classList.add('show')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('show');document.getElementById('sidebarOverlay').classList.remove('show')}
+
+function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #333;color:#4ade80;padding:8px 20px;border-radius:8px;font-size:12px;font-weight:700;z-index:999;animation:fadeIn .2s';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2000)}
+
+/* ===== EXPORT PDF ===== */
+async function exportPDF(){
+  const btn=document.getElementById('btnPdf');btn.disabled=true;btn.textContent='📤 Building...';
+  try{
+    const{jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:currentAR==='16:9'?'landscape':'portrait',unit:'mm',format:'a4'});
+    const pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight();
+
+    // Title page
+    pdf.setFillColor(0,0,0);pdf.rect(0,0,pw,ph,'F');
+    pdf.setTextColor(255,255,255);pdf.setFontSize(28);pdf.setFont(undefined,'bold');
+    const title=currentProjectId?getProjects().find(p=>p.id===currentProjectId)?.name||'Storyboard':'Storyboard';
+    pdf.text(title,pw/2,ph/2-10,{align:'center'});
+    pdf.setFontSize(10);pdf.setTextColor(150);
+    pdf.text(`${scenes.length} frames • ${PRESETS[activePreset].name} • ${currentQ} • ${currentAR}`,pw/2,ph/2+5,{align:'center'});
+    pdf.text(`Generated by StoryBoard Studio • ${new Date().toLocaleDateString()}`,pw/2,ph/2+15,{align:'center'});
+
+    // Scene pages
+    for(let i=0;i<scenes.length;i++){
+      const s=scenes[i];if(!s.imageUrl)continue;
+      pdf.addPage();pdf.setFillColor(0,0,0);pdf.rect(0,0,pw,ph,'F');
+
+      // Header
+      pdf.setTextColor(178,34,34);pdf.setFontSize(8);pdf.text(`SCENE ${s.scene_number}`,10,12);
+      pdf.setTextColor(255);pdf.setFontSize(14);pdf.setFont(undefined,'bold');pdf.text(s.title,10,20);
+      pdf.setTextColor(150);pdf.setFontSize(8);pdf.setFont(undefined,'normal');pdf.text(s.timecode,pw-10,12,{align:'right'});
+      pdf.text(currentQ,pw-10,18,{align:'right'});
+
+      // Image
+      try{
+        const imgW=currentAR==='16:9'?pw-20:currentAR==='1:1'?(ph-60)*0.6:(ph-60)*0.45;
+        const imgH=currentAR==='16:9'?imgW*(9/16):currentAR==='1:1'?imgW:imgW*(16/9);
+        const maxH=ph-60;const scale=imgH>maxH?maxH/imgH:1;
+        pdf.addImage(s.imageUrl,'PNG',10,28,imgW*scale,imgH*scale);
+
+        // Description
+        const textY=28+imgH*scale+8;
+        pdf.setTextColor(180);pdf.setFontSize(7);
+        const lines=pdf.splitTextToSize(s.description,pw-20);
+        pdf.text(lines.slice(0,4),10,textY);
+
+        if(s.sound){
+          const sndY=textY+20;
+          pdf.setTextColor(107,138,255);pdf.setFontSize(6);pdf.text('SFX: '+s.sound.sfx,10,sndY);
+          pdf.setTextColor(107,255,138);pdf.text('MUSIC: '+s.sound.music,10,sndY+6);
+        }
+      }catch(e){}
     }
 
-    const stC = { pending: 'st-w', generating: 'st-g', done: 'st-d', error: 'st-e' }[s.status] || 'st-w';
-    const stL = { pending: 'WAIT', generating: 'GEN', done: 'DONE', error: 'ERR' }[s.status] || '—';
+    pdf.save(`storyboard_${title.replace(/[^a-zA-Z0-9]/g,'_')}_${currentQ}.pdf`);
+  }catch(e){showErr('PDF export failed: '+e.message)}
+  btn.disabled=false;btn.textContent='📤 Export PDF';
+}
 
-    const optId = `opt-${i}`;
-    const hasOpt = s.optimized_prompt && s.optimized_prompt !== s.description;
+/* ===== UI ===== */
+function showErr(m){document.getElementById('errBox').style.display='block';document.getElementById('errTxt').textContent=m}
+function hideErr(){document.getElementById('errBox').style.display='none'}
+function setProg(c,t,txt,phase){document.getElementById('prog').style.display='block';document.getElementById('progFill').style.width=(t>0?(c/t)*100:0)+'%';document.getElementById('progFill').className='prog-fill '+(phase||'g');document.getElementById('progTxt').textContent=txt}
 
-    let tripleHtml = '';
-    if (tripleMode && s.tripleUrls && s.tripleUrls.length > 0 && s.status === 'done') {
-      tripleHtml = '<div class="triple">';
-      s.tripleUrls.forEach((url, t) => {
-        if (!url) return;
-        const picked = s.pickedTriple === t ? 'picked' : '';
-        tripleHtml += `<div class="triple-opt ${picked}" onclick="pickTriple(${i},${t})"><img src="${url}" style="${arStyle}"><div class="pick-badge">✓ PICK</div></div>`;
-      });
-      tripleHtml += '</div>';
+function render(){
+  const g=document.getElementById('grid');g.innerHTML='';
+  const done=scenes.filter(s=>s.status==='done').length;
+  document.getElementById('boardTitle').textContent=`STORYBOARD — ${scenes.length} FRAMES`;
+  document.getElementById('boardCount').textContent=`${done}/${scenes.length} • ${PRESETS[activePreset].name} • ${currentQ} • ${currentAR}`;
+  if(done>0){document.getElementById('btnDl').style.display='inline-block';document.getElementById('btnPdf').style.display='inline-block';document.getElementById('btnSndAll').style.display='inline-block'}
+
+  const arS=`aspect-ratio:${getARV()}`;
+
+  scenes.forEach((s,i)=>{
+    const c=document.createElement('div');c.className='sc';
+    let img='';
+    if(s.imageUrl)img=`<img src="${s.imageUrl}" alt="${s.title}" style="${arS}" onclick="openFeedback(${i})">`;
+    else if(s.status==='generating')img=`<div style="text-align:center;${arS};display:flex;align-items:center;justify-content:center;flex-direction:column"><div class="sp"></div><p style="color:#444;font-size:9px">${tripleMode?'Dual shot...':'Painting...'}</p></div>`;
+    else if(s.status==='error')img=`<div style="text-align:center;${arS};display:flex;align-items:center;justify-content:center;flex-direction:column;padding:10px"><p style="color:#ff6b6b;font-size:18px">✕</p><p style="color:#ff6b6b;font-size:8px;margin-top:4px">${s.error||'Failed'}</p></div>`;
+    else img=`<div style="${arS};display:flex;align-items:center;justify-content:center"><p style="color:#1a1a1a;font-size:22px;font-weight:800">${String(s.scene_number).padStart(2,'0')}</p></div>`;
+
+    const stC={pending:'st-w',generating:'st-g',done:'st-d',error:'st-e'}[s.status]||'st-w';
+    const stL={pending:'WAIT',generating:'GEN',done:'DONE',error:'ERR'}[s.status]||'—';
+    const optId=`opt-${i}`;
+    const hasOpt=s.optimized_prompt&&s.optimized_prompt!==s.description;
+
+    let tripleHtml='';
+    if(tripleMode&&s.tripleUrls&&s.tripleUrls.length>0&&s.status==='done'){
+      tripleHtml='<div class="triple">';
+      s.tripleUrls.forEach((url,t)=>{if(!url)return;tripleHtml+=`<div class="triple-opt ${s.pickedTriple===t?'picked':''}" onclick="pickTriple(${i},${t})"><img src="${url}" style="${arS}"><div class="pick-badge">✓</div></div>`});
+      tripleHtml+='</div>';
     }
 
-    c.innerHTML = `
-      <div class="sc-img" style="background:#050505">
-        ${img}
-        <div class="bdg bdg-t">${s.timecode}</div>
-        <div class="bdg bdg-n">#${String(s.scene_number).padStart(2, '0')}</div>
-        ${s.status === 'done' ? `<div class="bdg bdg-q">${currentQ}</div>` : ''}
+    let soundHtml='';
+    if(s.sound){
+      soundHtml=`<div class="sound-panel ${showSound?'show':''}">
+        <div class="sound-row"><span class="sound-icon">🔊</span><span class="sound-label">SFX</span><span class="sound-text">${s.sound.sfx||'-'}</span>${s.sound.sfx_prompt?`<button class="sound-copy" onclick="copyText(\`${s.sound.sfx_prompt.replace(/`/g,"'")}\`)">Copy</button>`:''}</div>
+        <div class="sound-row"><span class="sound-icon">🎵</span><span class="sound-label">MUSIC</span><span class="sound-text">${s.sound.music||'-'}</span>${s.sound.music_prompt?`<button class="sound-copy" onclick="copyText(\`${s.sound.music_prompt.replace(/`/g,"'")}\`)">Copy</button>`:''}</div>
+        <div class="sound-row"><span class="sound-icon">🌫️</span><span class="sound-label">AMB</span><span class="sound-text">${s.sound.ambience||'-'}</span></div>
+      </div>`;
+    }else if(s.status==='done'){
+      soundHtml=`<div class="sound-panel ${showSound?'show':''}"><button class="char-btn" onclick="genSound(${i})" style="width:100%;text-align:center;font-size:9px">🎵 Generate Sound Design</button></div>`;
+    }
+
+    c.innerHTML=`
+      <div class="sc-img" style="background:#050505">${img}
+        <div class="bdg bdg-t">${s.timecode}</div><div class="bdg bdg-n">#${String(s.scene_number).padStart(2,'0')}</div>
+        ${s.status==='done'?`<div class="bdg bdg-q">${currentQ}</div>`:''}
       </div>
       <div class="sc-i">
         <h3>${s.title} <span class="st ${stC}">${stL}</span></h3>
         <p>${s.description}</p>
-        ${tripleHtml}
-        ${hasOpt ? `<span class="opt-toggle" onclick="document.getElementById('${optId}').style.display=document.getElementById('${optId}').style.display==='block'?'none':'block'">AI prompt ▾</span><div class="opt-prompt" id="${optId}">${s.optimized_prompt}</div>` : ''}
-        ${s.status === 'done' ? `<span class="opt-toggle" onclick="openFeedback(${i})" style="color:#6b8aff;margin-left:6px">✏️ Refine</span>` : ''}
-        ${s.status === 'error' ? `<button class="btn-r" onclick="retry(${i})">Retry</button>` : ''}
+        ${tripleHtml}${soundHtml}
+        ${hasOpt?`<span class="opt-toggle" onclick="document.getElementById('${optId}').style.display=document.getElementById('${optId}').style.display==='block'?'none':'block'">AI prompt ▾</span><div class="opt-prompt" id="${optId}">${s.optimized_prompt}</div>`:''}
+        ${s.status==='done'?`<span class="opt-toggle" onclick="openFeedback(${i})" style="color:#6b8aff;margin-left:6px">✏️ Refine</span>`:''}
+        ${s.status==='error'?`<button class="btn-r" onclick="retry(${i})">Retry</button>`:''}
       </div>`;
     g.appendChild(c);
   });
 }
 
-function pickTriple(si, ti) {
-  scenes[si].pickedTriple = ti;
-  scenes[si].imageUrl = scenes[si].tripleUrls[ti];
-  render();
-}
+function pickTriple(si,ti){scenes[si].pickedTriple=ti;scenes[si].imageUrl=scenes[si].tripleUrls[ti];render()}
 
 /* ===== MAIN ===== */
-async function run() {
-  const script = $s.value.trim();
-  if (!script) { showErr('Paste a script first'); return; }
-  hideErr(); aborted = false;
+async function run(){
+  const script=$s.value.trim();if(!script){showErr('Paste a script');return}
+  hideErr();aborted=false;
+  document.getElementById('btnGo').style.display='none';document.getElementById('btnStop').style.display='inline-block';
+  document.getElementById('empty').style.display='none';document.getElementById('board').style.display='block';
 
-  document.getElementById('btnGo').style.display = 'none';
-  document.getElementById('btnStop').style.display = 'inline-block';
-  document.getElementById('empty').style.display = 'none';
-  document.getElementById('board').style.display = 'block';
-
-  setProg(0, 1, `Gemini 3.1 Pro analyzing (${currentQ} / ${currentAR} / ${PRESETS[activePreset].name})...`, 'p');
+  setProg(0,1,`Director analyzing (${currentQ}/${currentAR}/${PRESETS[activePreset].name})...`,'p');
   let parsed;
-  try {
-    parsed = await parseWithDirector(script);
-    if (!Array.isArray(parsed) || !parsed.length) throw new Error('No scenes');
-  } catch (e) {
-    console.warn('Director fallback:', e.message);
-    parsed = localParse(script);
-    if (!parsed.length) { showErr('Parse failed: ' + e.message); resetBtns(); return; }
-  }
+  try{parsed=await parseWithDirector(script);if(!Array.isArray(parsed)||!parsed.length)throw new Error('No scenes')}
+  catch(e){console.warn('Fallback:',e.message);parsed=localParse(script);if(!parsed.length){showErr('Parse failed: '+e.message);resetBtns();return}}
 
-  scenes = parsed.map(s => ({
-    scene_number: s.scene_number, timecode: s.timecode, title: s.title,
-    description: s.description || s.visual_description || '',
-    optimized_prompt: s.optimized_prompt || s.description || '',
-    status: 'pending', imageUrl: null, error: null,
-    tripleUrls: [], pickedTriple: -1
-  }));
+  scenes=parsed.map(s=>({scene_number:s.scene_number,timecode:s.timecode,title:s.title,description:s.description||s.visual_description||'',optimized_prompt:s.optimized_prompt||s.description||'',status:'pending',imageUrl:null,error:null,tripleUrls:[],pickedTriple:-1,sound:null}));
   render();
 
-  for (let i = 0; i < scenes.length; i++) {
-    if (aborted) break;
-    scenes[i].status = 'generating'; render();
-
-    if (tripleMode) {
-      setProg(i + 1, scenes.length, `Triple shot ${i + 1}/${scenes.length} (${currentQ})...`, 'g');
-      scenes[i].tripleUrls = [];
-      for (let t = 0; t < 3; t++) {
-        try {
-          scenes[i].tripleUrls.push(await generateFrame(scenes[i].optimized_prompt));
-          if (t === 0) scenes[i].imageUrl = scenes[i].tripleUrls[0];
-        } catch (e) { scenes[i].tripleUrls.push(null); }
-        render();
-        if (t < 2) await new Promise(r => setTimeout(r, 2000));
+  for(let i=0;i<scenes.length;i++){
+    if(aborted)break;scenes[i].status='generating';render();
+    if(tripleMode){
+      setProg(i+1,scenes.length,`Dual shot ${i+1}/${scenes.length} (${currentQ})...`,'g');
+      scenes[i].tripleUrls=[];
+      for(let t=0;t<2;t++){
+        try{scenes[i].tripleUrls.push(await generateFrame(scenes[i].optimized_prompt));if(t===0)scenes[i].imageUrl=scenes[i].tripleUrls[0]}catch(e){scenes[i].tripleUrls.push(null)}
+        render();if(t<1)await new Promise(r=>setTimeout(r,2000));
       }
-      scenes[i].status = scenes[i].tripleUrls.some(u => u) ? 'done' : 'error';
-      if (scenes[i].status === 'error') scenes[i].error = 'All 3 failed';
-    } else {
-      setProg(i + 1, scenes.length, `Frame ${i + 1}/${scenes.length} (${currentQ})...`, 'g');
-      try {
-        scenes[i].imageUrl = await generateFrame(scenes[i].optimized_prompt);
-        scenes[i].status = 'done';
-      } catch (e) { scenes[i].status = 'error'; scenes[i].error = e.message; }
+      scenes[i].status=scenes[i].tripleUrls.some(u=>u)?'done':'error';if(scenes[i].status==='error')scenes[i].error='Both shots failed';
+    }else{
+      setProg(i+1,scenes.length,`Frame ${i+1}/${scenes.length} (${currentQ})...`,'g');
+      try{scenes[i].imageUrl=await generateFrame(scenes[i].optimized_prompt);scenes[i].status='done'}catch(e){scenes[i].status='error';scenes[i].error=e.message}
     }
-    render();
-    if (i < scenes.length - 1 && !aborted) await new Promise(r => setTimeout(r, 2500));
+    render();if(i<scenes.length-1&&!aborted)await new Promise(r=>setTimeout(r,2500));
   }
-  resetBtns();
-  setProg(scenes.length, scenes.length, `Done! ${currentQ} • ${currentAR} • ${PRESETS[activePreset].name}`, 'g');
+  resetBtns();setProg(scenes.length,scenes.length,`Done! ${currentQ} • ${currentAR} • ${PRESETS[activePreset].name}`,'g');
 }
 
-function localParse(script) {
-  const results = [];
-  const blocks = script.split(/(?=SCENE\s+\d+)/i).filter(b => b.trim());
-  for (const block of blocks) {
-    const m = block.match(/SCENE\s+(\d+)\s*\(([^)]+)\)\s*[—\-–]+\s*(.+)/i);
-    if (!m) continue;
-    const desc = block.split('\n').slice(1).filter(l => l.trim()).join(' ').trim();
-    const preset = PRESETS[activePreset];
-    if (desc) results.push({
-      scene_number: parseInt(m[1]), timecode: m[2].trim(), title: m[3].trim(),
-      description: desc,
-      optimized_prompt: desc + '. ' + preset.suffix + ', ' + currentAR + ' aspect ratio, ' + Q_MAP[currentQ]
-    });
-  }
+function localParse(script){
+  const results=[],blocks=script.split(/(?=SCENE\s+\d+)/i).filter(b=>b.trim());
+  for(const block of blocks){const m=block.match(/SCENE\s+(\d+)\s*\(([^)]+)\)\s*[—\-–]+\s*(.+)/i);if(!m)continue;const desc=block.split('\n').slice(1).filter(l=>l.trim()).join(' ').trim();const p=PRESETS[activePreset];if(desc)results.push({scene_number:parseInt(m[1]),timecode:m[2].trim(),title:m[3].trim(),description:desc,optimized_prompt:desc+'. '+p.suffix+', '+currentAR+', '+Q_MAP[currentQ]})}
   return results;
 }
 
-async function retry(i) {
-  scenes[i].status = 'generating'; scenes[i].error = null; render();
-  try {
-    scenes[i].imageUrl = await generateFrame(scenes[i].optimized_prompt);
-    scenes[i].status = 'done';
-  } catch (e) { scenes[i].status = 'error'; scenes[i].error = e.message; }
-  render();
-}
-
-function stop() { aborted = true; resetBtns(); }
-function resetBtns() {
-  document.getElementById('btnGo').style.display = 'inline-block';
-  document.getElementById('btnStop').style.display = 'none';
-}
-
-function dlAll() {
-  scenes.forEach((s, i) => {
-    if (!s.imageUrl) return;
-    const a = document.createElement('a');
-    a.href = s.imageUrl;
-    a.download = `frame_${String(i + 1).padStart(2, '0')}_${s.title.replace(/[^a-zA-Z0-9]/g, '_')}_${currentQ}.png`;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  });
-}
+async function retry(i){scenes[i].status='generating';scenes[i].error=null;render();try{scenes[i].imageUrl=await generateFrame(scenes[i].optimized_prompt);scenes[i].status='done'}catch(e){scenes[i].status='error';scenes[i].error=e.message}render()}
+function stop(){aborted=true;resetBtns()}
+function resetBtns(){document.getElementById('btnGo').style.display='inline-block';document.getElementById('btnStop').style.display='none'}
+function dlAll(){scenes.forEach((s,i)=>{if(!s.imageUrl)return;const a=document.createElement('a');a.href=s.imageUrl;a.download=`frame_${String(i+1).padStart(2,'0')}_${s.title.replace(/[^a-zA-Z0-9]/g,'_')}_${currentQ}.png`;document.body.appendChild(a);a.click();document.body.removeChild(a)})}
 </script>
 
 </body>
