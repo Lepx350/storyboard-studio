@@ -41,13 +41,14 @@
 </style>
 </head>
 <body>
-<div class="login" id="loginScreen"><div class="login-box"><h1 class="login-title"><span>▸</span> STORYBOARD STUDIO</h1><p class="login-sub">AI FILMMAKING SUITE — LONG FORMAT</p><input type="password" class="login-input" id="pw" placeholder="Enter password" autofocus><button class="login-btn" id="loginBtn" onclick="login()">ENTER STUDIO</button><p class="login-err" id="loginErr"></p></div></div>
+<div class="login" id="loginScreen"><div class="login-box"><h1 class="login-title"><span>▸</span> STORYBOARD STUDIO</h1><p class="login-sub">AI FILMMAKING SUITE — STYLE BIBLE ENGINE</p><input type="password" class="login-input" id="pw" placeholder="Enter password" autofocus><button class="login-btn" id="loginBtn" onclick="login()">ENTER STUDIO</button><p class="login-err" id="loginErr"></p></div></div>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div><div class="sidebar" id="sidebar"><div class="sb-hdr"><h2>💾 Projects</h2><button class="sb-close" onclick="closeSidebar()">✕</button></div><div class="sb-list" id="projectList"></div><div class="sb-footer"><div style="display:flex;gap:6px;margin-bottom:6px"><button class="sb-new" style="background:#1a1a2a;font-size:10px;padding:8px" onclick="exportProject()">📥 Export .json</button><button class="sb-new" style="background:#1a1a2a;font-size:10px;padding:8px" onclick="document.getElementById('importFileInput').click()">📤 Import .json</button></div><input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importProject(event)"><button class="sb-new" onclick="newProject()">+ New</button></div></div>
 <div class="app" id="app">
 <div class="hdr"><div style="display:flex;align-items:center;gap:8px"><button class="btn-icon" onclick="openSidebar()">💾</button><h1><span>▸</span> <span id="projectTitle">STUDIO</span></h1></div><div class="hdr-r"><button class="btn-icon" id="soundToggleBtn" onclick="toggleSoundPanels()">🎵</button><button class="btn-out" onclick="logout()">Log out</button></div></div>
 <div class="panel" style="padding:10px 16px"><div class="mode-toggle"><button class="mode-btn active" id="modeCustom" onclick="setMode('custom')"><span>✍️</span>WRITE</button><button class="mode-btn" id="modeAI" onclick="setMode('ai')"><span>🤖</span>AI CREATE</button></div></div>
 <div class="panel"><span class="lbl">STYLE PRESET</span><div class="presets" id="presets"></div></div>
-<div class="panel custom-panel" id="customPanel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span class="lbl" style="margin:0">SCRIPT</span><span style="font-size:9px;color:#222" id="cc">0</span></div><textarea id="script" rows="6" placeholder="Paste your script... supports up to 120 scenes (8-10 min)"></textarea></div>
+<div class="panel custom-panel" id="customPanel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span class="lbl" style="margin:0">SCRIPT — clean story beats only</span><span style="font-size:9px;color:#222" id="cc">0</span></div><textarea id="script" rows="6" placeholder="SCENE 1 — THE FISHING VILLAGE&#10;The Trần clan lives as fishermen. Humble houses on stilts. Dawn light.&#10;&#10;SCENE 2 — THE KINGMAKER&#10;Trần Thủ Độ watches from a dark corridor. Sharp calculating eyes."></textarea></div>
+<div class="panel custom-panel" id="biblePanel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;cursor:pointer" onclick="document.getElementById('bibleWrap').style.display=document.getElementById('bibleWrap').style.display==='none'?'block':'none'"><span class="lbl" style="margin:0;color:#6b8aff">📖 STYLE BIBLE <span style="font-size:7px;color:#333">(tap to expand)</span></span><span style="font-size:9px;color:#333" id="bibleStatus">empty</span></div><div id="bibleWrap" style="display:none"><textarea id="styleBible" rows="5" placeholder="Paste your visual style bible here...&#10;&#10;Example: Semi-realistic digital painting, Vietnamese historical art, painterly brushstrokes. Vietnamese men have SHORT HAIR. Four-clawed dragons. Gentle curved roofs. NOT Chinese, NOT Japanese..." style="border-color:#151530;margin-bottom:8px"></textarea><div style="margin-bottom:5px"><span class="lbl" style="color:#ff6b6b">⛔ NEGATIVE PROMPT</span></div><textarea id="negPrompt" rows="2" placeholder="What to AVOID: Chinese hanfu, Japanese kimono, samurai armor, anime style, long flowing hair, five-clawed dragons..." style="border-color:#1a1515"></textarea></div></div>
 <div class="panel ai-panel" id="aiPanel"><span class="lbl">🔍 DISCOVER TOPICS</span><div class="topic-cats" id="topicCats"></div><div class="topic-grid" id="topicGrid"></div><button class="btn-sm" onclick="discoverTopics()" id="btnDiscover" style="margin-top:6px;width:100%;text-align:center">🔍 Discover Topics</button><div class="or-divider">— OR TYPE YOUR OWN —</div><input type="text" id="aiIdea" placeholder="e.g. 8-minute horror about a haunted VHS tape..."><button class="btn-ai" onclick="aiWriteScript()" id="btnAiWrite" style="margin-top:10px;width:100%">🤖 Write Script</button><div id="aiScriptPreview" style="display:none;margin-top:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span class="lbl" style="margin:0">AI SCRIPT</span><span class="fact-badge checking" id="factBadge">⏳</span></div><div class="script-preview"><pre id="aiScriptText"></pre></div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn-sm" onclick="useAiScript()" style="flex:1;text-align:center;background:#B22222;color:#fff;border-color:#B22222">✓ Use</button><button class="btn-sm" onclick="aiWriteScript()" style="flex:1;text-align:center">↻ Redo</button></div></div></div>
 <div class="panel">
 <div class="chars-section"><span class="lbl">👥 CHARACTERS (up to 3)</span><div class="chars-list" id="charsList"><div class="char-add-btn" onclick="openCharAdd()"><span>+</span>ADD</div></div><input type="file" id="charFileInput" accept="image/*" onchange="handleCharFile(event)"></div>
@@ -58,7 +59,8 @@
 <div class="batch-info" id="batchInfo" style="display:none"><div class="batch-stat"><div class="bv" id="biScenes">0</div><div class="bl">SCENES</div></div><div class="batch-stat"><div class="bv" id="biBatches">0</div><div class="bl">BATCHES</div></div><div class="batch-stat"><div class="bv" id="biETA">0m</div><div class="bl">EST. TIME</div></div><div class="batch-stat"><div class="bv" id="biMem">0MB</div><div class="bl">EST. RAM</div></div></div>
 <div class="pipe"><div class="pipe-card pipe-a"><p class="s">DIRECTOR</p><p class="n">Gemini 3.1 Pro</p><p class="d">Parse + optimize</p></div><div class="pipe-card pipe-b"><p class="s">ARTIST</p><p class="n">Nano Banana Pro</p><p class="d">Image + consistency</p></div></div>
 <div class="err" id="errBox"><p id="errTxt"></p></div>
-<div class="acts"><button class="btn btn-gen" id="btnGo" onclick="run()">▸ GENERATE STORYBOARD</button><button class="btn btn-stp" id="btnStop" onclick="stop()" style="display:none">■ STOP</button><button class="btn btn-stp" id="btnPause" onclick="pauseResume()" style="display:none">⏸ PAUSE</button></div>
+<div class="acts" id="actsPanel"><button class="btn btn-gen" id="btnAnalyze" onclick="analyze()" style="background:linear-gradient(135deg,#1a1a4a,#2a1a5a)">🔍 ANALYZE SCRIPT</button><button class="btn btn-gen" id="btnGo" onclick="generateNext()" style="display:none">▸ GENERATE NEXT 10</button><button class="btn btn-stp" id="btnStop" onclick="stop()" style="display:none">■ STOP</button><button class="btn btn-stp" id="btnPause" onclick="pauseResume()" style="display:none">⏸ PAUSE</button></div>
+<div id="analysisPanel" style="display:none" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span class="lbl" style="margin:0;color:#6b8aff">📊 ANALYSIS RESULTS</span><button class="btn-sm" onclick="resetAnalysis()" style="font-size:8px">✕ Reset</button></div><div id="analysisGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px"></div><div id="analysisChars" style="margin-bottom:8px"></div><div id="analysisHero" style="margin-bottom:8px"></div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span style="font-size:10px;color:#555;font-weight:700" id="batchProgress">0/0 generated</span><div style="flex:1;height:6px;background:#1a1a1a;border-radius:3px;min-width:100px;overflow:hidden"><div id="batchProgressFill" style="height:100%;background:linear-gradient(90deg,#B22222,#ff6b6b);border-radius:3px;width:0%;transition:width .4s"></div></div></div></div>
 </div>
 <div class="board" id="board"><div class="board-hdr"><h2 id="boardTitle">STORYBOARD</h2><div class="board-acts"><div class="view-toggle"><button class="view-btn active" onclick="setView('grid',this)">⊞</button><button class="view-btn" onclick="setView('timeline',this)">⊟</button></div><button class="btn-sm" id="btnSndAll" onclick="genAllSound()" style="display:none">🎵</button><button class="btn-sm" id="btnPdf" onclick="exportPDF()" style="display:none">📤</button><button class="btn-sm" id="btnDl" onclick="dlAll()" style="display:none">↓</button><button class="btn-sm" onclick="saveProject()">💾</button></div></div><p id="boardCount" style="font-size:10px;color:#333;margin-bottom:10px"></p><div class="grid" id="grid"></div><div class="timeline" id="timeline"><div class="timeline-track" id="timelineTrack"></div></div></div>
 <div class="empty" id="empty"><div style="font-size:28px">🎬</div><h3>Ready to Create</h3><p>Supports up to 120 scenes (8-10 min). Batch processing with auto-save.</p></div>
@@ -72,6 +74,8 @@ let API_KEY='',scenes=[],aborted=false,paused=false,currentAR='9:16',currentQ='2
 let consist={hero:true,charsheet:true,chain:true,style:true};
 let heroFrameData=null,charSheetData=null,styleAnchorData=null,prevFrameData=null;
 let characters=[],pendingCharFile=null,moodImages=[];
+let analyzed=false,batchStart=0;
+const BATCH_GEN=10;
 const BATCH_SIZE=8;
 const Q_MAP={'1K':'standard detail, 1024px','2K':'ultra detailed, 2048px, sharp focus','4K':'maximum 4096px, hyper-detailed, 4K UHD'};
 const PRESETS={horror:{icon:'🎬',name:'HORROR',bible:'Photorealistic. Film grain ISO 3200+. Crushed blacks. Horror. Blumhouse.',suffix:'cinematic horror, film grain, 35mm'},cyberpunk:{icon:'🌆',name:'CYBERPUNK',bible:'Neo-noir cyberpunk. Neon rain. Blade Runner meets Akira.',suffix:'cyberpunk, neon-lit, volumetric'},anime:{icon:'🌸',name:'ANIME',bible:'Anime. Cel shading. Vibrant. Studio Ghibli.',suffix:'anime, cel shaded, vibrant'},noir:{icon:'🖤',name:'NOIR',bible:'Film noir. B&W. High contrast. Venetian blind shadows.',suffix:'film noir, b&w, high contrast'},golden:{icon:'🌅',name:'GOLDEN HR',bible:'Golden hour. Warm amber. Lens flare. Malick.',suffix:'golden hour, warm, dreamy'},musicvid:{icon:'🎵',name:'MUSIC VID',bible:'Music video. Colored gels. Smoke. Hype Williams.',suffix:'music video, colored lighting'},social:{icon:'📱',name:'SOCIAL',bible:'Social media. Bright. Clean.',suffix:'bright, clean, modern'},comic:{icon:'💥',name:'COMIC',bible:'Graphic novel. Bold outlines. Halftone.',suffix:'comic book, bold outlines'},pixar:{icon:'🧸',name:'3D ANIM',bible:'Pixar 3D. Stylized. Warm.',suffix:'3D, Pixar quality'},doc:{icon:'📷',name:'DOCU',bible:'Documentary. Natural light. Raw.',suffix:'documentary, natural light'}};
@@ -82,6 +86,8 @@ $s.addEventListener('input',()=>{updCC();updateBatchInfo()});
 document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 document.getElementById('modalInput').addEventListener('keydown',e=>{if(e.key==='Enter')submitFeedback()});
 document.getElementById('aiIdea').addEventListener('keydown',e=>{if(e.key==='Enter')aiWriteScript()});
+function updBibleStatus(){const b=document.getElementById('styleBible').value.trim();const n=document.getElementById('negPrompt').value.trim();document.getElementById('bibleStatus').textContent=b?'✓ '+b.length+' chars'+(n?' + neg':''):'empty';document.getElementById('bibleStatus').style.color=b?'#4ade80':'#333'}
+setTimeout(()=>{const sb=document.getElementById('styleBible');const np=document.getElementById('negPrompt');if(sb)sb.addEventListener('input',updBibleStatus);if(np)np.addEventListener('input',updBibleStatus)},100);
 initPresets();initTopicCats();renderChars();
 
 // === IndexedDB for large projects ===
@@ -137,13 +143,17 @@ function d2b(d){return d?d.includes(’,’)?d.split(’,’)[1]:d:null}
 // === Consistency Refs ===
 function buildRefParts(prompt,skipPrev){
 const parts=[];let ref=’’;let has=false;
+const bible=document.getElementById(‘styleBible’).value.trim();
+const neg=document.getElementById(‘negPrompt’).value.trim();
 characters.forEach(c=>{parts.push({inlineData:{mimeType:c.mime,data:c.base64}});ref+=`- "${c.name}" (${c.role}): match face EXACTLY\n`;has=true});
 moodImages.slice(0,2).forEach((m,i)=>{parts.push({inlineData:{mimeType:m.mime,data:m.base64}});ref+=`- Mood ${i+1}: match style\n`;has=true});
 if(consist.charsheet&&charSheetData){parts.push({inlineData:{mimeType:‘image/png’,data:d2b(charSheetData)}});ref+=’- Char sheet: match proportions\n’;has=true}
 if(consist.hero&&heroFrameData){parts.push({inlineData:{mimeType:‘image/png’,data:d2b(heroFrameData)}});ref+=’- Hero: match quality\n’;has=true}
 if(consist.style&&styleAnchorData&&styleAnchorData!==heroFrameData){parts.push({inlineData:{mimeType:‘image/png’,data:d2b(styleAnchorData)}});ref+=’- Style: match mood\n’;has=true}
 if(consist.chain&&prevFrameData&&!skipPrev){parts.push({inlineData:{mimeType:‘image/png’,data:d2b(prevFrameData)}});ref+=’- Prev: continuity\n’;has=true}
-parts.push({text:(has?‘REFS:\n’+ref+‘MATCH all. Generate:\n’:’’)+prompt});return parts}
+let fullPrompt=(has?‘REFS:\n’+ref+‘MATCH all refs. ‘:’’)+(bible?‘STYLE BIBLE: ‘+bible+’\n’:’’)+prompt;
+if(neg)fullPrompt+=’\nNEGATIVE (DO NOT include): ’+neg;
+parts.push({text:fullPrompt});return parts}
 
 async function genCharSheet(){const p=PRESETS[activePreset];const cn=characters.length?characters.map(c=>`${c.name} (${c.role})`).join(’, ’):‘main character’;const parts=[];characters.forEach(c=>parts.push({inlineData:{mimeType:c.mime,data:c.base64}}));parts.push({text:`CHARACTER SHEET for ${cn}. 3 views: front, 3/4, profile. Dark bg. ${p.bible} ${p.suffix}, ${Q_MAP[currentQ]}`});const d=await callGemini(IM,[{role:‘user’,parts}],{responseModalities:[‘TEXT’,‘IMAGE’]});for(const x of(d.candidates?.[0]?.content?.parts||[]))if(x.inlineData)return`data:${x.inlineData.mimeType};base64,${x.inlineData.data}`;return null}
 
@@ -155,98 +165,138 @@ function updateRefPanel(){const r=document.getElementById(‘refRow’);r.innerH
 // === Checkpoint Save ===
 async function checkpoint(){try{const proj={id:currentProjectId||‘autosave’,name:‘⏳ Autosave’,preset:activePreset,ar:currentAR,q:currentQ,script:$s.value,scenesMeta:scenes.map(s=>({scene_number:s.scene_number,timecode:s.timecode,title:s.title,description:s.description,optimized_prompt:s.optimized_prompt,status:s.status,error:s.error,isHero:s.isHero})),updated:new Date().toISOString()};await dbPut(‘projects’,proj);for(const s of scenes){if(s.imageUrl&&s.status===‘done’)await dbPut(‘frames’,{id:proj.id+’_’+s.scene_number,data:s.imageUrl})}}catch(e){console.warn(‘Checkpoint fail:’,e)}}
 
-// === MAIN BATCH PIPELINE ===
-async function run(){
+// === ANALYZE: Parse script, show overview ===
+async function analyze(){
 const script=$s.value.trim();if(!script){showErr(‘Need script’);return}
-hideErr();aborted=false;paused=false;releaseBlobs();
+hideErr();aborted=false;analyzed=false;batchStart=0;
 heroFrameData=null;charSheetData=null;styleAnchorData=null;prevFrameData=null;
-document.getElementById(‘btnGo’).style.display=‘none’;
-document.getElementById(‘btnStop’).style.display=‘inline-block’;
-document.getElementById(‘btnPause’).style.display=‘inline-block’;
+const btn=document.getElementById(‘btnAnalyze’);btn.disabled=true;btn.textContent=‘🔍 Analyzing…’;
 document.getElementById(‘empty’).style.display=‘none’;
 document.getElementById(‘board’).style.display=‘block’;
-
-// Phase 1: Parse in chunks for long scripts
-showCTA(‘🧠 Director analyzing…’,‘Phase 1/4’,’’);
+showCTA(‘🧠 Director analyzing…’,‘Phase 1’,‘Parsing all scenes’);
 let parsed=[];
 const sceneBlocks=script.split(/(?=SCENE\s+\d+)/i).filter(b=>b.trim());
 if(sceneBlocks.length>30){
-// Parse in chunks of 20 for long scripts
 for(let c=0;c<sceneBlocks.length;c+=20){
 if(aborted)break;
 const chunk=sceneBlocks.slice(c,c+20).join(’\n\n’);
-showCTA(`🧠 Parsing scenes ${c+1}-${Math.min(c+20,sceneBlocks.length)}...`,‘Phase 1/4’,`${sceneBlocks.length} total`);
+showCTA(`🧠 Parsing scenes ${c+1}-${Math.min(c+20,sceneBlocks.length)}...`,‘Phase 1’,`${sceneBlocks.length} total`);
 try{const r=await parseScript(chunk);if(Array.isArray(r))parsed.push(…r)}catch{parsed.push(…localParse(chunk))}
 await sleep(1000);
 }
 }else{
 try{parsed=await parseScript(script);if(!Array.isArray(parsed)||!parsed.length)throw new Error(‘0’)}catch{parsed=localParse(script)}
 }
-if(!parsed.length){showErr(‘Parse failed’);resetBtns();hideCTA();return}
-// Re-number scenes
+if(!parsed.length){showErr(‘Parse failed’);btn.disabled=false;btn.textContent=‘🔍 ANALYZE SCRIPT’;hideCTA();return}
 parsed.forEach((s,i)=>s.scene_number=i+1);
 scenes=parsed.map(s=>({scene_number:s.scene_number,timecode:s.timecode||’’,title:s.title||’’,description:s.description||’’,optimized_prompt:s.optimized_prompt||s.description||’’,status:‘pending’,imageUrl:null,blobUrl:null,error:null,tripleUrls:[],pickedTriple:-1,sound:null,isHero:false}));
-render();if(aborted){resetBtns();hideCTA();return}
+const hi=pickHero(scenes);scenes[hi].isHero=true;
+analyzed=true;batchStart=0;
+showAnalysis(hi);render();
+btn.disabled=false;btn.textContent=‘🔍 ANALYZE SCRIPT’;btn.style.display=‘none’;
+document.getElementById(‘btnGo’).style.display=‘inline-block’;
+document.getElementById(‘btnGo’).textContent=`▸ GENERATE SCENES 1-${Math.min(BATCH_GEN,scenes.length)}`;
+hideCTA();showToast(`✓ ${scenes.length} scenes analyzed`)}
 
-// Phase 2: Char sheet
-if(consist.charsheet){showCTA(‘👤 Char sheet…’,‘Phase 2/4’,‘Consistency’);try{charSheetData=await genCharSheet();updateRefPanel()}catch(e){}if(aborted){resetBtns();hideCTA();return}await sleep(2000)}
+function showAnalysis(heroIdx){
+const ap=document.getElementById(‘analysisPanel’);ap.style.display=‘block’;
+const ag=document.getElementById(‘analysisGrid’);
+const done=scenes.filter(s=>s.status===‘done’).length;
+ag.innerHTML=`<div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#ff6b6b">${scenes.length}</div><div style="font-size:7px;color:#444;font-weight:700">SCENES</div></div><div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#6b8aff">${Math.ceil(scenes.length/BATCH_GEN)}</div><div style="font-size:7px;color:#444;font-weight:700">BATCHES OF 10</div></div><div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#4ade80">${done}</div><div style="font-size:7px;color:#444;font-weight:700">GENERATED</div></div><div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#ffaa33">${scenes.length-done}</div><div style="font-size:7px;color:#444;font-weight:700">REMAINING</div></div>`;
+const ac=document.getElementById(‘analysisChars’);
+const bible=document.getElementById(‘styleBible’).value.trim();
+const neg=document.getElementById(‘negPrompt’).value.trim();
+ac.innerHTML=`<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:9px;padding:4px 8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;color:#ccc">📖 Bible: ${bible?'<span style=color:#4ade80>✓ Active</span>':'<span style=color:#ff6b6b>Not set</span>'}</span><span style="font-size:9px;padding:4px 8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;color:#ccc">⛔ Negative: ${neg?'<span style=color:#4ade80>✓ Active</span>':'<span style=color:#555>None</span>'}</span><span style="font-size:9px;padding:4px 8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;color:#ccc">👥 Chars: ${characters.length}/3</span><span style="font-size:9px;padding:4px 8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;color:#ccc">🖼️ Mood: ${moodImages.length}/6</span></div>`;
+const ah=document.getElementById(‘analysisHero’);
+ah.innerHTML=`<div style="font-size:9px;color:#555;padding:6px 8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px">🎯 Hero frame: <strong style="color:#ff6b6b">Scene ${heroIdx+1}</strong> — ${scenes[heroIdx].title} <span style="color:#333">(most complex, generated first)</span></div>`;
+updateBatchProgress()}
 
-// Phase 3: Hero
-if(consist.hero){const hi=pickHero(scenes);scenes[hi].isHero=true;scenes[hi].status=‘generating’;render();showCTA(`🎯 Hero: #${hi+1}...`,‘Phase 3/4’,‘Consistency’);try{const u=await genFrame(scenes[hi].optimized_prompt,true);scenes[hi].imageUrl=u;scenes[hi].blobUrl=b64toBlob(u);scenes[hi].status=‘done’;heroFrameData=u;if(consist.style)styleAnchorData=u;updateRefPanel()}catch(e){scenes[hi].status=‘error’;scenes[hi].error=e.message}render();if(aborted){resetBtns();hideCTA();return}await sleep(2000)}
-
-// Phase 4: Batch generation
+function updateBatchProgress(){
+const done=scenes.filter(s=>s.status===‘done’).length;
 const tot=scenes.length;
-const totalBatches=Math.ceil(scenes.filter(s=>s.status!==‘done’).length/BATCH_SIZE);
-let batchNum=0;let gen=scenes.filter(s=>s.status===‘done’).length;
+document.getElementById(‘batchProgress’).textContent=`${done}/${tot} generated`;
+document.getElementById(‘batchProgressFill’).style.width=(tot?done/tot*100:0)+’%’}
 
-for(let i=0;i<scenes.length;i++){
+function resetAnalysis(){analyzed=false;batchStart=0;scenes=[];releaseBlobs();
+document.getElementById(‘analysisPanel’).style.display=‘none’;
+document.getElementById(‘board’).style.display=‘none’;
+document.getElementById(‘empty’).style.display=‘block’;
+document.getElementById(‘btnAnalyze’).style.display=‘inline-block’;
+document.getElementById(‘btnGo’).style.display=‘none’}
+
+// === GENERATE NEXT 10 ===
+async function generateNext(){
+if(!analyzed||!scenes.length){showErr(‘Analyze first’);return}
+hideErr();aborted=false;paused=false;
+document.getElementById(‘btnGo’).style.display=‘none’;
+document.getElementById(‘btnStop’).style.display=‘inline-block’;
+document.getElementById(‘btnPause’).style.display=‘inline-block’;
+if(!charSheetData&&consist.charsheet){
+showCTA(‘👤 Char sheet…’,‘Setup’,‘Consistency’);
+try{charSheetData=await genCharSheet();updateRefPanel()}catch(e){}
+if(aborted){resetGenBtns();return}await sleep(2000)}
+if(!heroFrameData&&consist.hero){
+const hi=scenes.findIndex(s=>s.isHero);
+if(hi>=0&&scenes[hi].status!==‘done’){scenes[hi].status=‘generating’;render();
+showCTA(`🎯 Hero: #${hi+1}...`,‘Setup’,‘Style anchor’);
+try{const u=await genFrame(scenes[hi].optimized_prompt,true);scenes[hi].imageUrl=u;scenes[hi].blobUrl=b64toBlob(u);scenes[hi].status=‘done’;heroFrameData=u;if(consist.style)styleAnchorData=u;updateRefPanel()}catch(e){scenes[hi].status=‘error’;scenes[hi].error=e.message}
+render();if(aborted){resetGenBtns();return}await sleep(2000)}}
+const pending=[];
+for(let i=0;i<scenes.length&&pending.length<BATCH_GEN;i++){
+if(scenes[i].status===‘pending’)pending.push(i)}
+if(!pending.length){showToast(‘All scenes generated!’);resetGenBtns();return}
+const tot=scenes.length;
+for(let p=0;p<pending.length;p++){
 if(aborted)break;
-// Pause support
 while(paused&&!aborted){await sleep(500)}
-if(scenes[i].status===‘done’)continue;
-
-// Batch boundary - checkpoint
-if((gen-scenes.filter((_,j)=>j<i&&scenes[j].isHero).length)%BATCH_SIZE===0&&gen>0){
-batchNum++;
-showCTA(`📦 Batch ${batchNum}/${totalBatches}...`,`Phase 4/4 • ${gen}/${tot}`,`Checkpoint saving...`);
-await checkpoint();
-// Memory cleanup: convert previous batch base64 to blob URLs
-for(let j=Math.max(0,i-BATCH_SIZE);j<i;j++){
-if(scenes[j].imageUrl&&scenes[j].imageUrl.startsWith(‘data:’)&&scenes[j].status===‘done’){
-if(!scenes[j].blobUrl)scenes[j].blobUrl=b64toBlob(scenes[j].imageUrl);
-// Keep imageUrl for hero/style anchor, release others
-if(!scenes[j].isHero)scenes[j].imageUrl=scenes[j].blobUrl;
-}
-}
-await sleep(1000);
-}
-
-scenes[i].status=‘generating’;render();gen++;
-showCTA(tripleMode?`🎨 Dual ${gen}/${tot}`:`🎨 Frame ${gen}/${tot}`,`Phase 4/4 • Batch ${batchNum+1}/${totalBatches}`,consist.chain?‘🔗 Chaining’:’’);
-document.getElementById(‘ctaFill’).style.width=(gen/tot*100)+’%’;
-
+const i=pending[p];
+scenes[i].status=‘generating’;render();
+const doneCount=scenes.filter(s=>s.status===‘done’).length;
+showCTA(`🎨 Frame ${doneCount+1}/${tot}`,`Batch: ${p+1}/${pending.length}`,consist.chain?‘🔗 Chaining’:’’);
+document.getElementById(‘ctaFill’).style.width=((doneCount+1)/tot*100)+’%’;
 if(tripleMode){
 scenes[i].tripleUrls=[];
 for(let t=0;t<2;t++){
 try{const u=await genFrame(scenes[i].optimized_prompt);scenes[i].tripleUrls.push(u);if(t===0){scenes[i].imageUrl=u;scenes[i].blobUrl=b64toBlob(u);if(consist.chain)prevFrameData=u}}catch(e){scenes[i].tripleUrls.push(null)}
-render();if(t<1)await sleep(2000)
-}
+render();if(t<1)await sleep(2000)}
 scenes[i].status=scenes[i].tripleUrls.some(u=>u)?‘done’:‘error’;
 }else{
-try{const u=await genFrame(scenes[i].optimized_prompt);scenes[i].imageUrl=u;scenes[i].blobUrl=b64toBlob(u);scenes[i].status=‘done’;if(consist.chain)prevFrameData=u}catch(e){scenes[i].status=‘error’;scenes[i].error=e.message}
-}
-render();if(!aborted&&i<scenes.length-1)await sleep(2500);
-}
+try{const u=await genFrame(scenes[i].optimized_prompt);scenes[i].imageUrl=u;scenes[i].blobUrl=b64toBlob(u);scenes[i].status=‘done’;if(consist.chain)prevFrameData=u}catch(e){scenes[i].status=‘error’;scenes[i].error=e.message}}
+render();
+if((p+1)%BATCH_SIZE===0)await checkpoint();
+if(scenes[i].imageUrl&&scenes[i].imageUrl.startsWith(‘data:’)&&!scenes[i].isHero){
+if(!scenes[i].blobUrl)scenes[i].blobUrl=b64toBlob(scenes[i].imageUrl);
+scenes[i].imageUrl=scenes[i].blobUrl}
+if(!aborted&&p<pending.length-1)await sleep(2500)}
 await checkpoint();
-resetBtns();
-const doneCount=scenes.filter(s=>s.status===‘done’).length;
-showCTA(`✅ ${doneCount}/${tot} done`,currentQ+’ • ’+currentAR,doneCount===tot?‘All complete!’:‘Some frames failed — tap Retry’);
+updateBatchProgress();showAnalysis(scenes.findIndex(s=>s.isHero));
+resetGenBtns();
+const remaining=scenes.filter(s=>s.status===‘pending’).length;
+const doneN=scenes.filter(s=>s.status===‘done’).length;
+if(remaining>0){showCTA(`✅ Batch done! ${doneN}/${tot}`,`${remaining} remaining`,‘Review then tap Generate Next 10’)}
+else{showCTA(`🎉 ALL ${tot} FRAMES DONE!`,currentQ+’ • ’+currentAR,‘Export ready!’)}
 setTimeout(hideCTA,4000)}
+
+function resetGenBtns(){
+const remaining=scenes.filter(s=>s.status===‘pending’).length;
+document.getElementById(‘btnStop’).style.display=‘none’;
+document.getElementById(‘btnPause’).style.display=‘none’;
+if(remaining>0){
+const nextStart=scenes.filter(s=>s.status===‘done’).length+1;
+const nextEnd=Math.min(nextStart+BATCH_GEN-1,scenes.length);
+document.getElementById(‘btnGo’).style.display=‘inline-block’;
+document.getElementById(‘btnGo’).textContent=`▸ GENERATE NEXT 10 (${nextStart}-${nextEnd})`}
+else if(scenes.length>0){
+document.getElementById(‘btnGo’).style.display=‘inline-block’;
+document.getElementById(‘btnGo’).textContent=‘✅ ALL DONE’;
+document.getElementById(‘btnGo’).disabled=true}
+else{document.getElementById(‘btnAnalyze’).style.display=‘inline-block’;
+document.getElementById(‘btnGo’).style.display=‘none’}}
 
 function pauseResume(){paused=!paused;document.getElementById(‘btnPause’).textContent=paused?‘▶ RESUME’:‘⏸ PAUSE’;if(paused)showCTA(‘⏸ PAUSED’,’’,‘Tap Resume to continue’);document.getElementById(‘btnPause’).style.color=paused?’#4ade80’:’#ff6b6b’}
 
 function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
-function buildParsePrompt(s){const p=PRESETS[activePreset];const cn=characters.map(c=>`${c.name} (${c.role})`).join(’, ‘);return`Director. Script→scenes with image prompts.\nSTYLE: ${p.bible}\nRATIO: ${currentAR} | Q: ${Q_MAP[currentQ]}\n${cn?'CHARS: '+cn+'\n':''}Each prompt: camera, lighting, composition, ending "${p.suffix}, ${currentAR}, ${Q_MAP[currentQ]}"\nJSON: [{"scene_number":1,"timecode":"","title":"","description":"","optimized_prompt":""}]\n\n${s}`}
+function buildParsePrompt(s){const p=PRESETS[activePreset];const cn=characters.map(c=>`${c.name} (${c.role})`).join(’, ‘);const bible=document.getElementById(‘styleBible’).value.trim();const neg=document.getElementById(‘negPrompt’).value.trim();return`Director. Script→scenes with image prompts.\nSTYLE: ${p.bible}\n${bible?'VISUAL BIBLE: '+bible+'\n':''}${neg?'NEVER INCLUDE: '+neg+'\n':''}RATIO: ${currentAR} | Q: ${Q_MAP[currentQ]}\n${cn?'CHARS: '+cn+'\n':''}Each prompt MUST incorporate the visual bible style. Camera, lighting, composition, ending "${p.suffix}, ${currentAR}, ${Q_MAP[currentQ]}"\n${neg?'NEGATIVE (never show): '+neg+'\n':''}JSON: [{"scene_number":1,"timecode":"","title":"","description":"","optimized_prompt":""}]\n\n${s}`}
 async function parseScript(s){const d=await callGemini(PM,[{role:‘user’,parts:[{text:buildParsePrompt(s)}]}],{temperature:.3});return JSON.parse((d.candidates?.[0]?.content?.parts||[]).map(p=>p.text||’’).join(’’).replace(/`json|`/g,’’).trim())}
 function localParse(s){const r=[],b=s.split(/(?=SCENE\s+\d+)/i).filter(x=>x.trim());for(const bl of b){const m=bl.match(/SCENE\s+(\d+)\s*(([^)]+))\s*[—-–]+\s*(.+)/i);if(!m)continue;const d=bl.split(’\n’).slice(1).filter(l=>l.trim()).join(’ ‘).trim();const p=PRESETS[activePreset];if(d)r.push({scene_number:parseInt(m[1]),timecode:m[2].trim(),title:m[3].trim(),description:d,optimized_prompt:d+’. ‘+p.suffix+’, ‘+currentAR+’, ’+Q_MAP[currentQ]})}return r}
 
@@ -254,7 +304,7 @@ function localParse(s){const r=[],b=s.split(/(?=SCENE\s+\d+)/i).filter(x=>x.trim
 async function discoverTopics(id){const cat=TOPIC_CATS.find(c=>c.id===(id||‘horror’))||TOPIC_CATS[0];const g=document.getElementById(‘topicGrid’),btn=document.getElementById(‘btnDiscover’);btn.disabled=true;g.innerHTML=Array(6).fill(’<div class="topic-chip loading">…</div>’).join(’’);try{const d=await callGemini(PM,[{role:‘user’,parts:[{text:`6 storyboard topics for ${cat.name}. ${cat.p.join(', ')}. 8-15 words. JSON array.`}]}],{temperature:.8});const t=JSON.parse((d.candidates?.[0]?.content?.parts||[]).map(p=>p.text||’’).join(’’).replace(/`json|`/g,’’).trim());g.innerHTML=’’;t.forEach(x=>{const ch=document.createElement(‘button’);ch.className=‘topic-chip’;ch.textContent=x;ch.onclick=()=>{document.querySelectorAll(’.topic-chip’).forEach(c=>c.classList.remove(‘selected’));ch.classList.add(‘selected’);selectedTopic=x;document.getElementById(‘aiIdea’).value=x};g.appendChild(ch)})}catch(e){g.innerHTML=`<p style="color:#ff6b6b;font-size:10px">${e.message}</p>`}btn.disabled=false;btn.textContent=‘🔍 Discover Topics’}
 async function aiWriteScript(){const idea=document.getElementById(‘aiIdea’).value.trim()||selectedTopic;if(!idea){showErr(‘Pick topic’);return}const btn=document.getElementById(‘btnAiWrite’);btn.disabled=true;btn.textContent=‘🤖…’;document.getElementById(‘aiScriptPreview’).style.display=‘none’;try{const p=PRESETS[activePreset];const cn=characters.map(c=>`${c.name} (${c.role})`).join(’, ‘);const d=await callGemini(PM,[{role:‘user’,parts:[{text:`Screenwriter. "${idea}"\n${p.name}: ${p.bible}\n${cn?'Chars: '+cn+'\n':''}Write 8-10 MINUTE video script. 60-100 scenes. SCENE [N] (time) — TITLE. Visual descriptions. Detailed. Script only.`}]}],{temperature:.6,maxOutputTokens:8192});aiGeneratedScript=(d.candidates?.[0]?.content?.parts||[]).map(p=>p.text||’’).join(’’);document.getElementById(‘aiScriptText’).textContent=aiGeneratedScript;document.getElementById(‘aiScriptPreview’).style.display=‘block’;factCheck(aiGeneratedScript);updateBatchInfo()}catch(e){showErr(e.message)}btn.disabled=false;btn.textContent=‘🤖 Write Script’}
 async function factCheck(s){const b=document.getElementById(‘factBadge’);b.className=‘fact-badge checking’;b.textContent=‘⏳’;try{const d=await callGemini(PM,[{role:‘user’,parts:[{text:`Fact check: "${s.substring(0,2000)}"\nJSON: {"status":"pass"} or {"status":"fail","note":"..."}`}]}],{temperature:.1});const r=JSON.parse((d.candidates?.[0]?.content?.parts||[]).map(p=>p.text||’’).join(’’).replace(/`json|`/g,’’).trim());b.className=‘fact-badge ‘+(r.status===‘pass’?‘pass’:’’);b.textContent=r.status===‘pass’?‘✓’:‘⚠️ ‘+(r.note||‘Issue’);if(r.status!==‘pass’){b.style.background=’#2a1a0a’;b.style.color=’#ffaa33’}}catch{b.className=‘fact-badge pass’;b.textContent=‘✓’}}
-function useAiScript(){$s.value=aiGeneratedScript;updCC();updateBatchInfo();setMode(‘custom’);showToast(‘Loaded ✓’)}
+function useAiScript(){$s.value=aiGeneratedScript;updCC();updateBatchInfo();setMode(‘custom’);analyzed=false;document.getElementById(‘analysisPanel’).style.display=‘none’;document.getElementById(‘btnAnalyze’).style.display=‘inline-block’;document.getElementById(‘btnGo’).style.display=‘none’;showToast(‘Loaded ✓’)}
 
 // === Sound ===
 function toggleSoundPanels(){showSound=!showSound;document.getElementById(‘soundToggleBtn’).classList.toggle(‘active’,showSound);document.querySelectorAll(’.sound-panel’).forEach(p=>p.classList.toggle(‘show’,showSound))}
@@ -268,10 +318,10 @@ function closeModal(){document.getElementById(‘modalOverlay’).style.display=
 async function submitFeedback(){const input=document.getElementById(‘modalInput’).value.trim();if(!input||feedbackIndex<0)return;const i=feedbackIndex,s=scenes[i],btn=document.getElementById(‘modalGo’);btn.disabled=true;btn.textContent=’…’;try{const d=await callGemini(PM,[{role:‘user’,parts:[{text:`Rewrite:\n"${s.optimized_prompt}"\nChange: "${input}"\n${Q_MAP[currentQ]}\nNew prompt only.`}]}],{temperature:.3});s.optimized_prompt=(d.candidates?.[0]?.content?.parts||[]).map(p=>p.text||’’).join(’’).trim();s.status=‘generating’;s.sound=null;closeModal();render();const u=await genFrame(s.optimized_prompt);s.imageUrl=u;s.blobUrl=b64toBlob(u);s.status=‘done’}catch(e){scenes[i].status=‘error’;scenes[i].error=e.message;closeModal()}btn.disabled=false;btn.textContent=‘Regenerate’;render()}
 
 // === Projects (IndexedDB) ===
-async function saveProject(){const name=prompt(‘Name:’,currentProjectId?(await dbGet(‘projects’,currentProjectId))?.name||’’:‘Untitled’);if(!name)return;const id=currentProjectId||Date.now().toString();currentProjectId=id;const proj={id,name,preset:activePreset,ar:currentAR,q:currentQ,script:$s.value,scenesMeta:scenes.map(s=>({scene_number:s.scene_number,timecode:s.timecode,title:s.title,description:s.description,optimized_prompt:s.optimized_prompt,status:s.status,error:s.error,isHero:s.isHero})),updated:new Date().toISOString()};try{await dbPut(‘projects’,proj);for(const s of scenes){if(s.imageUrl&&s.status===‘done’){const data=s.imageUrl.startsWith(‘blob:’)?(s.blobUrl||s.imageUrl):s.imageUrl;await dbPut(‘frames’,{id:id+’*’+s.scene_number,data})}}document.getElementById(‘projectTitle’).textContent=name;showToast(‘Saved ✓’)}catch(e){showErr(‘Save error: ‘+e)}}
-async function loadProject(id){try{const p=await dbGet(‘projects’,id);if(!p)return;currentProjectId=p.id;activePreset=p.preset||‘horror’;currentAR=p.ar||‘9:16’;currentQ=p.q||‘2K’;$s.value=p.script||’’;updCC();updateBatchInfo();scenes=(p.scenesMeta||[]).map(s=>({…s,imageUrl:null,blobUrl:null,tripleUrls:[],pickedTriple:-1,sound:null}));for(const s of scenes){const frame=await dbGet(‘frames’,id+’*’+s.scene_number);if(frame?.data){s.imageUrl=frame.data;if(frame.data.startsWith(‘data:’))s.blobUrl=b64toBlob(frame.data);else s.blobUrl=frame.data}}document.getElementById(‘projectTitle’).textContent=p.name;if(scenes.length>0){document.getElementById(‘empty’).style.display=‘none’;document.getElementById(‘board’).style.display=‘block’}render();closeSidebar()}catch(e){showErr(‘Load error’)}}
+async function saveProject(){const name=prompt(‘Name:’,currentProjectId?(await dbGet(‘projects’,currentProjectId))?.name||’’:‘Untitled’);if(!name)return;const id=currentProjectId||Date.now().toString();currentProjectId=id;const proj={id,name,preset:activePreset,ar:currentAR,q:currentQ,script:$s.value,styleBible:document.getElementById(‘styleBible’).value,negPrompt:document.getElementById(‘negPrompt’).value,scenesMeta:scenes.map(s=>({scene_number:s.scene_number,timecode:s.timecode,title:s.title,description:s.description,optimized_prompt:s.optimized_prompt,status:s.status,error:s.error,isHero:s.isHero})),updated:new Date().toISOString()};try{await dbPut(‘projects’,proj);for(const s of scenes){if(s.imageUrl&&s.status===‘done’){const data=s.imageUrl.startsWith(‘blob:’)?(s.blobUrl||s.imageUrl):s.imageUrl;await dbPut(‘frames’,{id:id+’*’+s.scene_number,data})}}document.getElementById(‘projectTitle’).textContent=name;showToast(‘Saved ✓’)}catch(e){showErr(‘Save error: ‘+e)}}
+async function loadProject(id){try{const p=await dbGet(‘projects’,id);if(!p)return;currentProjectId=p.id;activePreset=p.preset||‘horror’;currentAR=p.ar||‘9:16’;currentQ=p.q||‘2K’;$s.value=p.script||’’;updCC();updateBatchInfo();if(p.styleBible)document.getElementById(‘styleBible’).value=p.styleBible;if(p.negPrompt)document.getElementById(‘negPrompt’).value=p.negPrompt;updBibleStatus();scenes=(p.scenesMeta||[]).map(s=>({…s,imageUrl:null,blobUrl:null,tripleUrls:[],pickedTriple:-1,sound:null}));for(const s of scenes){const frame=await dbGet(‘frames’,id+’*’+s.scene_number);if(frame?.data){s.imageUrl=frame.data;if(frame.data.startsWith(‘data:’))s.blobUrl=b64toBlob(frame.data);else s.blobUrl=frame.data}}document.getElementById(‘projectTitle’).textContent=p.name;if(scenes.length>0){document.getElementById(‘empty’).style.display=‘none’;document.getElementById(‘board’).style.display=‘block’;analyzed=true;document.getElementById(‘btnAnalyze’).style.display=‘none’;const remaining=scenes.filter(s=>s.status===‘pending’).length;if(remaining>0){document.getElementById(‘btnGo’).style.display=‘inline-block’;resetGenBtns()}showAnalysis(scenes.findIndex(s=>s.isHero)||0)}render();closeSidebar()}catch(e){showErr(‘Load error’)}}
 async function deleteProject(id){if(!confirm(‘Delete?’))return;try{await dbDel(‘projects’,id);const all=await dbGetAll(‘frames’);for(const f of all){if(f.id.startsWith(id+’_’))await dbDel(‘frames’,f.id)}if(currentProjectId===id){currentProjectId=null;document.getElementById(‘projectTitle’).textContent=‘STUDIO’}loadProjectList()}catch{}}
-function newProject(){currentProjectId=null;releaseBlobs();scenes=[];$s.value=’’;updCC();updateBatchInfo();document.getElementById(‘projectTitle’).textContent=‘STUDIO’;document.getElementById(‘board’).style.display=‘none’;document.getElementById(‘empty’).style.display=‘block’;closeSidebar()}
+function newProject(){currentProjectId=null;releaseBlobs();scenes=[];analyzed=false;batchStart=0;$s.value=’’;document.getElementById(‘styleBible’).value=’’;document.getElementById(‘negPrompt’).value=’’;updCC();updateBatchInfo();updBibleStatus();document.getElementById(‘projectTitle’).textContent=‘STUDIO’;document.getElementById(‘board’).style.display=‘none’;document.getElementById(‘empty’).style.display=‘block’;document.getElementById(‘analysisPanel’).style.display=‘none’;document.getElementById(‘btnAnalyze’).style.display=‘inline-block’;document.getElementById(‘btnGo’).style.display=‘none’;document.getElementById(‘btnGo’).disabled=false;closeSidebar()}
 async function loadProjectList(){const l=document.getElementById(‘projectList’);l.innerHTML=’’;try{const pjs=await dbGetAll(‘projects’);pjs.sort((a,b)=>new Date(b.updated)-new Date(a.updated));if(!pjs.length){l.innerHTML=’<p style="text-align:center;color:#333;font-size:11px;padding:20px">No projects</p>’;return}pjs.forEach(p=>{const d=document.createElement(‘div’);d.className=‘sb-item’+(p.id===currentProjectId?’ active’:’’);d.innerHTML=`<p class="sb-item-name">${p.name}</p><p class="sb-item-meta">${p.scenesMeta?.length||0} frames • ${PRESETS[p.preset]?.name||'?'} • ${p.q||'2K'}</p><button class="sb-del" onclick="event.stopPropagation();deleteProject('${p.id}')">Del</button>`;d.onclick=()=>loadProject(p.id);l.appendChild(d)})}catch{l.innerHTML=’<p style="color:#ff6b6b;font-size:11px;padding:20px">DB error</p>’}}
 function openSidebar(){loadProjectList();document.getElementById(‘sidebar’).classList.add(‘show’);document.getElementById(‘sidebarOverlay’).classList.add(‘show’)}
 function closeSidebar(){document.getElementById(‘sidebar’).classList.remove(‘show’);document.getElementById(‘sidebarOverlay’).classList.remove(‘show’)}
@@ -306,14 +356,13 @@ return`<div class="sc-img" style="background:#050505">${img}<div class="bdg bdg-
 
 function pickTriple(si,ti){scenes[si].pickedTriple=ti;scenes[si].imageUrl=scenes[si].tripleUrls[ti];scenes[si].blobUrl=b64toBlob(scenes[si].imageUrl);render()}
 async function retry(i){scenes[i].status=‘generating’;scenes[i].error=null;render();showCTA(‘🔄’,’’,’’);try{const u=await genFrame(scenes[i].optimized_prompt);scenes[i].imageUrl=u;scenes[i].blobUrl=b64toBlob(u);scenes[i].status=‘done’}catch(e){scenes[i].status=‘error’;scenes[i].error=e.message}render();hideCTA()}
-function stop(){aborted=true;paused=false;resetBtns();hideCTA()}
-function resetBtns(){document.getElementById(‘btnGo’).style.display=‘inline-block’;document.getElementById(‘btnStop’).style.display=‘none’;document.getElementById(‘btnPause’).style.display=‘none’}
+function stop(){aborted=true;paused=false;resetGenBtns();hideCTA()}
 function dlAll(){scenes.forEach((s,i)=>{if(!s.imageUrl||s.status!==‘done’)return;const a=document.createElement(‘a’);a.href=s.blobUrl||s.imageUrl;a.download=`frame_${String(i+1).padStart(3,'0')}_${currentQ}.png`;document.body.appendChild(a);a.click();document.body.removeChild(a)})}
 
 async function exportProject(){if(!currentProjectId&&scenes.length===0){showErr(‘Nothing to export’);return}
 const name=currentProjectId?(await dbGet(‘projects’,currentProjectId))?.name||‘Untitled’:‘Untitled’;
 showToast(‘Packing…’);
-const exp={version:‘v7’,name,preset:activePreset,ar:currentAR,q:currentQ,script:document.getElementById(‘script’).value,consist,characters:characters.map(c=>({name:c.name,role:c.role,base64:c.base64,mime:c.mime})),moodImages:moodImages.map(m=>({base64:m.base64,mime:m.mime})),scenes:scenes.map(s=>{const d={scene_number:s.scene_number,timecode:s.timecode,title:s.title,description:s.description,optimized_prompt:s.optimized_prompt,status:s.status,error:s.error,isHero:s.isHero};if(s.status===‘done’&&s.imageUrl){d.imageData=s.imageUrl.startsWith(‘blob:’)?null:s.imageUrl}return d}),exported:new Date().toISOString()};
+const exp={version:‘v8’,name,preset:activePreset,ar:currentAR,q:currentQ,script:document.getElementById(‘script’).value,styleBible:document.getElementById(‘styleBible’).value,negPrompt:document.getElementById(‘negPrompt’).value,consist,characters:characters.map(c=>({name:c.name,role:c.role,base64:c.base64,mime:c.mime})),moodImages:moodImages.map(m=>({base64:m.base64,mime:m.mime})),scenes:scenes.map(s=>{const d={scene_number:s.scene_number,timecode:s.timecode,title:s.title,description:s.description,optimized_prompt:s.optimized_prompt,status:s.status,error:s.error,isHero:s.isHero};if(s.status===‘done’&&s.imageUrl){d.imageData=s.imageUrl.startsWith(‘blob:’)?null:s.imageUrl}return d}),exported:new Date().toISOString()};
 const blob=new Blob([JSON.stringify(exp)],{type:‘application/json’});
 const a=document.createElement(‘a’);a.href=URL.createObjectURL(blob);a.download=name.replace(/\W/g,’*’)+’*’+new Date().toISOString().slice(0,10)+’.json’;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
 showToast(‘Exported ✓ — save to Google Drive’)}
@@ -322,6 +371,9 @@ async function importProject(e){const f=e.target.files[0];if(!f)return;e.target.
 try{const text=await f.text();const imp=JSON.parse(text);if(!imp.version){throw new Error(‘Invalid file’)}
 activePreset=imp.preset||‘horror’;currentAR=imp.ar||‘9:16’;currentQ=imp.q||‘2K’;
 document.getElementById(‘script’).value=imp.script||’’;updCC();updateBatchInfo();
+if(imp.styleBible)document.getElementById(‘styleBible’).value=imp.styleBible;
+if(imp.negPrompt)document.getElementById(‘negPrompt’).value=imp.negPrompt;
+updBibleStatus();
 if(imp.consist){consist=imp.consist;[‘hero’,‘charsheet’,‘chain’,‘style’].forEach(k=>{const el=document.getElementById(‘c’+k.charAt(0).toUpperCase()+k.slice(1));if(el)el.classList.toggle(‘on’,consist[k])})}
 characters=[];if(imp.characters)imp.characters.forEach(c=>{characters.push({name:c.name,role:c.role,base64:c.base64,mime:c.mime,dataUrl:‘data:’+c.mime+’;base64,’+c.base64})});renderChars();
 moodImages=[];if(imp.moodImages)imp.moodImages.forEach(m=>{moodImages.push({base64:m.base64,mime:m.mime,dataUrl:‘data:’+m.mime+’;base64,’+m.base64})});renderMood();
