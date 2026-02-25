@@ -395,7 +395,7 @@ input[type="file"]{display:none}
 <div class="ref-panel" id="refPanel"><span class="lbl">&#128444;&#65039; AUTO REFS</span><div class="ref-row" id="refRow"></div></div>
 <div class="settings-row"><div class="setting"><span class="setting-label">RATIO</span><div class="tog-options" id="arOptions"><button class="tog-btn active" data-ar="9:16">9:16</button><button class="tog-btn" data-ar="16:9">16:9</button><button class="tog-btn" data-ar="1:1">1:1</button></div></div><div class="setting"><span class="setting-label">OUTPUT</span><div class="tog-options" id="qOptions"><button class="tog-btn" data-q="1K">1K</button><button class="tog-btn active" data-q="2K">2K</button><button class="tog-btn" data-q="4K">4K</button></div></div><div class="setting"><div class="toggle-wrap" id="tripleWrap"><div class="toggle" id="tripleToggle"><div class="toggle-knob"></div></div><span class="toggle-text">DUAL</span></div></div></div>
 <div class="batch-info" id="batchInfo" style="display:none"><div class="batch-stat"><div class="bv" id="biScenes">0</div><div class="bl">SCENES</div></div><div class="batch-stat"><div class="bv" id="biBatches">0</div><div class="bl">BATCHES</div></div><div class="batch-stat"><div class="bv" id="biETA">0m</div><div class="bl">EST. TIME</div></div><div class="batch-stat"><div class="bv" id="biMem">0MB</div><div class="bl">EST. RAM</div></div></div>
-<div class="pipe"><div class="pipe-card pipe-a"><p class="s">ANALYZER</p><p class="n">Gemini 3.1 Pro</p><p class="d">1 call → chars + scenes</p></div><div class="pipe-card pipe-b"><p class="s">⚡ DIRECT</p><p class="n">Nano Banana Pro</p><p class="d">Portrait refs + auto camera</p></div></div>
+<div class="pipe"><div class="pipe-card pipe-a"><p class="s">ANALYZER</p><p class="n">Instant Local</p><p class="d">0 API calls → chars + scenes</p></div><div class="pipe-card pipe-b"><p class="s">⚡ DIRECT</p><p class="n">Nano Banana Pro</p><p class="d">Portrait refs + auto camera</p></div></div>
 <div class="err" id="errBox"><p id="errTxt"></p></div>
 <div class="acts" id="actsPanel"><button class="btn btn-gen" id="btnAnalyze" style="background:linear-gradient(135deg,#1a1a4a,#2a1a5a)">&#128269; ANALYZE SCRIPT</button><button class="btn btn-gen" id="btnGenPortraits" style="display:none;background:linear-gradient(135deg,#2a1a4a,#4a1a6a)">&#128248; GEN ALL PORTRAITS</button><button class="btn btn-gen" id="btnGo" style="display:none">&#9654; GENERATE NEXT 10</button><button class="btn btn-stp" id="btnStop" style="display:none">&#9632; STOP</button><button class="btn btn-stp" id="btnPause" style="display:none">&#9199; PAUSE</button></div>
 <div id="portraitPanel" style="display:none" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span class="lbl" style="margin:0;color:#b8a0ff">&#128100; CHARACTER PORTRAITS</span><span style="font-size:8px;color:#666">Lock faces before generating scenes</span></div><div id="portraitGrid" class="portrait-grid"></div></div><div id="analysisPanel" style="display:none" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span class="lbl" style="margin:0;color:#6b8aff">&#128202; ANALYSIS RESULTS</span><button class="btn-sm" id="resetAnalysisBtn" style="font-size:8px">&#10005; Reset</button></div><div id="analysisGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px"></div><div id="analysisChars" style="margin-bottom:8px"></div><div id="analysisHero" style="margin-bottom:8px"></div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span style="font-size:10px;color:#555;font-weight:700" id="batchProgress">0/0 generated</span><div style="flex:1;height:6px;background:#1a1a1a;border-radius:3px;min-width:100px;overflow:hidden"><div id="batchProgressFill" style="height:100%;background:linear-gradient(90deg,#B22222,#ff6b6b);border-radius:3px;width:0%;transition:width .4s"></div></div></div></div>
@@ -637,29 +637,8 @@ var btn=document.getElementById('btnAnalyze');btn.disabled=true;btn.textContent=
 document.getElementById('empty').style.display='none';
 document.getElementById('board').style.display='block';
 showCTA('\uD83E\uDDE0 Analyzing script','Phase 1','Detecting characters & scenes');
-var parsed=[];
-var sceneBlocks=script.split(/(?=SCENE\s+\d+)/i).filter(function(b){return b.trim()});
-var doAnalyze;
-if(sceneBlocks.length>30){
-doAnalyze=(function(){
-var chain=Promise.resolve();
-for(var c=0;c<sceneBlocks.length;c+=20){
-(function(ci){
-chain=chain.then(function(){
-if(aborted)return;
-var chunk=sceneBlocks.slice(ci,ci+20).join('\n\n');
-showCTA('\uD83E\uDDE0 Parsing '+(ci+1)+'-'+Math.min(ci+20,sceneBlocks.length),'Phase 1',sceneBlocks.length+' total');
-return parseScript(chunk).then(function(r){if(Array.isArray(r))parsed=parsed.concat(r)}).catch(function(){parsed=parsed.concat(localParse(chunk))}).then(function(){return sleep(1000)})
-})
-})(c);
-}
-return chain;
-})();
-}else{
-doAnalyze=parseScript(script).then(function(r){if(!Array.isArray(r)||!r.length)throw new Error('0');parsed=r}).catch(function(){parsed=localParse(script)});
-}
-doAnalyze.then(function(){
-if(!parsed.length){showErr('Parse failed');btn.disabled=false;btn.textContent='\uD83D\uDD0D ANALYZE SCRIPT';hideCTA();return}
+var parsed=localParse(script);
+if(!parsed.length){showErr('Parse failed — make sure script uses SCENE 1, SCENE 2... format');btn.disabled=false;btn.textContent='\uD83D\uDD0D ANALYZE SCRIPT';hideCTA();return}
 parsed.forEach(function(s,i){s.scene_number=i+1});
 scenes=parsed.map(function(s){return{scene_number:s.scene_number,timecode:s.timecode||'',title:s.title||'',description:s.description||'',characters:s.characters||[],people_count:s.people_count||0,scene_type:s.scene_type||'landscape',status:'pending',imageUrl:null,blobUrl:null,error:null,tripleUrls:[],pickedTriple:-1,sound:null,isHero:false}});
 var charSet={};
@@ -675,7 +654,7 @@ document.getElementById('btnGo').style.display='inline-block';
 document.getElementById('btnGo').textContent='\u25B8 GENERATE SCENES 1-'+Math.min(BATCH_GEN,scenes.length);
 document.getElementById('btnGenPortraits').style.display=detectedChars.length?'inline-block':'none';
 hideCTA();showToast('\u2713 '+scenes.length+' scenes \u2022 '+detectedChars.length+' chars \u2022 '+crowdCount+' crowd \u2022 '+landCount+' landscape')
-})}
+}
 
 function showAnalysis(heroIdx){
 var ap=document.getElementById('analysisPanel');ap.style.display='block';
@@ -764,8 +743,19 @@ else{showCTA('\uD83C\uDF89 ALL '+tot+' FRAMES DONE!',currentQ+' \u2022 '+current
 setTimeout(hideCTA,4000)})
 }).catch(function(e){if(e==='aborted'){resetGenBtns();hideCTA()}})}
 
-function parseScript(s){return callGemini(PM,[{role:'user',parts:[{text:buildParsePrompt(s)}]}],{temperature:.3}).then(function(d){var raw=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts||[]).map(function(p){return p.text||''}).join('');return JSON.parse(raw.replace(/`+json/g,'').replace(/`+/g,'').trim())})}
-function localParse(s){var r=[],b=s.split(/(?=SCENE\s+\d+)/i).filter(function(x){return x.trim()});b.forEach(function(bl){var m=bl.match(/SCENE\s+(\d+)\s*(?:\(([^)]+)\))?\s*[\u2014\-\u2013]+\s*(.+)/i);if(!m)return;var d=bl.split('\n').slice(1).filter(function(l){return l.trim()}).join(' ').trim();var pc=0;if(/crowd|army|soldiers|troops|villagers|people|courtiers|monks|warriors|guards/i.test(d))pc=99;else if(/two|both|them|they|and\s/i.test(d))pc=2;else if(/man|woman|he\s|she\s|king|queen|general|child|boy|girl/i.test(d))pc=1;var st=pc>=3?'crowd':pc>0?'character':'landscape';if(d)r.push({scene_number:parseInt(m[1]),timecode:(m[2]||'').trim(),title:m[3].trim(),description:d,characters:[],people_count:pc,scene_type:st})});return r}
+/* parseScript removed - using instant local parsing */
+function localParse(s){var r=[],b=s.split(/(?=SCENE\s+\d+)/i).filter(function(x){return x.trim()});
+/* Vietnamese/historical name patterns */
+var namePatterns=/(?:Tr\u1EA7n|L\u00FD|Nguy\u1EC5n|L\u00EA|Ph\u1EA1m|V\u00F5|Ho\u00E0ng|B\u00F9i|Hu\u1EF3nh|Phan|V\u0169|\u0110\u1ED7|\u0110\u1EB7ng)\s+(?:Th\u1EE7\s+\u0110\u1ED9|Chiêu\s+Ho\u00E0ng|C\u1EA3nh|Nh\u00E2n\s+T\u00F4ng|Th\u00E1i\s+T\u00F4ng|Hu\u1EC7|Anh\s+T\u00F4ng|Minh\s+T\u00F4ng|Qu\u1ED1c\s+Tu\u1EA5n|H\u01B0ng\s+\u0110\u1EA1o|Kh\u00E1t\s+Ch\u00E2n|Quang\s+Kh\u1EA3i|\u0110\u1EA1i|S\u01A1n|H\u1EA3i|Long|Ph\u01B0\u1EDBng|H\u1ED3|Nam|B\u1EAFc|Trung|Xu\u00E2n|H\u1EA1|Thu|T\u00F9ng|H\u01B0ng|Minh)/g;
+/* Also catch simple capitalized name references */
+var simpleNames=/(?:Th\u1EE7\s+\u0110\u1ED9|Chiêu\s+Ho\u00E0ng|Hu\u1EC7|H\u01B0ng\s+\u0110\u1EA1o|Qu\u1ED1c\s+Tu\u1EA5n|Kh\u00E1t\s+Ch\u00E2n|Quang\s+Kh\u1EA3i|Genghis|Kublai|Toa\s+\u0110\u00F4|Thoát\s+Hoan|Ô\s+M\u00E3\s+Nhi)/gi;
+b.forEach(function(bl){var m=bl.match(/SCENE\s+(\d+)\s*(?:\(([^)]+)\))?\s*[\u2014\-\u2013]+\s*(.+)/i);if(!m)return;var d=bl.split('\n').slice(1).filter(function(l){return l.trim()}).join(' ').trim();var pc=0;if(/crowd|army|soldiers|troops|villagers|people|courtiers|monks|warriors|guards|đội quân|binh lính|dân làng|quân/i.test(d))pc=99;else if(/two|both|them|they|hai người|cả hai/i.test(d))pc=2;else if(/man|woman|he\s|she\s|king|queen|general|child|boy|girl|vua|hoàng hậu|tướng/i.test(d))pc=1;
+/* Extract character names from this scene */
+var chars=[];var fullText=m[3]+' '+d;
+var nm=fullText.match(namePatterns);if(nm)nm.forEach(function(n){if(chars.indexOf(n)<0)chars.push(n)});
+var sm=fullText.match(simpleNames);if(sm)sm.forEach(function(n){if(chars.indexOf(n)<0&&!chars.some(function(c){return c.indexOf(n)>=0}))chars.push(n)});
+if(chars.length>0&&pc<1)pc=chars.length;
+var st=pc>=3?'crowd':pc>0?'character':'landscape';if(d)r.push({scene_number:parseInt(m[1]),timecode:(m[2]||'').trim(),title:m[3].trim(),description:d,characters:chars,people_count:pc,scene_type:st})});return r}
 
 /* === AI Features === */
 function discoverTopics(id){var cat=TOPIC_CATS.find(function(c){return c.id===(id||'horror')})||TOPIC_CATS[0];var g=document.getElementById('topicGrid'),btn=document.getElementById('btnDiscover');btn.disabled=true;g.innerHTML='<div class="topic-chip loading">\u2026</div><div class="topic-chip loading">\u2026</div><div class="topic-chip loading">\u2026</div><div class="topic-chip loading">\u2026</div><div class="topic-chip loading">\u2026</div><div class="topic-chip loading">\u2026</div>';callGemini(PM,[{role:'user',parts:[{text:'6 storyboard topics for '+cat.name+'. '+cat.p.join(', ')+'. 8-15 words. JSON array.'}]}],{temperature:.8}).then(function(d){var raw=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts||[]).map(function(p){return p.text||''}).join('');var t=JSON.parse(raw.replace(/`+json/g,'').replace(/`+/g,'').trim());g.innerHTML='';t.forEach(function(x){var ch=document.createElement('button');ch.className='topic-chip';ch.textContent=x;ch.addEventListener('click',function(){document.querySelectorAll('.topic-chip').forEach(function(c){c.classList.remove('selected')});ch.classList.add('selected');selectedTopic=x;document.getElementById('aiIdea').value=x});g.appendChild(ch)})}).catch(function(e){g.innerHTML='<p style="color:#ff6b6b;font-size:10px">'+e.message+'</p>'}).then(function(){btn.disabled=false;btn.textContent='\uD83D\uDD0D Discover Topics'})}
