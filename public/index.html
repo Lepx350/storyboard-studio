@@ -40,15 +40,15 @@ body{background:#050505;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 .login-box{width:100%;max-width:360px;text-align:center;position:relative;z-index:1;animation:floatIn .6s ease-out}
 .login-title{font-size:30px;font-weight:900;letter-spacing:-1.5px;margin-bottom:4px;text-shadow:0 0 40px rgba(178,34,34,.3)}
 .login-title span{color:#B22222;text-shadow:0 0 20px rgba(178,34,34,.5)}
-.login-sub{font-size:10px;color:#444;letter-spacing:2px;margin-bottom:48px;font-weight:600}
+.login-sub{font-size:10px;color:#666;letter-spacing:2px;margin-bottom:48px;font-weight:600}
 .login-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 18px;color:#fff;font-size:16px;text-align:center;letter-spacing:3px;-webkit-appearance:none;margin-bottom:14px;transition:all .3s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .login-input:focus{outline:none;border-color:rgba(178,34,34,.5);box-shadow:0 0 20px rgba(178,34,34,.15),inset 0 0 20px rgba(178,34,34,.05);background:rgba(255,255,255,.06)}
-.login-input::placeholder{letter-spacing:0;color:#333;font-weight:400}
+.login-input::placeholder{letter-spacing:0;color:#555;font-weight:400}
 .login-btn{width:100%;background:linear-gradient(135deg,#B22222 0%,#8B0000 50%,#6B0000 100%);border:none;color:#fff;padding:16px;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:all .2s;box-shadow:0 4px 20px rgba(178,34,34,.3),0 0 40px rgba(178,34,34,.1);position:relative;overflow:hidden}
 .login-btn:active{transform:scale(.97);box-shadow:0 2px 10px rgba(178,34,34,.2)}
 .login-btn:disabled{opacity:.3;box-shadow:none}
 .login-err{margin-top:14px;font-size:12px;color:#ff6b6b;display:none;animation:fadeIn .3s}
-.login-hint{margin-top:24px;font-size:10px;color:#333}
+.login-hint{margin-top:24px;font-size:10px;color:#555}
 
 /* === APP SHELL === */
 .app{display:none;min-height:100dvh;padding-bottom:90px}
@@ -56,25 +56,25 @@ body{background:#050505;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 .hdr h1{font-size:15px;font-weight:800;letter-spacing:-.5px}
 .hdr h1 span{color:#B22222}
 .hdr-r{display:flex;gap:6px;align-items:center}
-.btn-icon{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#777;width:34px;height:34px;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.btn-icon{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#aaa;width:34px;height:34px;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .btn-icon:active{transform:scale(.9)}
 .btn-icon.active{border-color:rgba(178,34,34,.4);color:#ff6b6b;background:rgba(178,34,34,.1)}
-.btn-out{background:none;border:1px solid rgba(255,255,255,.06);color:#444;padding:6px 12px;border-radius:6px;font-size:9px;cursor:pointer;transition:all .2s;font-weight:600}
+.btn-out{background:none;border:1px solid rgba(255,255,255,.06);color:#777;padding:6px 12px;border-radius:6px;font-size:9px;cursor:pointer;transition:all .2s;font-weight:600}
 .btn-out:active{transform:scale(.95)}
 
 /* === PANELS === */
 .panel{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.03)}
-.lbl{font-size:9px;font-weight:700;color:#444;letter-spacing:1.5px;margin-bottom:6px;display:block;text-transform:uppercase}
-textarea{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;color:#bbb;font-size:11px;font-family:'SF Mono',Menlo,monospace;line-height:1.6;resize:vertical;transition:all .3s}
+.lbl{font-size:9px;font-weight:700;color:#777;letter-spacing:1.5px;margin-bottom:6px;display:block;text-transform:uppercase}
+textarea{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;color:#ddd;font-size:11px;font-family:'SF Mono',Menlo,monospace;line-height:1.6;resize:vertical;transition:all .3s}
 textarea:focus{outline:none;border-color:rgba(178,34,34,.4);box-shadow:0 0 16px rgba(178,34,34,.1);background:rgba(255,255,255,.04)}
 input[type=text]{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;color:#fff;font-size:13px;transition:all .3s}
 input[type=text]:focus{outline:none;border-color:rgba(178,34,34,.4);box-shadow:0 0 16px rgba(178,34,34,.1)}
-input[type=text]::placeholder{color:#333}
+input[type=text]::placeholder{color:#555}
 input[type="file"]{display:none}
 
 /* === MODE TOGGLE === */
 .mode-toggle{display:flex;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden;padding:3px}
-.mode-btn{flex:1;padding:11px 10px;background:transparent;border:none;color:#444;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .25s;border-radius:11px}
+.mode-btn{flex:1;padding:11px 10px;background:transparent;border:none;color:#666;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .25s;border-radius:11px}
 .mode-btn.active{background:linear-gradient(135deg,#B22222,#8B0000);color:#fff;box-shadow:0 2px 12px rgba(178,34,34,.3)}
 .mode-btn:active{transform:scale(.97)}
 .mode-btn span{display:block;font-size:16px;margin-bottom:2px}
@@ -86,22 +86,22 @@ input[type="file"]{display:none}
 .preset:active{transform:scale(.93)}
 .preset.active{border-color:rgba(178,34,34,.5);background:rgba(178,34,34,.08);box-shadow:0 0 20px rgba(178,34,34,.15),inset 0 0 20px rgba(178,34,34,.05)}
 .preset-icon{font-size:22px}
-.preset-name{font-size:8px;font-weight:800;color:#555;letter-spacing:.8px;white-space:nowrap}
+.preset-name{font-size:8px;font-weight:800;color:#888;letter-spacing:.8px;white-space:nowrap}
 .preset.active .preset-name{color:#ff6b6b}
 
 /* === AI PANEL === */
 .ai-panel{display:none}.ai-panel.show{display:block}
 .custom-panel{display:block}.custom-panel.hide{display:none}
 .topic-cats{display:flex;gap:4px;margin-bottom:8px;overflow-x:auto;scrollbar-width:none}.topic-cats::-webkit-scrollbar{display:none}
-.topic-cat{flex-shrink:0;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);color:#666;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s}
+.topic-cat{flex-shrink:0;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);color:#999;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s}
 .topic-cat:active{transform:scale(.95)}
 .topic-cat.active{border-color:rgba(107,138,255,.4);background:rgba(107,138,255,.08);color:#6b8aff}
 .topic-grid{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
-.topic-chip{padding:9px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);color:#bbb;font-size:11px;cursor:pointer;transition:all .25s;animation:cardReveal .3s ease-out}
+.topic-chip{padding:9px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);color:#ddd;font-size:11px;cursor:pointer;transition:all .25s;animation:cardReveal .3s ease-out}
 .topic-chip:active{transform:scale(.95)}
 .topic-chip.selected{border-color:rgba(178,34,34,.4);background:rgba(178,34,34,.08);color:#ff6b6b}
 .topic-chip.loading{color:#222;background:linear-gradient(90deg,rgba(255,255,255,.02) 25%,rgba(255,255,255,.05) 50%,rgba(255,255,255,.02) 75%);background-size:200%;animation:shimmer 1.5s infinite}
-.or-divider{text-align:center;font-size:9px;color:#222;margin:10px 0;letter-spacing:3px}
+.or-divider{text-align:center;font-size:9px;color:#555;margin:10px 0;letter-spacing:3px}
 .script-preview{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;margin-top:8px;max-height:200px;overflow-y:auto}
 .script-preview pre{font-size:10px;color:#777;font-family:'SF Mono',Menlo,monospace;white-space:pre-wrap;line-height:1.5}
 .fact-badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:8px;font-weight:700;letter-spacing:.5px}
@@ -117,10 +117,10 @@ input[type="file"]{display:none}
 .char-card-img{width:100px;height:100px;object-fit:cover;display:block}
 .char-card-info{padding:6px}
 .char-card-name{font-size:9px;font-weight:700;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.char-card-role{font-size:7px;color:#444}
+.char-card-role{font-size:7px;color:#888}
 .char-card-x{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.1);color:#ff6b6b;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
 .char-card:hover .char-card-x{opacity:1}
-.char-add-btn{flex-shrink:0;width:100px;height:138px;background:rgba(255,255,255,.02);border:2px dashed rgba(255,255,255,.06);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:#222;font-size:9px;font-weight:700;transition:all .2s}
+.char-add-btn{flex-shrink:0;width:100px;height:138px;background:rgba(255,255,255,.02);border:2px dashed rgba(255,255,255,.06);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:#555;font-size:9px;font-weight:700;transition:all .2s}
 .char-add-btn:active{transform:scale(.95);border-color:rgba(178,34,34,.3);color:#ff6b6b}
 
 /* === MOOD BOARD === */
@@ -131,7 +131,7 @@ input[type="file"]{display:none}
 .mood-card img{width:100%;height:100%;object-fit:cover}
 .mood-card-x{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.1);color:#ff6b6b;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
 .mood-card:hover .mood-card-x{opacity:1}
-.mood-add{flex-shrink:0;width:80px;height:80px;border:2px dashed rgba(255,255,255,.06);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:#222;font-size:20px;transition:all .2s}
+.mood-add{flex-shrink:0;width:80px;height:80px;border:2px dashed rgba(255,255,255,.06);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:#555;font-size:20px;transition:all .2s}
 .mood-add:active{border-color:rgba(178,34,34,.3);color:#ff6b6b;transform:scale(.93)}
 .mood-add small{font-size:7px;font-weight:700;margin-top:2px}
 
@@ -144,9 +144,9 @@ input[type="file"]{display:none}
 .consist-opt:active{transform:scale(.95)}
 .consist-opt.on{border-color:rgba(107,138,255,.25);background:rgba(107,138,255,.06);box-shadow:0 0 12px rgba(107,138,255,.08)}
 .consist-opt .co-icon{font-size:18px;margin-bottom:3px}
-.consist-opt .co-name{font-size:9px;font-weight:700;color:#444}
+.consist-opt .co-name{font-size:9px;font-weight:700;color:#777}
 .consist-opt.on .co-name{color:#6b8aff}
-.consist-opt .co-desc{font-size:7px;color:#222;margin-top:2px}
+.consist-opt .co-desc{font-size:7px;color:#555;margin-top:2px}
 .consist-opt.on .co-desc{color:#3a3a5a}
 
 /* === REF PANEL === */
@@ -164,9 +164,9 @@ input[type="file"]{display:none}
 /* === SETTINGS === */
 .settings-row{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap;align-items:center}
 .setting{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:7px 10px}
-.setting-label{font-size:8px;color:#444;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+.setting-label{font-size:8px;color:#777;font-weight:700;letter-spacing:.5px;white-space:nowrap}
 .tog-options{display:flex;gap:3px}
-.tog-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#555;padding:5px 9px;border-radius:6px;font-size:9px;font-weight:700;cursor:pointer;transition:all .2s}
+.tog-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#888;padding:5px 9px;border-radius:6px;font-size:9px;font-weight:700;cursor:pointer;transition:all .2s}
 .tog-btn:active{transform:scale(.93)}
 .tog-btn.active{background:linear-gradient(135deg,#B22222,#8B0000);border-color:transparent;color:#fff;box-shadow:0 2px 8px rgba(178,34,34,.3)}
 .toggle-wrap{display:flex;align-items:center;gap:6px;cursor:pointer}
@@ -174,13 +174,13 @@ input[type="file"]{display:none}
 .toggle.on{background:linear-gradient(135deg,#B22222,#8B0000)}
 .toggle-knob{width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .25s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
 .toggle.on .toggle-knob{left:18px}
-.toggle-text{font-size:9px;color:#444;font-weight:600}
+.toggle-text{font-size:9px;color:#777;font-weight:600}
 
 /* === BATCH INFO === */
 .batch-info{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:10px 14px;margin:12px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
 .batch-stat{text-align:center}
 .batch-stat .bv{font-size:18px;font-weight:800;color:#ff6b6b}
-.batch-stat .bl{font-size:7px;color:#333;font-weight:700;letter-spacing:.5px}
+.batch-stat .bl{font-size:7px;color:#777;font-weight:700;letter-spacing:.5px}
 
 /* === PIPELINE === */
 .pipe{display:flex;gap:8px;margin:12px 0}
@@ -193,8 +193,8 @@ input[type="file"]{display:none}
 .pipe-card .s{font-size:8px;font-weight:700;letter-spacing:.5px}
 .pipe-a .s{color:#6b8aff}
 .pipe-b .s{color:#6bff8a}
-.pipe-card .n{font-size:11px;color:#999;font-weight:600}
-.pipe-card .d{font-size:8px;color:#333;margin-top:2px}
+.pipe-card .n{font-size:11px;color:#ccc;font-weight:600}
+.pipe-card .d{font-size:8px;color:#666;margin-top:2px}
 
 /* === BUTTONS === */
 .acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -204,13 +204,13 @@ input[type="file"]{display:none}
 .btn-gen:disabled{opacity:.25;box-shadow:none;transform:none}
 .btn-stp{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#ff6b6b}
 .btn-stp:active{transform:scale(.96);background:rgba(255,107,107,.08)}
-.btn-sm{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#999;font-size:11px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .2s;font-weight:600}
+.btn-sm{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#ccc;font-size:11px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .2s;font-weight:600}
 .btn-sm:active{transform:scale(.93)}
 .btn-sm:disabled{opacity:.25}
 .btn-ai{background:linear-gradient(135deg,rgba(107,138,255,.15),rgba(184,160,255,.15));border:1px solid rgba(107,138,255,.2);color:#b8a0ff;padding:12px 22px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 2px 12px rgba(107,138,255,.1)}
 .btn-ai:active{transform:scale(.96)}
 .btn-ai:disabled{opacity:.25;box-shadow:none}
-.char-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#777;padding:5px 10px;border-radius:6px;font-size:9px;cursor:pointer;transition:all .2s}
+.char-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#aaa;padding:5px 10px;border-radius:6px;font-size:9px;cursor:pointer;transition:all .2s}
 .char-btn:active{transform:scale(.93)}
 .err{background:rgba(255,107,107,.06);border:1px solid rgba(255,107,107,.12);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:none;animation:fadeIn .3s}
 .err p{font-size:12px;color:#ff6b6b}
@@ -221,9 +221,9 @@ input[type="file"]{display:none}
 .cta-prog{flex:1}
 .cta-prog-bar{width:100%;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
 .cta-prog-fill{height:100%;border-radius:2px;transition:width .4s;background:linear-gradient(90deg,#B22222,#ff6b6b,#B22222);background-size:200% 100%;animation:progressPulse 3s ease infinite}
-.cta-text{font-size:10px;color:#777;margin-top:4px;display:flex;justify-content:space-between}
+.cta-text{font-size:10px;color:#aaa;margin-top:4px;display:flex;justify-content:space-between}
 .cta-step{font-weight:700;color:#ff6b6b}
-.cta-count{color:#444}
+.cta-count{color:#888}
 .cta-phase{font-size:8px;color:#6b8aff;margin-top:2px;font-weight:600}
 .cta-stop{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.15);color:#ff6b6b;padding:9px 18px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;transition:all .2s}
 .cta-stop:active{transform:scale(.95)}
@@ -231,10 +231,10 @@ input[type="file"]{display:none}
 /* === BOARD === */
 .board{padding:14px 16px;display:none}
 .board-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
-.board-hdr h2{font-size:11px;font-weight:700;color:#444;letter-spacing:1px}
+.board-hdr h2{font-size:11px;font-weight:700;color:#888;letter-spacing:1px}
 .board-acts{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .view-toggle{display:flex;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;overflow:hidden;padding:2px}
-.view-btn{padding:6px 10px;background:transparent;border:none;color:#444;font-size:10px;font-weight:700;cursor:pointer;border-radius:6px;transition:all .2s}
+.view-btn{padding:6px 10px;background:transparent;border:none;color:#666;font-size:10px;font-weight:700;cursor:pointer;border-radius:6px;transition:all .2s}
 .view-btn:active{transform:scale(.93)}
 .view-btn.active{background:linear-gradient(135deg,#B22222,#8B0000);color:#fff}
 
@@ -252,7 +252,7 @@ input[type="file"]{display:none}
 .tl-body{padding:8px}
 .tl-body h4{font-size:9px;font-weight:700;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tl-tc{font-size:8px;color:#B22222;font-family:monospace;font-weight:700}
-.tl-desc{font-size:7px;color:#333;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tl-desc{font-size:7px;color:#777;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .tl-connector{flex-shrink:0;width:24px;display:flex;align-items:center;justify-content:center;position:relative}
 .tl-connector::before{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:rgba(255,255,255,.04)}
 .tl-connector::after{content:'\25B8';color:#222;font-size:10px;position:relative;z-index:1;background:#050505;padding:0 2px}
@@ -272,9 +272,9 @@ input[type="file"]{display:none}
 /* === SCENE INFO === */
 .sc-i{padding:10px 12px}
 .sc-i h3{font-size:10px;font-weight:700;color:#ccc;margin-bottom:3px;display:flex;justify-content:space-between;align-items:center}
-.sc-i p{font-size:8px;color:#444;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sc-i p{font-size:8px;color:#888;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .st{padding:3px 7px;border-radius:4px;font-size:7px;font-weight:800;letter-spacing:.5px}
-.st-w{background:rgba(255,255,255,.05);color:#333}
+.st-w{background:rgba(255,255,255,.05);color:#666}
 .st-g{background:rgba(107,255,138,.08);color:#6bff8a;animation:pulse 1.5s infinite}
 .st-d{background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.12)}
 .st-e{background:rgba(255,107,107,.08);color:#ff6b6b;border:1px solid rgba(255,107,107,.12)}
@@ -287,7 +287,7 @@ input[type="file"]{display:none}
 .sound-row{display:flex;gap:4px;align-items:flex-start;margin-bottom:4px}
 .sound-icon{font-size:10px;flex-shrink:0;margin-top:1px}
 .sound-label{font-size:7px;font-weight:700;color:#6b8aff;letter-spacing:.5px;min-width:30px}
-.sound-text{font-size:8px;color:#555;line-height:1.3;flex:1}
+.sound-text{font-size:8px;color:#999;line-height:1.3;flex:1}
 .sound-copy{background:rgba(107,138,255,.1);border:1px solid rgba(107,138,255,.15);color:#6b8aff;padding:3px 8px;border-radius:4px;font-size:7px;cursor:pointer;flex-shrink:0;transition:all .2s}
 .sound-copy:active{transform:scale(.93)}
 
@@ -301,10 +301,10 @@ input[type="file"]{display:none}
 .triple-opt.picked .pick-badge{display:block}
 
 /* === MISC === */
-.opt-toggle{font-size:8px;color:#333;cursor:pointer;text-decoration:underline;margin-top:3px;display:inline-block}
-.opt-prompt{display:none;margin-top:4px;padding:5px 7px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:4px;font-size:7px;font-family:monospace;color:#2a2a2a;line-height:1.3;max-height:80px;overflow-y:auto;word-break:break-word}
+.opt-toggle{font-size:8px;color:#666;cursor:pointer;text-decoration:underline;margin-top:3px;display:inline-block}
+.opt-prompt{display:none;margin-top:4px;padding:5px 7px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:4px;font-size:7px;font-family:monospace;color:#666;line-height:1.3;max-height:80px;overflow-y:auto;word-break:break-word}
 .empty{padding:50px 20px;text-align:center}
-.empty h3{font-size:15px;color:#333;margin:10px 0 6px;font-weight:700}
+.empty h3{font-size:15px;color:#666;margin:10px 0 6px;font-weight:700}
 .empty p{font-size:10px;color:#1a1a1a;line-height:1.6}
 
 /* === MODALS - GLASS === */
@@ -313,15 +313,15 @@ input[type="file"]{display:none}
 .modal-img{width:100%;max-height:35vh;object-fit:contain;background:#000}
 .modal-body{padding:16px}
 .modal-title{font-size:14px;font-weight:700;margin-bottom:8px}
-.modal-desc{font-size:10px;color:#555;margin-bottom:12px}
+.modal-desc{font-size:10px;color:#999;margin-bottom:12px}
 .modal-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px;color:#fff;font-size:13px;transition:all .3s}
 .modal-input:focus{outline:none;border-color:rgba(178,34,34,.4);box-shadow:0 0 16px rgba(178,34,34,.1)}
-.modal-input::placeholder{color:#333}
+.modal-input::placeholder{color:#555}
 .modal-acts{display:flex;gap:8px;margin-top:12px}
 .modal-btn{flex:1;padding:12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
 .modal-btn:active{transform:scale(.96)}
 .modal-btn-go{background:linear-gradient(135deg,#B22222,#8B0000);color:#fff;box-shadow:0 2px 12px rgba(178,34,34,.2)}
-.modal-btn-cancel{background:rgba(255,255,255,.04);color:#777;border:1px solid rgba(255,255,255,.08)}
+.modal-btn-cancel{background:rgba(255,255,255,.04);color:#aaa;border:1px solid rgba(255,255,255,.08)}
 .modal-btn:disabled{opacity:.3}
 
 /* === CHAR MODAL === */
@@ -330,7 +330,7 @@ input[type="file"]{display:none}
 .char-modal-box{width:100%;max-width:320px;background:rgba(17,17,17,.95);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px;animation:floatIn .3s ease-out;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .char-modal-box h3{font-size:14px;margin-bottom:14px}
 .cm-field{margin-bottom:12px}
-.cm-field label{font-size:9px;color:#444;font-weight:700;display:block;margin-bottom:5px;letter-spacing:.5px}
+.cm-field label{font-size:9px;color:#777;font-weight:700;display:block;margin-bottom:5px;letter-spacing:.5px}
 .cm-field input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 12px;color:#fff;font-size:13px;transition:all .3s}
 .cm-field input:focus{outline:none;border-color:rgba(178,34,34,.4);box-shadow:0 0 12px rgba(178,34,34,.1)}
 
@@ -348,7 +348,7 @@ input[type="file"]{display:none}
 .sb-item:active{transform:scale(.98)}
 .sb-item:hover,.sb-item.active{border-color:rgba(178,34,34,.3);background:rgba(178,34,34,.05)}
 .sb-item-name{font-size:12px;font-weight:700;color:#ccc;margin-bottom:3px}
-.sb-item-meta{font-size:9px;color:#333}
+.sb-item-meta{font-size:9px;color:#777}
 .sb-del{background:none;border:none;color:#ff6b6b;font-size:9px;cursor:pointer;text-decoration:underline}
 .sb-footer{padding:14px;border-top:1px solid rgba(255,255,255,.04)}
 .sb-new{width:100%;background:linear-gradient(135deg,#B22222,#8B0000);border:none;color:#fff;padding:12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 2px 12px rgba(178,34,34,.2)}
@@ -367,8 +367,8 @@ input[type="file"]{display:none}
 <div class="hdr"><div style="display:flex;align-items:center;gap:8px"><button class="btn-icon" id="openSidebarBtn">&#128190;</button><h1><span>&#9654;</span> <span id="projectTitle">STUDIO</span></h1></div><div class="hdr-r"><button class="btn-icon" id="soundToggleBtn">&#127925;</button><button class="btn-out" id="logoutBtn">Log out</button></div></div>
 <div class="panel" style="padding:10px 16px"><div class="mode-toggle"><button class="mode-btn active" id="modeCustom"><span>&#9997;&#65039;</span>WRITE</button><button class="mode-btn" id="modeAI"><span>&#129302;</span>AI CREATE</button></div></div>
 <div class="panel"><span class="lbl">STYLE PRESET</span><div class="presets" id="presets"></div></div>
-<div class="panel custom-panel" id="customPanel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span class="lbl" style="margin:0">SCRIPT — clean story beats only</span><span style="font-size:9px;color:#222" id="cc">0</span></div><textarea id="script" rows="6" placeholder="SCENE 1 — THE FISHING VILLAGE&#10;The Tr&#7847;n clan lives as fishermen. Humble houses on stilts. Dawn light.&#10;&#10;SCENE 2 — THE KINGMAKER&#10;Tr&#7847;n Th&#7911; &#272;&#7897; watches from a dark corridor. Sharp calculating eyes."></textarea></div>
-<div class="panel custom-panel" id="biblePanel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;cursor:pointer" id="bibleToggle"><span class="lbl" style="margin:0;color:#6b8aff">&#128214; STYLE BIBLE <span style="font-size:7px;color:#333">(tap to expand)</span></span><span style="font-size:9px;color:#333" id="bibleStatus">empty</span></div><div id="bibleWrap" style="display:none"><textarea id="styleBible" rows="5" placeholder="Paste your visual style bible here..." style="border-color:#151530;margin-bottom:8px"></textarea><div style="margin-bottom:5px"><span class="lbl" style="color:#ff6b6b">&#9940; NEGATIVE PROMPT</span></div><textarea id="negPrompt" rows="2" placeholder="What to AVOID: Chinese hanfu, Japanese kimono, samurai armor, anime style, long flowing hair, five-clawed dragons..." style="border-color:#1a1515"></textarea></div></div>
+<div class="panel custom-panel" id="customPanel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span class="lbl" style="margin:0">SCRIPT — clean story beats only</span><span style="font-size:9px;color:#777" id="cc">0</span></div><textarea id="script" rows="6" placeholder="SCENE 1 — THE FISHING VILLAGE&#10;The Tr&#7847;n clan lives as fishermen. Humble houses on stilts. Dawn light.&#10;&#10;SCENE 2 — THE KINGMAKER&#10;Tr&#7847;n Th&#7911; &#272;&#7897; watches from a dark corridor. Sharp calculating eyes."></textarea></div>
+<div class="panel custom-panel" id="biblePanel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;cursor:pointer" id="bibleToggle"><span class="lbl" style="margin:0;color:#6b8aff">&#128214; STYLE BIBLE <span style="font-size:7px;color:#666">(tap to expand)</span></span><span style="font-size:9px;color:#777" id="bibleStatus">empty</span></div><div id="bibleWrap" style="display:none"><textarea id="styleBible" rows="5" placeholder="Paste your visual style bible here..." style="border-color:#151530;margin-bottom:8px"></textarea><div style="margin-bottom:5px"><span class="lbl" style="color:#ff6b6b">&#9940; NEGATIVE PROMPT</span></div><textarea id="negPrompt" rows="2" placeholder="What to AVOID: Chinese hanfu, Japanese kimono, samurai armor, anime style, long flowing hair, five-clawed dragons..." style="border-color:#1a1515"></textarea></div></div>
 <div class="panel ai-panel" id="aiPanel"><span class="lbl">&#128269; DISCOVER TOPICS</span><div class="topic-cats" id="topicCats"></div><div class="topic-grid" id="topicGrid"></div><button class="btn-sm" id="btnDiscover" style="margin-top:6px;width:100%;text-align:center">&#128269; Discover Topics</button><div class="or-divider">— OR TYPE YOUR OWN —</div><input type="text" id="aiIdea" placeholder="e.g. 8-minute horror about a haunted VHS tape..."><button class="btn-ai" id="btnAiWrite" style="margin-top:10px;width:100%">&#129302; Write Script</button><div id="aiScriptPreview" style="display:none;margin-top:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span class="lbl" style="margin:0">AI SCRIPT</span><span class="fact-badge checking" id="factBadge">&#9203;</span></div><div class="script-preview"><pre id="aiScriptText"></pre></div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn-sm" id="useAiBtn" style="flex:1;text-align:center;background:#B22222;color:#fff;border-color:#B22222">&#10003; Use</button><button class="btn-sm" id="redoAiBtn" style="flex:1;text-align:center">&#8635; Redo</button></div></div></div>
 <div class="panel">
 <div class="chars-section"><span class="lbl">&#128101; CHARACTERS (up to 3)</span><div class="chars-list" id="charsList"><div class="char-add-btn" id="charAddBtn"><span>+</span>ADD</div></div><input type="file" id="charFileInput" accept="image/*"></div>
@@ -382,7 +382,7 @@ input[type="file"]{display:none}
 <div class="acts" id="actsPanel"><button class="btn btn-gen" id="btnAnalyze" style="background:linear-gradient(135deg,#1a1a4a,#2a1a5a)">&#128269; ANALYZE SCRIPT</button><button class="btn btn-gen" id="btnGo" style="display:none">&#9654; GENERATE NEXT 10</button><button class="btn btn-stp" id="btnStop" style="display:none">&#9632; STOP</button><button class="btn btn-stp" id="btnPause" style="display:none">&#9199; PAUSE</button></div>
 <div id="analysisPanel" style="display:none" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span class="lbl" style="margin:0;color:#6b8aff">&#128202; ANALYSIS RESULTS</span><button class="btn-sm" id="resetAnalysisBtn" style="font-size:8px">&#10005; Reset</button></div><div id="analysisGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px"></div><div id="analysisChars" style="margin-bottom:8px"></div><div id="analysisHero" style="margin-bottom:8px"></div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span style="font-size:10px;color:#555;font-weight:700" id="batchProgress">0/0 generated</span><div style="flex:1;height:6px;background:#1a1a1a;border-radius:3px;min-width:100px;overflow:hidden"><div id="batchProgressFill" style="height:100%;background:linear-gradient(90deg,#B22222,#ff6b6b);border-radius:3px;width:0%;transition:width .4s"></div></div></div></div>
 </div>
-<div class="board" id="board"><div class="board-hdr"><h2 id="boardTitle">STORYBOARD</h2><div class="board-acts"><div class="view-toggle"><button class="view-btn active" data-view="grid">&#8862;</button><button class="view-btn" data-view="timeline">&#8863;</button></div><button class="btn-sm" id="btnSndAll" style="display:none">&#127925;</button><button class="btn-sm" id="btnPdf" style="display:none">&#128228;</button><button class="btn-sm" id="btnDl" style="display:none">&#8595;</button><button class="btn-sm" id="btnSave">&#128190;</button></div></div><p id="boardCount" style="font-size:10px;color:#333;margin-bottom:10px"></p><div class="grid" id="grid"></div><div class="timeline" id="timeline"><div class="timeline-track" id="timelineTrack"></div></div></div>
+<div class="board" id="board"><div class="board-hdr"><h2 id="boardTitle">STORYBOARD</h2><div class="board-acts"><div class="view-toggle"><button class="view-btn active" data-view="grid">&#8862;</button><button class="view-btn" data-view="timeline">&#8863;</button></div><button class="btn-sm" id="btnSndAll" style="display:none">&#127925;</button><button class="btn-sm" id="btnPdf" style="display:none">&#128228;</button><button class="btn-sm" id="btnDl" style="display:none">&#8595;</button><button class="btn-sm" id="btnSave">&#128190;</button></div></div><p id="boardCount" style="font-size:10px;color:#777;margin-bottom:10px"></p><div class="grid" id="grid"></div><div class="timeline" id="timeline"><div class="timeline-track" id="timelineTrack"></div></div></div>
 <div class="empty" id="empty"><div style="font-size:28px">&#127916;</div><h3>Ready to Create</h3><p>Supports up to 120 scenes (8-10 min). Batch processing with auto-save.</p></div>
 </div>
 <div class="cta-bar" id="ctaBar"><div class="cta-inner"><div class="cta-prog"><div class="cta-prog-bar"><div class="cta-prog-fill" id="ctaFill"></div></div><div class="cta-text"><span class="cta-step" id="ctaStep"></span><span class="cta-count" id="ctaCount"></span></div><div class="cta-phase" id="ctaPhase"></div></div><button class="cta-stop" id="ctaStopBtn">&#9632; STOP</button></div></div>
@@ -398,7 +398,7 @@ var analyzed=false,batchStart=0;
 var BATCH_GEN=10;
 var BATCH_SIZE=8;
 var Q_MAP={'1K':'standard detail, 1024px','2K':'ultra detailed, 2048px, sharp focus','4K':'maximum 4096px, hyper-detailed, 4K UHD'};
-var PRESETS={horror:{icon:'\uD83C\uDFAC',name:'HORROR',bible:'Photorealistic. Film grain ISO 3200+. Crushed blacks. Horror. Blumhouse.',suffix:'cinematic horror, film grain, 35mm'},cyberpunk:{icon:'\uD83C\uDF06',name:'CYBERPUNK',bible:'Neo-noir cyberpunk. Neon rain. Blade Runner meets Akira.',suffix:'cyberpunk, neon-lit, volumetric'},anime:{icon:'\uD83C\uDF38',name:'ANIME',bible:'Anime. Cel shading. Vibrant. Studio Ghibli.',suffix:'anime, cel shaded, vibrant'},noir:{icon:'\uD83D\uDDA4',name:'NOIR',bible:'Film noir. B&W. High contrast. Venetian blind shadows.',suffix:'film noir, b&w, high contrast'},golden:{icon:'\uD83C\uDF05',name:'GOLDEN HR',bible:'Golden hour. Warm amber. Lens flare. Malick.',suffix:'golden hour, warm, dreamy'},musicvid:{icon:'\uD83C\uDFB5',name:'MUSIC VID',bible:'Music video. Colored gels. Smoke. Hype Williams.',suffix:'music video, colored lighting'},social:{icon:'\uD83D\uDCF1',name:'SOCIAL',bible:'Social media. Bright. Clean.',suffix:'bright, clean, modern'},comic:{icon:'\uD83D\uDCA5',name:'COMIC',bible:'Graphic novel. Bold outlines. Halftone.',suffix:'comic book, bold outlines'},pixar:{icon:'\uD83E\uDDF8',name:'3D ANIM',bible:'Pixar 3D. Stylized. Warm.',suffix:'3D, Pixar quality'},doc:{icon:'\uD83D\uDCF7',name:'DOCU',bible:'Documentary. Natural light. Raw.',suffix:'documentary, natural light'}};
+var PRESETS={horror:{icon:'\uD83C\uDFAC',name:'HORROR',bible:'Photorealistic. Film grain ISO 3200+. Crushed blacks. Horror. Blumhouse.',suffix:'cinematic horror, film grain, 35mm'},cyberpunk:{icon:'\uD83C\uDF06',name:'CYBERPUNK',bible:'Neo-noir cyberpunk. Neon rain. Blade Runner meets Akira.',suffix:'cyberpunk, neon-lit, volumetric'},anime:{icon:'\uD83C\uDF38',name:'ANIME',bible:'Anime. Cel shading. Vibrant. Studio Ghibli.',suffix:'anime, cel shaded, vibrant'},noir:{icon:'\uD83D\uDDA4',name:'NOIR',bible:'Film noir. B&W. High contrast. Venetian blind shadows.',suffix:'film noir, b&w, high contrast'},golden:{icon:'\uD83C\uDF05',name:'GOLDEN HR',bible:'Golden hour. Warm amber. Lens flare. Malick.',suffix:'golden hour, warm, dreamy'},musicvid:{icon:'\uD83C\uDFB5',name:'MUSIC VID',bible:'Music video. Colored gels. Smoke. Hype Williams.',suffix:'music video, colored lighting'},social:{icon:'\uD83D\uDCF1',name:'SOCIAL',bible:'Social media. Bright. Clean.',suffix:'bright, clean, modern'},comic:{icon:'\uD83D\uDCA5',name:'COMIC',bible:'Graphic novel. Bold outlines. Halftone.',suffix:'comic book, bold outlines'},pixar:{icon:'\uD83E\uDDF8',name:'3D ANIM',bible:'Pixar 3D. Stylized. Warm.',suffix:'3D, Pixar quality'},doc:{icon:'\uD83D\uDCF7',name:'DOCU',bible:'Documentary. Natural light. Raw.',suffix:'documentary, natural light'},ultra:{icon:'\uD83D\uDDBC\uFE0F',name:'ULTRA REAL',bible:'Ultra photorealistic. 8K render. Hyper-detailed skin pores, fabric texture, atmospheric particles. DSLR 85mm f/1.4 shallow depth of field. Volumetric god rays. RAW photography.',suffix:'ultra photorealistic, 8K, DSLR 85mm, hyper-detailed, volumetric lighting, cinematic color grading'},epic:{icon:'\u2694\uFE0F',name:'EPIC',bible:'Epic historical painting. Oil on canvas. Dramatic Renaissance composition. Rembrandt lighting. Rich impasto texture. Museum quality.',suffix:'epic oil painting, Rembrandt lighting, dramatic composition, museum quality'}};
 var TOPIC_CATS=[{id:'horror',name:'\uD83C\uDFAC Horror',p:['short horror','creepy twists','found footage']},{id:'tiktok',name:'\uD83D\uDCF1 TikTok',p:['viral TikTok','trending','hook-first']},{id:'youtube',name:'\uD83C\uDFA5 YouTube',p:['cinematic intros','dramatic scenes','epic']}];
 var DEFAULT_SCRIPT='SCENE 1 (0:00 - 0:05) \u2014 THE DARK ROOM\nDark living room 3AM. Man on couch. Cold blue phone glow. Heavy grain.\n\nSCENE 2 (0:05 - 0:10) \u2014 THE MONITOR\nPhone screen. Baby monitor, night-vision green. Baby in swaddle.\n\nSCENE 3 (0:10 - 0:17) \u2014 THE PAUSE\nMan\'s face, blue-white light from below. Frozen alert.\n\nSCENE 4 (0:17 - 0:22) \u2014 THE FIGURE\nPhone: nursery, dark silhouette in corner. Static.\n\nSCENE 5 (0:22 - 0:28) \u2014 THE RUN\nMan running dark hallway. Motion blur. Blue phone light.\n\nSCENE 6 (0:28 - 0:32) \u2014 THE DOOR\nNursery door open. Man silhouette. Moonlight blinds.\n\nSCENE 7 (0:32 - 0:35) \u2014 EMPTY CORNER\nCorner empty. Moonlight. Crib with baby.\n\nSCENE 8 (0:35 - 0:42) \u2014 FALSE SAFETY\nFather holds baby. Warm amber moonlight.\n\nSCENE 9 (0:42 - 0:50) \u2014 THE CALM\nClose-up eyes closed. Warm. Baby on shoulder.\n\nSCENE 10 (0:50 - 0:55) \u2014 NOTIFICATION\nEyes open. Phone. Cold blue + warm amber.\n\nSCENE 11 (0:55 - 0:58) \u2014 THE SCREEN\nPhone: camera disconnected 11:47 PM.\n\nSCENE 12 (0:58 - 1:00) \u2014 THE END\nClose-up. Cold blue. Horrified. Heavy grain.';
 var $s=document.getElementById('script');
@@ -576,11 +576,11 @@ function showAnalysis(heroIdx){
 var ap=document.getElementById('analysisPanel');ap.style.display='block';
 var ag=document.getElementById('analysisGrid');
 var done=scenes.filter(function(s){return s.status==='done'}).length;
-ag.innerHTML='<div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#ff6b6b">'+scenes.length+'</div><div style="font-size:7px;color:#444;font-weight:700">SCENES</div></div><div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#6b8aff">'+Math.ceil(scenes.length/BATCH_GEN)+'</div><div style="font-size:7px;color:#444;font-weight:700">BATCHES OF 10</div></div><div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#4ade80">'+done+'</div><div style="font-size:7px;color:#444;font-weight:700">GENERATED</div></div><div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#ffaa33">'+(scenes.length-done)+'</div><div style="font-size:7px;color:#444;font-weight:700">REMAINING</div></div>';
+ag.innerHTML='<div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#ff6b6b">'+scenes.length+'</div><div style="font-size:7px;color:#888;font-weight:700">SCENES</div></div><div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#6b8aff">'+Math.ceil(scenes.length/BATCH_GEN)+'</div><div style="font-size:7px;color:#888;font-weight:700">BATCHES OF 10</div></div><div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#4ade80">'+done+'</div><div style="font-size:7px;color:#888;font-weight:700">GENERATED</div></div><div style="text-align:center;padding:8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px"><div style="font-size:18px;font-weight:800;color:#ffaa33">'+(scenes.length-done)+'</div><div style="font-size:7px;color:#888;font-weight:700">REMAINING</div></div>';
 var bible=document.getElementById('styleBible').value.trim();
 var neg=document.getElementById('negPrompt').value.trim();
 document.getElementById('analysisChars').innerHTML='<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:9px;padding:4px 8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;color:#ccc">\uD83D\uDCD6 Bible: '+(bible?'<span style=color:#4ade80>\u2713 Active</span>':'<span style=color:#ff6b6b>Not set</span>')+'</span><span style="font-size:9px;padding:4px 8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;color:#ccc">\u26D4 Negative: '+(neg?'<span style=color:#4ade80>\u2713 Active</span>':'<span style=color:#555>None</span>')+'</span><span style="font-size:9px;padding:4px 8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;color:#ccc">\uD83D\uDC65 Chars: '+characters.length+'/3</span><span style="font-size:9px;padding:4px 8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;color:#ccc">\uD83D\uDDBC\uFE0F Mood: '+moodImages.length+'/6</span></div>';
-document.getElementById('analysisHero').innerHTML='<div style="font-size:9px;color:#555;padding:6px 8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px">\uD83C\uDFAF Hero frame: <strong style="color:#ff6b6b">Scene '+(heroIdx+1)+'</strong> \u2014 '+scenes[heroIdx].title+' <span style="color:#333">(most complex, generated first)</span></div>';
+document.getElementById('analysisHero').innerHTML='<div style="font-size:9px;color:#555;padding:6px 8px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px">\uD83C\uDFAF Hero frame: <strong style="color:#ff6b6b">Scene '+(heroIdx+1)+'</strong> \u2014 '+scenes[heroIdx].title+' <span style="color:#777">(most complex, generated first)</span></div>';
 updateBatchProgress()}
 
 function updateBatchProgress(){
