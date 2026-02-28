@@ -3,945 +3,782 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinema Studio</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>Gemini Image Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #08080c;
-  --s1: #0e0e14;
-  --s2: #14141e;
-  --s3: #1a1a28;
-  --border: #252535;
-  --border2: #353545;
-  --text: #e8e8f0;
-  --text2: #7878a0;
-  --text3: #4a4a6a;
-  --red: #ff2d55;
-  --blue: #0a84ff;
-  --purple: #bf5af2;
-  --green: #30d158;
-  --orange: #ff9f0a;
-  --cyan: #64d2ff;
-  --yellow: #ffd60a;
-}
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0b;
+    --surface: #141416;
+    --surface-2: #1c1c20;
+    --surface-3: #242428;
+    --border: #2a2a30;
+    --border-hover: #3a3a44;
+    --text: #e8e6e3;
+    --text-dim: #8a8a95;
+    --text-muted: #5a5a65;
+    --accent: #c8ff00;
+    --accent-dim: #a0cc00;
+    --accent-glow: rgba(200, 255, 0, 0.08);
+    --danger: #ff4466;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', -apple-system, sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-/* HEADER */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(8,8,12,0.9);
-  backdrop-filter: blur(20px);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.logo-icon {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, var(--red), var(--purple));
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-}
-.logo-text {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-.logo-text span { color: var(--red); }
-.logo-ver {
-  font-size: 10px;
-  color: var(--text3);
-  letter-spacing: 2px;
-  font-weight: 600;
-}
-.header-actions {
-  display: flex;
-  gap: 8px;
-}
-.header-btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--s2);
-  color: var(--text2);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: inherit;
-}
-.header-btn:hover { border-color: var(--border2); color: var(--text); }
-.header-btn.primary {
-  background: var(--red);
-  border-color: var(--red);
-  color: #fff;
-}
-.header-btn.primary:hover { filter: brightness(1.15); }
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(200, 255, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(100, 120, 255, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-/* LAYOUT */
-.layout {
-  display: grid;
-  grid-template-columns: 320px 1fr 340px;
-  min-height: calc(100vh - 65px);
-}
+  .app { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
 
-/* PANELS */
-.panel {
-  border-right: 1px solid var(--border);
-  overflow-y: auto;
-  padding: 0;
-}
-.panel:last-child { border-right: none; }
-.panel-section {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-}
-.panel-title {
-  font-size: 10px;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: var(--text3);
-  font-weight: 700;
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.panel-title .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--red);
-}
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
 
-/* SCENE INPUT */
-.scene-input {
-  width: 100%;
-  background: var(--s1);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 16px;
-  color: var(--text);
-  font-size: 14px;
-  font-family: inherit;
-  line-height: 1.6;
-  resize: vertical;
-  min-height: 120px;
-  transition: border-color 0.2s;
-}
-.scene-input:focus {
-  outline: none;
-  border-color: var(--red);
-  box-shadow: 0 0 0 3px rgba(255,45,85,0.1);
-}
-.scene-input::placeholder { color: var(--text3); }
+  .logo {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
 
-/* SELECTOR GRID */
-.sel-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-.sel-grid.three { grid-template-columns: 1fr 1fr 1fr; }
-.sel-item {
-  padding: 10px 8px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--s1);
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text2);
-  user-select: none;
-}
-.sel-item:hover { border-color: var(--border2); color: var(--text); }
-.sel-item.active {
-  border-color: var(--red);
-  background: rgba(255,45,85,0.08);
-  color: var(--red);
-  box-shadow: 0 0 0 1px rgba(255,45,85,0.2);
-}
-.sel-item .icon {
-  font-size: 18px;
-  display: block;
-  margin-bottom: 4px;
-}
-.sel-item .label {
-  font-size: 10px;
-  display: block;
-  color: var(--text3);
-  margin-top: 2px;
-  font-weight: 400;
-}
+  .logo h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.75rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
 
-/* SLIDER */
-.slider-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-.slider-label {
-  font-size: 11px;
-  color: var(--text2);
-  font-weight: 600;
-  min-width: 70px;
-}
-.slider-wrap {
-  flex: 1;
-  position: relative;
-}
-input[type="range"] {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: var(--s3);
-  border-radius: 2px;
-  outline: none;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--red);
-  cursor: pointer;
-  box-shadow: 0 0 8px rgba(255,45,85,0.4);
-}
-.slider-val {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  color: var(--cyan);
-  font-weight: 700;
-  min-width: 45px;
-  text-align: right;
-}
+  .logo .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
 
-/* DROPDOWN */
-.dropdown {
-  width: 100%;
-  padding: 10px 14px;
-  background: var(--s1);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-size: 13px;
-  font-family: inherit;
-  font-weight: 500;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237878a0'%3E%3Cpath d='M6 8.5L1 3.5h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  margin-bottom: 10px;
-}
-.dropdown:focus { outline: none; border-color: var(--red); }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
 
-/* CENTER - PREVIEW */
-.center {
-  display: flex;
-  flex-direction: column;
-  background: var(--bg);
-}
-.preview-area {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-.preview-frame {
-  width: 90%;
-  max-width: 680px;
-  aspect-ratio: 16/9;
-  background: var(--s1);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-.preview-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 11px;
-}
-.preview-empty {
-  text-align: center;
-  color: var(--text3);
-}
-.preview-empty .cam-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-  opacity: 0.3;
-}
-.preview-empty p {
-  font-size: 13px;
-  font-weight: 500;
-}
+  .api-key-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
 
-/* GRID OVERLAY */
-.grid-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.15;
-}
-.grid-overlay.active { opacity: 0.3; }
-.grid-overlay .v-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: var(--cyan);
-}
-.grid-overlay .h-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--cyan);
-}
+  .api-key-btn:hover { border-color: var(--border-hover); color: var(--text); }
+  .api-key-btn.active { border-color: var(--accent); color: var(--accent); }
+  .api-key-btn .key-icon { font-size: 0.9rem; }
 
-/* CAMERA INFO BAR */
-.cam-info {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  padding: 12px 20px;
-  border-top: 1px solid var(--border);
-  background: var(--s1);
-}
-.cam-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--text3);
-  font-weight: 500;
-}
-.cam-tag span { color: var(--cyan); font-weight: 700; }
+  /* Layout */
+  .layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
 
-/* RIGHT PANEL - PROMPT OUTPUT */
-.prompt-output {
-  background: var(--s1);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  line-height: 1.8;
-  color: var(--text);
-  min-height: 200px;
-  max-height: 400px;
-  overflow-y: auto;
-  word-break: break-word;
-  position: relative;
-}
-.prompt-output .tag {
-  color: var(--cyan);
-  font-weight: 700;
-}
-.prompt-output .val { color: var(--orange); }
-.prompt-output .scene-text { color: var(--green); }
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+  }
 
-/* ACTION BUTTONS */
-.action-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-.action-btn {
-  flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.15s;
-  letter-spacing: 0.3px;
-}
-.action-btn.copy {
-  background: var(--s2);
-  border: 1px solid var(--border);
-  color: var(--text2);
-}
-.action-btn.copy:hover { border-color: var(--cyan); color: var(--cyan); }
-.action-btn.generate {
-  background: linear-gradient(135deg, var(--red), #cc1144);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(255,45,85,0.3);
-}
-.action-btn.generate:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  /* Sidebar / Controls */
+  .controls {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    position: sticky;
+    top: 2rem;
+  }
 
-/* PRESETS ROW */
-.presets-row {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.preset-chip {
-  padding: 6px 12px;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  background: var(--s1);
-  font-size: 11px;
-  color: var(--text2);
-  cursor: pointer;
-  transition: all 0.15s;
-  font-weight: 500;
-}
-.preset-chip:hover { border-color: var(--purple); color: var(--purple); }
-.preset-chip.active { border-color: var(--purple); background: rgba(191,90,242,0.1); color: var(--purple); }
+  .field label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
 
-/* TOAST */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: var(--green);
-  color: #000;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 700;
-  z-index: 999;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  pointer-events: none;
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
+  .prompt-area {
+    width: 100%;
+    min-height: 120px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color 0.2s;
+    outline: none;
+  }
 
-/* CHARACTER REFS */
-.char-slots {
-  display: flex;
-  gap: 8px;
-}
-.char-slot {
-  width: 56px;
-  height: 56px;
-  border-radius: 10px;
-  border: 2px dashed var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-size: 20px;
-  color: var(--text3);
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.char-slot:hover { border-color: var(--red); }
-.char-slot.filled {
-  border-style: solid;
-  border-color: var(--red);
-}
-.char-slot img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.char-slot .remove {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 16px;
-  height: 16px;
-  background: var(--red);
-  border-radius: 50%;
-  font-size: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  cursor: pointer;
-}
+  .prompt-area:focus { border-color: var(--accent); }
+  .prompt-area::placeholder { color: var(--text-muted); }
 
-/* RESPONSIVE */
-@media (max-width: 1100px) {
-  .layout { grid-template-columns: 280px 1fr 300px; }
-}
-@media (max-width: 900px) {
-  .layout { grid-template-columns: 1fr; }
-  .panel { border-right: none; border-bottom: 1px solid var(--border); }
-  .preview-frame { width: 95%; }
-}
+  /* Select & Input shared */
+  .select-wrap {
+    position: relative;
+  }
 
-/* SCROLLBAR */
-.panel::-webkit-scrollbar { width: 4px; }
-.panel::-webkit-scrollbar-track { background: transparent; }
-.panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .select-wrap::after {
+    content: '▾';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    font-size: 0.75rem;
+  }
+
+  select, .input-field {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  select:focus, .input-field:focus { border-color: var(--accent); }
+  select option { background: var(--surface-2); color: var(--text); }
+
+  /* Row fields */
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Generate Button */
+  .generate-btn {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    background: var(--accent);
+    color: #0a0a0b;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .generate-btn:hover { background: #d4ff33; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(200, 255, 0, 0.2); }
+  .generate-btn:active { transform: translateY(0); }
+  .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .generate-btn.loading {
+    color: transparent;
+  }
+
+  .generate-btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2.5px solid rgba(10, 10, 11, 0.3);
+    border-top-color: #0a0a0b;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Canvas area */
+  .canvas {
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* Empty state */
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 3rem;
+    text-align: center;
+  }
+
+  .empty-state .icon {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.3;
+  }
+
+  .empty-state p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 300px;
+  }
+
+  .empty-state p strong {
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  /* Image result */
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    animation: fadeUp 0.5s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-card img {
+    width: 100%;
+    display: block;
+    background: var(--surface-2);
+  }
+
+  .result-meta {
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+  }
+
+  .result-prompt {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 1rem;
+  }
+
+  .result-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .icon-btn {
+    padding: 0.4rem 0.7rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .icon-btn:hover { border-color: var(--border-hover); color: var(--text); }
+
+  /* Error state */
+  .error-msg {
+    background: rgba(255, 68, 102, 0.08);
+    border: 1px solid rgba(255, 68, 102, 0.2);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    color: var(--danger);
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease;
+  }
+
+  /* Text response */
+  .text-response {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+    animation: fadeUp 0.5s ease;
+  }
+
+  /* Modal overlay */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    width: 90%;
+    max-width: 420px;
+    animation: scaleIn 0.25s ease;
+  }
+
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .modal h2 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+  }
+
+  .btn-secondary {
+    padding: 0.55rem 1rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-secondary:hover { border-color: var(--border-hover); color: var(--text); }
+
+  .btn-primary {
+    padding: 0.55rem 1.2rem;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #0a0a0b;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-primary:hover { background: #d4ff33; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
+
+  /* Image upload */
+  .upload-zone {
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .upload-zone:hover { border-color: var(--border-hover); color: var(--text-dim); }
+  .upload-zone.has-image { border-style: solid; border-color: var(--accent); padding: 0.4rem; }
+  .upload-zone.has-image img { width: 100%; border-radius: 6px; display: block; }
+
+  .upload-zone input { display: none; }
+
+  .clear-upload {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-size: 0.7rem;
+    color: var(--danger);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">
-    <div class="logo-icon">🎥</div>
-    <div>
-      <div class="logo-text">Cinema <span>Studio</span></div>
-      <div class="logo-ver">IMAGE DIRECTOR v1.0</div>
+<div class="app">
+  <header class="header">
+    <div class="logo">
+      <h1>Gemini Image Studio</h1>
+      <span class="dot"></span>
     </div>
-  </div>
-  <div class="header-actions">
-    <button class="header-btn" onclick="resetAll()">Reset</button>
-    <button class="header-btn" onclick="toggleGrid()">Grid</button>
-    <button class="header-btn primary" onclick="buildAndCopy()">⌘ Build Prompt</button>
+    <button class="api-key-btn" id="apiKeyBtn" onclick="showApiModal()">
+      <span class="key-icon">🔑</span>
+      <span id="apiKeyLabel">Set API Key</span>
+    </button>
+  </header>
+
+  <div class="layout">
+    <aside class="controls">
+      <div class="field">
+        <label>Prompt</label>
+        <textarea class="prompt-area" id="prompt" placeholder="Describe the image you want to create…"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Reference Image (optional)</label>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <span id="uploadLabel">Click to upload an image</span>
+          <input type="file" id="fileInput" accept="image/*" onchange="handleUpload(event)">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Model</label>
+        <div class="select-wrap">
+          <select id="model">
+            <option value="gemini-3.1-flash-image-preview">Flash 3.1 — Fast & efficient</option>
+            <option value="gemini-3-pro-image-preview">Pro 3 — Studio quality</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Aspect Ratio</label>
+          <div class="select-wrap">
+            <select id="aspectRatio">
+              <option value="">Auto</option>
+              <option value="1:1">1:1 Square</option>
+              <option value="16:9">16:9 Wide</option>
+              <option value="9:16">9:16 Portrait</option>
+              <option value="4:3">4:3</option>
+              <option value="3:4">3:4</option>
+              <option value="4:1">4:1 Ultra Wide</option>
+              <option value="1:4">1:4 Ultra Tall</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Resolution</label>
+          <div class="select-wrap">
+            <select id="resolution">
+              <option value="1024x1024">1K (default)</option>
+              <option value="512x512">0.5K</option>
+              <option value="2048x2048">2K</option>
+              <option value="4096x4096">4K</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button class="generate-btn" id="generateBtn" onclick="generate()">Generate Image</button>
+
+      <div id="errorContainer"></div>
+    </aside>
+
+    <main class="canvas" id="canvas">
+      <div class="empty-state">
+        <div class="icon">✦</div>
+        <p>Enter a prompt and hit <strong>Generate</strong> to create an image with Gemini's native image generation.</p>
+      </div>
+    </main>
   </div>
 </div>
 
-<div class="layout">
-
-  <!-- LEFT PANEL: CAMERA + SCENE -->
-  <div class="panel" id="leftPanel">
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> SCENE DESCRIPTION</div>
-      <textarea class="scene-input" id="sceneDesc" placeholder="Describe your scene... e.g. 'White faceless mannequin sitting at desk in dark room, holding phone, laptop glowing with data'"></textarea>
+<!-- API Key Modal -->
+<div class="modal-overlay" id="apiModal" style="display:none" onclick="if(event.target===this)hideApiModal()">
+  <div class="modal">
+    <h2>API Key</h2>
+    <p>Enter your Google AI Studio API key. It stays in your browser and is never stored elsewhere.</p>
+    <input class="input-field" type="password" id="apiKeyInput" placeholder="AIza...">
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="hideApiModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveApiKey()">Save Key</button>
     </div>
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> SHOT TYPE</div>
-      <div class="sel-grid three" id="shotGrid">
-        <div class="sel-item" data-val="Extreme close-up" onclick="selectIn(this,'shotGrid')"><span class="icon">👁</span>ECU<span class="label">Eyes/Detail</span></div>
-        <div class="sel-item active" data-val="Close-up" onclick="selectIn(this,'shotGrid')"><span class="icon">😐</span>CU<span class="label">Face/Head</span></div>
-        <div class="sel-item" data-val="Medium close-up" onclick="selectIn(this,'shotGrid')"><span class="icon">👤</span>MCU<span class="label">Chest up</span></div>
-        <div class="sel-item" data-val="Medium shot" onclick="selectIn(this,'shotGrid')"><span class="icon">🧍</span>MS<span class="label">Waist up</span></div>
-        <div class="sel-item" data-val="Wide shot" onclick="selectIn(this,'shotGrid')"><span class="icon">🏠</span>WS<span class="label">Full body</span></div>
-        <div class="sel-item" data-val="Extreme wide shot, establishing shot" onclick="selectIn(this,'shotGrid')"><span class="icon">🌆</span>EWS<span class="label">Landscape</span></div>
-      </div>
-    </div>
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> CAMERA ANGLE</div>
-      <div class="sel-grid three" id="angleGrid">
-        <div class="sel-item" data-val="low angle, looking up" onclick="selectIn(this,'angleGrid')"><span class="icon">⬆</span>Low<span class="label">Power</span></div>
-        <div class="sel-item active" data-val="eye level" onclick="selectIn(this,'angleGrid')"><span class="icon">➡</span>Eye<span class="label">Neutral</span></div>
-        <div class="sel-item" data-val="high angle, looking down" onclick="selectIn(this,'angleGrid')"><span class="icon">⬇</span>High<span class="label">Vulnerable</span></div>
-        <div class="sel-item" data-val="bird's eye view, top down" onclick="selectIn(this,'angleGrid')"><span class="icon">🔽</span>Bird<span class="label">Top down</span></div>
-        <div class="sel-item" data-val="dutch angle, tilted" onclick="selectIn(this,'angleGrid')"><span class="icon">↗</span>Dutch<span class="label">Tension</span></div>
-        <div class="sel-item" data-val="over the shoulder" onclick="selectIn(this,'angleGrid')"><span class="icon">👀</span>OTS<span class="label">POV</span></div>
-      </div>
-    </div>
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> LENS & OPTICS</div>
-      <div class="slider-row">
-        <span class="slider-label">Focal Length</span>
-        <div class="slider-wrap"><input type="range" id="focalLength" min="8" max="200" value="35" oninput="updateSlider(this)"></div>
-        <span class="slider-val" id="focalVal">35mm</span>
-      </div>
-      <div class="slider-row">
-        <span class="slider-label">Aperture</span>
-        <div class="slider-wrap"><input type="range" id="aperture" min="1" max="22" value="2" step="0.1" oninput="updateAperture(this)"></div>
-        <span class="slider-val" id="apertureVal">f/2.0</span>
-      </div>
-      <select class="dropdown" id="lensType">
-        <option value="cinematic prime lens">Prime Lens</option>
-        <option value="anamorphic lens, 2.39:1 aspect ratio, lens flare">Anamorphic</option>
-        <option value="macro lens, extreme detail">Macro</option>
-        <option value="tilt-shift lens, miniature effect">Tilt-Shift</option>
-        <option value="vintage lens, soft focus, chromatic aberration">Vintage</option>
-        <option value="fisheye lens, barrel distortion">Fisheye</option>
-      </select>
-      <select class="dropdown" id="sensorType">
-        <option value="shot on ARRI Alexa 65">ARRI Alexa 65</option>
-        <option value="shot on RED V-Raptor 8K">RED V-Raptor</option>
-        <option value="shot on Sony Venice 2">Sony Venice 2</option>
-        <option value="shot on Blackmagic URSA">Blackmagic URSA</option>
-        <option value="shot on 35mm film">35mm Film</option>
-        <option value="shot on IMAX 70mm">IMAX 70mm</option>
-      </select>
-    </div>
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> DEPTH OF FIELD</div>
-      <div class="sel-grid three" id="dofGrid">
-        <div class="sel-item active" data-val="shallow depth of field, bokeh background" onclick="selectIn(this,'dofGrid')">Shallow<span class="label">Bokeh</span></div>
-        <div class="sel-item" data-val="medium depth of field" onclick="selectIn(this,'dofGrid')">Medium<span class="label">Balanced</span></div>
-        <div class="sel-item" data-val="deep focus, everything sharp" onclick="selectIn(this,'dofGrid')">Deep<span class="label">All sharp</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CENTER: PREVIEW -->
-  <div class="center">
-    <div class="preview-area">
-      <div class="preview-frame" id="previewFrame">
-        <div class="grid-overlay" id="gridOverlay">
-          <div class="v-line" style="left:33.33%"></div>
-          <div class="v-line" style="left:66.66%"></div>
-          <div class="h-line" style="top:33.33%"></div>
-          <div class="h-line" style="top:66.66%"></div>
-        </div>
-        <div class="preview-empty" id="previewEmpty">
-          <div class="cam-icon">🎬</div>
-          <p>Configure your shot, then build the prompt</p>
-          <p style="font-size:11px;margin-top:8px;color:#353545">Your cinematic prompt will appear on the right</p>
-        </div>
-      </div>
-    </div>
-    <div class="cam-info">
-      <div class="cam-tag">LENS <span id="infoLens">35mm</span></div>
-      <div class="cam-tag">APERTURE <span id="infoAperture">f/2.0</span></div>
-      <div class="cam-tag">SENSOR <span id="infoSensor">ARRI</span></div>
-      <div class="cam-tag">SHOT <span id="infoShot">CU</span></div>
-      <div class="cam-tag">ANGLE <span id="infoAngle">Eye</span></div>
-    </div>
-  </div>
-
-  <!-- RIGHT PANEL: STYLE + OUTPUT -->
-  <div class="panel" id="rightPanel">
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> LIGHTING</div>
-      <div class="sel-grid" id="lightGrid">
-        <div class="sel-item active" data-val="volumetric lighting, god rays, atmospheric haze" onclick="selectIn(this,'lightGrid')"><span class="icon">🌫</span>Volumetric<span class="label">God rays</span></div>
-        <div class="sel-item" data-val="three-point lighting, key light, fill light, rim light" onclick="selectIn(this,'lightGrid')"><span class="icon">💡</span>3-Point<span class="label">Classic</span></div>
-        <div class="sel-item" data-val="dramatic rim lighting, strong backlight, silhouette edges" onclick="selectIn(this,'lightGrid')"><span class="icon">🌅</span>Rim Light<span class="label">Edge glow</span></div>
-        <div class="sel-item" data-val="harsh overhead fluorescent lighting, cold institutional" onclick="selectIn(this,'lightGrid')"><span class="icon">🏢</span>Fluorescent<span class="label">Institutional</span></div>
-        <div class="sel-item" data-val="single practical light source, desk lamp, warm spotlight" onclick="selectIn(this,'lightGrid')"><span class="icon">🔦</span>Practical<span class="label">Single source</span></div>
-        <div class="sel-item" data-val="neon lighting, cyberpunk, colored light reflections" onclick="selectIn(this,'lightGrid')"><span class="icon">💜</span>Neon<span class="label">Cyberpunk</span></div>
-        <div class="sel-item" data-val="natural soft window light, golden hour" onclick="selectIn(this,'lightGrid')"><span class="icon">🪟</span>Window<span class="label">Natural</span></div>
-        <div class="sel-item" data-val="low key lighting, heavy shadows, film noir, dark" onclick="selectIn(this,'lightGrid')"><span class="icon">🌑</span>Low Key<span class="label">Noir</span></div>
-      </div>
-    </div>
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> RENDER STYLE</div>
-      <div class="sel-grid" id="styleGrid">
-        <div class="sel-item active" data-val="3D render, Cinema 4D, Octane render" onclick="selectIn(this,'styleGrid')"><span class="icon">🧊</span>3D Render<span class="label">C4D/Octane</span></div>
-        <div class="sel-item" data-val="3D render, Blender, realistic materials" onclick="selectIn(this,'styleGrid')"><span class="icon">🎨</span>Blender<span class="label">Realistic</span></div>
-        <div class="sel-item" data-val="photorealistic, hyperrealistic photography" onclick="selectIn(this,'styleGrid')"><span class="icon">📷</span>Photo Real<span class="label">Hyper real</span></div>
-        <div class="sel-item" data-val="Unreal Engine 5, ray tracing, photogrammetry" onclick="selectIn(this,'styleGrid')"><span class="icon">🎮</span>UE5<span class="label">Game engine</span></div>
-      </div>
-    </div>
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> COLOR GRADE</div>
-      <div class="sel-grid three" id="colorGrid">
-        <div class="sel-item active" data-val="desaturated, teal and orange color grade, cinematic" onclick="selectIn(this,'colorGrid')">Teal/Orange</div>
-        <div class="sel-item" data-val="cold blue tones, desaturated, clinical" onclick="selectIn(this,'colorGrid')">Cold Blue</div>
-        <div class="sel-item" data-val="warm golden tones, amber highlights" onclick="selectIn(this,'colorGrid')">Warm Gold</div>
-        <div class="sel-item" data-val="high contrast black and white, monochrome" onclick="selectIn(this,'colorGrid')">B&W</div>
-        <div class="sel-item" data-val="neon color palette, saturated, vivid" onclick="selectIn(this,'colorGrid')">Neon</div>
-        <div class="sel-item" data-val="muted earth tones, film grain, vintage" onclick="selectIn(this,'colorGrid')">Vintage</div>
-      </div>
-    </div>
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> MOOD / GENRE</div>
-      <div class="presets-row" id="moodRow">
-        <span class="preset-chip active" data-val="suspenseful, tension" onclick="toggleChip(this)">Suspense</span>
-        <span class="preset-chip" data-val="documentary, journalistic" onclick="toggleChip(this)">Documentary</span>
-        <span class="preset-chip" data-val="horror, unsettling, dread" onclick="toggleChip(this)">Horror</span>
-        <span class="preset-chip" data-val="dramatic, emotional" onclick="toggleChip(this)">Drama</span>
-        <span class="preset-chip" data-val="action, dynamic, intense" onclick="toggleChip(this)">Action</span>
-        <span class="preset-chip" data-val="melancholic, somber, reflective" onclick="toggleChip(this)">Melancholy</span>
-        <span class="preset-chip" data-val="mysterious, enigmatic, unknown" onclick="toggleChip(this)">Mystery</span>
-        <span class="preset-chip" data-val="clinical, sterile, institutional" onclick="toggleChip(this)">Clinical</span>
-      </div>
-    </div>
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> QUALITY TAGS</div>
-      <div class="presets-row" id="qualityRow">
-        <span class="preset-chip active" data-val="4K" onclick="toggleChip(this)">4K</span>
-        <span class="preset-chip active" data-val="photorealistic lighting" onclick="toggleChip(this)">Photo Light</span>
-        <span class="preset-chip" data-val="8K UHD" onclick="toggleChip(this)">8K</span>
-        <span class="preset-chip" data-val="HDR" onclick="toggleChip(this)">HDR</span>
-        <span class="preset-chip active" data-val="cinematic composition" onclick="toggleChip(this)">Cinematic</span>
-        <span class="preset-chip" data-val="award-winning photography" onclick="toggleChip(this)">Award</span>
-        <span class="preset-chip" data-val="film grain, 35mm texture" onclick="toggleChip(this)">Film Grain</span>
-        <span class="preset-chip" data-val="Ray tracing" onclick="toggleChip(this)">Ray Trace</span>
-      </div>
-    </div>
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> BUILT PROMPT</div>
-      <div class="prompt-output" id="promptOutput">
-        <span style="color:var(--text3);font-style:italic">Configure settings and click "Build Prompt" to generate your cinematic prompt...</span>
-      </div>
-      <div class="action-row">
-        <button class="action-btn copy" onclick="copyPrompt()">📋 Copy</button>
-        <button class="action-btn generate" onclick="buildAndCopy()">⚡ Build Prompt</button>
-      </div>
-    </div>
-
-    <div class="panel-section">
-      <div class="panel-title"><span class="dot"></span> SCENE PRESETS</div>
-      <div class="presets-row">
-        <span class="preset-chip" onclick="loadPreset('bedroom')">🛏 Dark Bedroom</span>
-        <span class="preset-chip" onclick="loadPreset('office')">🏢 Call Center</span>
-        <span class="preset-chip" onclick="loadPreset('hacker')">💻 Hacker Room</span>
-        <span class="preset-chip" onclick="loadPreset('court')">⚖ Courtroom</span>
-        <span class="preset-chip" onclick="loadPreset('fbi')">🔍 FBI Raid</span>
-        <span class="preset-chip" onclick="loadPreset('teen')">🎮 Teen Bedroom</span>
-        <span class="preset-chip" onclick="loadPreset('store')">📱 Phone Store</span>
-        <span class="preset-chip" onclick="loadPreset('defeat')">😔 Defeat</span>
-      </div>
-    </div>
-
   </div>
 </div>
-
-<div class="toast" id="toast">Prompt copied to clipboard!</div>
 
 <script>
-// ── Selection Logic ──
-function selectIn(el, gridId) {
-  document.querySelectorAll(`#${gridId} .sel-item`).forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
-  updateInfoBar();
-}
+  let API_KEY = '';
+  let uploadedImageBase64 = null;
+  let uploadedImageMime = null;
 
-function toggleChip(el) {
-  el.classList.toggle('active');
-}
-
-function getActive(gridId) {
-  const a = document.querySelector(`#${gridId} .sel-item.active`);
-  return a ? a.dataset.val : '';
-}
-
-function getActiveChips(rowId) {
-  return Array.from(document.querySelectorAll(`#${rowId} .preset-chip.active`)).map(c => c.dataset.val);
-}
-
-// ── Sliders ──
-function updateSlider(el) {
-  document.getElementById('focalVal').textContent = el.value + 'mm';
-  document.getElementById('infoLens').textContent = el.value + 'mm';
-}
-
-function updateAperture(el) {
-  const v = parseFloat(el.value).toFixed(1);
-  document.getElementById('apertureVal').textContent = 'f/' + v;
-  document.getElementById('infoAperture').textContent = 'f/' + v;
-}
-
-// ── Info Bar ──
-function updateInfoBar() {
-  const shot = getActive('shotGrid');
-  const angle = getActive('angleGrid');
-  document.getElementById('infoShot').textContent = shot.split(',')[0].replace('Extreme ','E').replace('close-up','CU').replace('Close-up','CU').replace('Medium close-up','MCU').replace('Medium shot','MS').replace('Wide shot','WS').replace('shot','').trim() || 'CU';
-  document.getElementById('infoAngle').textContent = angle.split(',')[0].replace(' angle','').replace('eye level','Eye').replace('low','Low').replace('high','High').trim() || 'Eye';
-  const sensor = document.getElementById('sensorType').value;
-  document.getElementById('infoSensor').textContent = sensor.replace('shot on ','').split(' ')[0];
-}
-
-// ── Grid Toggle ──
-let gridOn = false;
-function toggleGrid() {
-  gridOn = !gridOn;
-  document.getElementById('gridOverlay').classList.toggle('active', gridOn);
-}
-
-// ── Build Prompt ──
-function buildPrompt() {
-  const scene = document.getElementById('sceneDesc').value.trim();
-  const shot = getActive('shotGrid');
-  const angle = getActive('angleGrid');
-  const focal = document.getElementById('focalLength').value;
-  const aperture = parseFloat(document.getElementById('aperture').value).toFixed(1);
-  const lens = document.getElementById('lensType').value;
-  const sensor = document.getElementById('sensorType').value;
-  const dof = getActive('dofGrid');
-  const light = getActive('lightGrid');
-  const style = getActive('styleGrid');
-  const color = getActive('colorGrid');
-  const moods = getActiveChips('moodRow');
-  const quality = getActiveChips('qualityRow');
-
-  const parts = [];
-
-  // Style first
-  if (style) parts.push(style);
-
-  // Scene
-  if (scene) {
-    parts.push(scene);
-  } else {
-    parts.push('[describe your scene here]');
+  function showApiModal() {
+    document.getElementById('apiModal').style.display = 'flex';
+    const input = document.getElementById('apiKeyInput');
+    input.value = API_KEY;
+    setTimeout(() => input.focus(), 100);
   }
 
-  // Shot + Angle
-  if (shot) parts.push(shot);
-  if (angle) parts.push(angle);
-
-  // Lens
-  parts.push(`${focal}mm focal length`);
-  parts.push(`f/${aperture}`);
-  if (lens) parts.push(lens);
-
-  // Sensor
-  if (sensor) parts.push(sensor);
-
-  // DOF
-  if (dof) parts.push(dof);
-
-  // Lighting
-  if (light) parts.push(light);
-
-  // Color
-  if (color) parts.push(color);
-
-  // Mood
-  if (moods.length) parts.push(moods.join(', '));
-
-  // Quality
-  if (quality.length) parts.push(quality.join(', '));
-
-  return parts.join(', ');
-}
-
-function buildAndCopy() {
-  const prompt = buildPrompt();
-  const output = document.getElementById('promptOutput');
-
-  // Colorized display
-  const scene = document.getElementById('sceneDesc').value.trim();
-  let html = prompt;
-
-  // Highlight scene text
-  if (scene) {
-    html = html.replace(scene, `<span class="scene-text">${scene}</span>`);
+  function hideApiModal() {
+    document.getElementById('apiModal').style.display = 'none';
   }
 
-  // Highlight technical terms
-  const techTerms = ['3D render', 'Cinema 4D', 'Octane render', 'Blender', 'Unreal Engine 5', 'ray tracing', 'ARRI Alexa 65', 'RED V-Raptor', 'Sony Venice 2', 'Blackmagic URSA', '35mm film', 'IMAX 70mm', '4K', '8K UHD', 'HDR', 'photorealistic', 'anamorphic', 'bokeh'];
-  techTerms.forEach(term => {
-    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    html = html.replace(regex, '<span class="tag">$1</span>');
+  function saveApiKey() {
+    API_KEY = document.getElementById('apiKeyInput').value.trim();
+    const label = document.getElementById('apiKeyLabel');
+    const btn = document.getElementById('apiKeyBtn');
+    if (API_KEY) {
+      label.textContent = '••••' + API_KEY.slice(-4);
+      btn.classList.add('active');
+    } else {
+      label.textContent = 'Set API Key';
+      btn.classList.remove('active');
+    }
+    hideApiModal();
+  }
+
+  function handleUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const base64Full = e.target.result;
+      uploadedImageBase64 = base64Full.split(',')[1];
+      uploadedImageMime = file.type;
+
+      const zone = document.getElementById('uploadZone');
+      zone.classList.add('has-image');
+      zone.innerHTML = `<img src="${base64Full}" alt="uploaded"><button class="clear-upload" onclick="clearUpload(event)">✕ Remove</button>`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearUpload(e) {
+    e.stopPropagation();
+    uploadedImageBase64 = null;
+    uploadedImageMime = null;
+    const zone = document.getElementById('uploadZone');
+    zone.classList.remove('has-image');
+    zone.innerHTML = `<span id="uploadLabel">Click to upload an image</span><input type="file" id="fileInput" accept="image/*" onchange="handleUpload(event)">`;
+  }
+
+  function showError(msg) {
+    document.getElementById('errorContainer').innerHTML = `<div class="error-msg">${msg}</div>`;
+    setTimeout(() => {
+      const el = document.getElementById('errorContainer');
+      if (el) el.innerHTML = '';
+    }, 8000);
+  }
+
+  async function generate() {
+    const prompt = document.getElementById('prompt').value.trim();
+    if (!prompt) return showError('Please enter a prompt.');
+    if (!API_KEY) return showError('Please set your API key first.');
+
+    const model = document.getElementById('model').value;
+    const aspectRatio = document.getElementById('aspectRatio').value;
+    const btn = document.getElementById('generateBtn');
+
+    btn.disabled = true;
+    btn.classList.add('loading');
+    document.getElementById('errorContainer').innerHTML = '';
+
+    // Build parts
+    const parts = [];
+
+    if (uploadedImageBase64) {
+      parts.push({
+        inlineData: {
+          mimeType: uploadedImageMime,
+          data: uploadedImageBase64
+        }
+      });
+    }
+
+    parts.push({ text: prompt });
+
+    // Build request
+    const requestBody = {
+      contents: [{ role: "user", parts }],
+      generationConfig: {
+        responseModalities: ["TEXT", "IMAGE"],
+      }
+    };
+
+    if (aspectRatio) {
+      requestBody.generationConfig.aspectRatio = aspectRatio;
+    }
+
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        const errMsg = errData?.error?.message || `HTTP ${response.status}`;
+        throw new Error(errMsg);
+      }
+
+      const data = await response.json();
+
+      // Parse response
+      const candidates = data.candidates || [];
+      if (candidates.length === 0) throw new Error('No response from model. The prompt may have been blocked.');
+
+      const parts_out = candidates[0].content?.parts || [];
+      let imageData = null;
+      let textData = '';
+
+      for (const part of parts_out) {
+        if (part.inlineData) {
+          imageData = part.inlineData;
+        }
+        if (part.text) {
+          textData += part.text;
+        }
+      }
+
+      // Render
+      const canvas = document.getElementById('canvas');
+
+      // Remove empty state
+      const emptyState = canvas.querySelector('.empty-state');
+      if (emptyState) emptyState.remove();
+
+      if (imageData) {
+        const card = document.createElement('div');
+        card.className = 'result-card';
+
+        const imgSrc = `data:${imageData.mimeType};base64,${imageData.data}`;
+
+        card.innerHTML = `
+          <img src="${imgSrc}" alt="${prompt}">
+          <div class="result-meta">
+            <span class="result-prompt">${escapeHtml(prompt)}</span>
+            <div class="result-actions">
+              <button class="icon-btn" onclick="downloadImage('${imgSrc}', 'gemini-image.png')">⬇ Save</button>
+              <button class="icon-btn" onclick="openFullscreen('${imgSrc}')">⛶ Full</button>
+            </div>
+          </div>
+        `;
+
+        canvas.insertBefore(card, canvas.firstChild);
+      }
+
+      if (textData && !imageData) {
+        const textEl = document.createElement('div');
+        textEl.className = 'text-response';
+        textEl.textContent = textData;
+        canvas.insertBefore(textEl, canvas.firstChild);
+      }
+
+    } catch (err) {
+      showError(escapeHtml(err.message));
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function downloadImage(dataUrl, filename) {
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = filename;
+    a.click();
+  }
+
+  function openFullscreen(dataUrl) {
+    const w = window.open();
+    w.document.write(`<html><head><title>Image</title><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh}img{max-width:100%;max-height:100vh;object-fit:contain}</style></head><body><img src="${dataUrl}"></body></html>`);
+  }
+
+  // Enter key to generate
+  document.getElementById('prompt').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      generate();
+    }
   });
-
-  // Highlight values
-  const valTerms = ['f/[0-9.]+', '[0-9]+mm focal length', 'shallow depth', 'deep focus', 'medium depth'];
-  valTerms.forEach(pattern => {
-    const regex = new RegExp(`(${pattern})`, 'gi');
-    html = html.replace(regex, '<span class="val">$1</span>');
-  });
-
-  output.innerHTML = html;
-}
-
-function copyPrompt() {
-  const prompt = buildPrompt();
-  navigator.clipboard.writeText(prompt).then(() => {
-    const toast = document.getElementById('toast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2000);
-  });
-}
-
-// ── Scene Presets ──
-const presets = {
-  bedroom: { scene: "white faceless mannequin figure lying asleep in dark bedroom, smartphone on wooden nightstand glowing bright blue, minimal furniture", shot: 1, angle: 1, light: 0, mood: [0], focal: 35, aperture: 1.8 },
-  office: { scene: "white faceless mannequin figure in office cubicle wearing headset, slightly slumped tired posture, multiple monitors showing customer database, gray cubicle walls", shot: 3, angle: 1, light: 3, mood: [7], focal: 50, aperture: 4 },
-  hacker: { scene: "white faceless mannequin figure sitting at desk in dark room, laptop screen showing dark web marketplace with green text, single desk lamp warm spotlight", shot: 2, angle: 1, light: 4, mood: [0, 6], focal: 35, aperture: 2 },
-  court: { scene: "courtroom interior, white faceless mannequin in business suit at plaintiff table, mannequin judge elevated on bench, large screen showing corporate logo, wood paneling", shot: 4, angle: 1, light: 3, mood: [3], focal: 24, aperture: 5.6 },
-  fbi: { scene: "two white faceless mannequins in dark suits approaching suburban house front door, early dawn light, one reaching toward doorbell, wet driveway", shot: 4, angle: 2, light: 6, mood: [0, 4], focal: 24, aperture: 4 },
-  teen: { scene: "white faceless mannequin teenager in messy bedroom at gaming PC, RGB keyboard lighting, energy drinks and textbooks scattered, computer screens showing cryptocurrency wallet with millions, school backpack on floor", shot: 3, angle: 1, light: 5, mood: [0, 6], focal: 28, aperture: 2.8 },
-  store: { scene: "interior of mobile phone retail store, white faceless mannequin standing behind service counter in retail polo shirt, bright fluorescent overhead lighting, phone display cases in background", shot: 3, angle: 1, light: 3, mood: [7], focal: 35, aperture: 4 },
-  defeat: { scene: "white faceless mannequin figure sitting on edge of bed in morning sunlight, head down in defeated posture, smartphone lying face-down on floor, empty feeling, melancholic morning light through curtains", shot: 3, angle: 2, light: 6, mood: [5], focal: 50, aperture: 2 },
-};
-
-function loadPreset(key) {
-  const p = presets[key];
-  document.getElementById('sceneDesc').value = p.scene;
-
-  // Shot
-  const shots = document.querySelectorAll('#shotGrid .sel-item');
-  shots.forEach((s,i) => s.classList.toggle('active', i === p.shot));
-
-  // Angle
-  const angles = document.querySelectorAll('#angleGrid .sel-item');
-  angles.forEach((a,i) => a.classList.toggle('active', i === p.angle));
-
-  // Light
-  const lights = document.querySelectorAll('#lightGrid .sel-item');
-  lights.forEach((l,i) => l.classList.toggle('active', i === p.light));
-
-  // Mood
-  const moods = document.querySelectorAll('#moodRow .preset-chip');
-  moods.forEach((m,i) => m.classList.toggle('active', p.mood.includes(i)));
-
-  // Focal + Aperture
-  document.getElementById('focalLength').value = p.focal;
-  document.getElementById('focalVal').textContent = p.focal + 'mm';
-  document.getElementById('aperture').value = p.aperture;
-  document.getElementById('apertureVal').textContent = 'f/' + p.aperture.toFixed(1);
-
-  updateInfoBar();
-  buildAndCopy();
-}
-
-function resetAll() {
-  document.getElementById('sceneDesc').value = '';
-  document.getElementById('focalLength').value = 35;
-  document.getElementById('focalVal').textContent = '35mm';
-  document.getElementById('aperture').value = 2;
-  document.getElementById('apertureVal').textContent = 'f/2.0';
-  document.getElementById('lensType').selectedIndex = 0;
-  document.getElementById('sensorType').selectedIndex = 0;
-
-  document.querySelectorAll('.sel-item').forEach((s,i) => {
-    const grid = s.parentElement.id;
-    s.classList.remove('active');
-  });
-  // Reset defaults
-  document.querySelector('#shotGrid .sel-item:nth-child(2)').classList.add('active');
-  document.querySelector('#angleGrid .sel-item:nth-child(2)').classList.add('active');
-  document.querySelector('#dofGrid .sel-item:nth-child(1)').classList.add('active');
-  document.querySelector('#lightGrid .sel-item:nth-child(1)').classList.add('active');
-  document.querySelector('#styleGrid .sel-item:nth-child(1)').classList.add('active');
-  document.querySelector('#colorGrid .sel-item:nth-child(1)').classList.add('active');
-
-  document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
-  document.querySelector('#moodRow .preset-chip:nth-child(1)').classList.add('active');
-  document.querySelector('#qualityRow .preset-chip:nth-child(1)').classList.add('active');
-  document.querySelector('#qualityRow .preset-chip:nth-child(2)').classList.add('active');
-  document.querySelector('#qualityRow .preset-chip:nth-child(5)').classList.add('active');
-
-  document.getElementById('promptOutput').innerHTML = '<span style="color:var(--text3);font-style:italic">Configure settings and click "Build Prompt"...</span>';
-  updateInfoBar();
-}
-
-// ── Init ──
-document.getElementById('sensorType').addEventListener('change', updateInfoBar);
-document.getElementById('lensType').addEventListener('change', updateInfoBar);
-updateInfoBar();
 </script>
 
 </body>
