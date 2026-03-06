@@ -361,7 +361,7 @@
   <div class="section">
     <div class="section-label"><div class="dot"></div> API KEY</div>
     <div class="key-row">
-      <input type="password" class="key-input" id="apiKey" placeholder="Gemini API key" autocomplete="off">
+      <input type="password" class="key-input" id="apiKey" placeholder="Gemini API key" autocomplete="off" onblur="if(this.value.trim())saveKey()">
       <button class="key-save" id="keySave" onclick="saveKey()">Save</button>
     </div>
   </div>
@@ -392,14 +392,6 @@
   <!-- Options -->
   <div class="section">
     <div class="opts-grid">
-      <div class="opt-col">
-        <div class="section-label"><div class="dot"></div> RESOLUTION</div>
-        <div class="chip-group" id="resGroup">
-          <div class="chip active" data-val="1024x1024" onclick="selectChip(this,'resGroup')">1K</div>
-          <div class="chip" data-val="2048x2048" onclick="selectChip(this,'resGroup')">2K</div>
-          <div class="chip" data-val="4096x4096" onclick="selectChip(this,'resGroup')">4K <span class="sub">$$</span></div>
-        </div>
-      </div>
       <div class="opt-col">
         <div class="section-label"><div class="dot"></div> IMAGES</div>
         <div class="chip-group" id="numGroup">
@@ -462,6 +454,13 @@
       </div>
     </div>
     <div class="section" style="background:var(--bg); margin-top: 10px">
+      <div class="section-label"><div class="dot"></div> API KEY</div>
+      <p style="font-size:13px;color:var(--text3);line-height:1.5;margin-bottom:10px">
+        Your key is saved in your browser's local storage. It never leaves your device.
+      </p>
+      <button class="key-save" style="width:100%" onclick="clearKey()">Clear saved API key</button>
+    </div>
+    <div class="section" style="background:var(--bg); margin-top: 10px">
       <div class="section-label"><div class="dot"></div> ABOUT</div>
       <p style="font-size:13px;color:var(--text3);line-height:1.5">
         NB Pro Studio calls the Gemini API directly from your browser. Your API key stays on your device. No data is sent to any server except Google's API.
@@ -495,25 +494,40 @@ OUTPUT: Generate the highest quality photorealistic 3D rendered image possible. 
 // Init
 document.getElementById('sysPrompt').value = DEFAULT_SYS;
 
-// Load saved key
-const savedKey = (() => { try { return sessionStorage.getItem('nbkey') || ''; } catch(e) { return ''; } })();
+// Load saved key from localStorage (persists across sessions)
+const savedKey = (() => { try { return localStorage.getItem('nbkey') || ''; } catch(e) { return ''; } })();
 if (savedKey) {
   document.getElementById('apiKey').value = savedKey;
   document.getElementById('apiKey').classList.add('saved');
-  document.getElementById('keySave').textContent = '✓';
+  document.getElementById('keySave').textContent = '✓ Saved';
   document.getElementById('keySave').classList.add('active');
 }
 
 function saveKey() {
   const key = document.getElementById('apiKey').value.trim();
   if (!key) return;
-  try { sessionStorage.setItem('nbkey', key); } catch(e) {}
+  try { localStorage.setItem('nbkey', key); } catch(e) {}
   document.getElementById('apiKey').classList.add('saved');
   document.getElementById('keySave').textContent = '✓';
   document.getElementById('keySave').classList.add('active');
   setTimeout(() => {
-    document.getElementById('keySave').textContent = 'Saved';
+    document.getElementById('keySave').textContent = '✓ Saved';
   }, 200);
+}
+
+// Also auto-save key on first successful generation
+function autoSaveKey() {
+  const key = document.getElementById('apiKey').value.trim();
+  if (key) { try { localStorage.setItem('nbkey', key); } catch(e) {} }
+}
+
+function clearKey() {
+  try { localStorage.removeItem('nbkey'); } catch(e) {}
+  document.getElementById('apiKey').value = '';
+  document.getElementById('apiKey').classList.remove('saved');
+  document.getElementById('keySave').textContent = 'Save';
+  document.getElementById('keySave').classList.remove('active');
+  toggleSettings();
 }
 
 function selectChip(el, groupId) {
@@ -580,7 +594,6 @@ async function generate() {
 
   const sysPrompt = document.getElementById('sysPrompt').value.trim();
   const model = getChipVal('modelGroup');
-  const resolution = getChipVal('resGroup');
   const numImages = parseInt(getChipVal('numGroup'));
   const aspectRatio = getChipVal('arGroup');
 
@@ -593,32 +606,16 @@ async function generate() {
   document.getElementById('errorMsg').classList.remove('visible');
 
   try {
-    const allImages = [];
-    const allText = [];
-    const requests = [];
+    const result = await callAPI(apiKey, model, sysPrompt, prompt, aspectRatio, numImages, uploadedImage);
 
-    for (let i = 0; i < numImages; i++) {
-      requests.push(callAPI(apiKey, model, sysPrompt, prompt, aspectRatio, resolution, uploadedImage));
-    }
-
-    const results = await Promise.allSettled(requests);
-
-    for (const result of results) {
-      if (result.status === 'fulfilled' && result.value) {
-        if (result.value.images) allImages.push(...result.value.images);
-        if (result.value.text) allText.push(result.value.text);
-      } else if (result.status === 'rejected') {
-        console.error(result.reason);
-      }
-    }
-
-    if (allImages.length === 0 && allText.length === 0) {
+    if (result.images.length === 0 && !result.text) {
       showError('No images returned. The prompt may have been blocked by safety filters. Try rewording.');
       resetBtn();
       return;
     }
 
-    renderResults(allImages, allText);
+    renderResults(result.images, result.text ? [result.text] : []);
+    autoSaveKey(); // persist key after first success
 
   } catch (err) {
     showError('Error: ' + (err.message || 'Unknown error'));
@@ -636,8 +633,11 @@ function resetBtn() {
   label.textContent = 'Generate';
 }
 
-async function callAPI(apiKey, model, sysPrompt, prompt, aspectRatio, resolution, refImage) {
+async function callAPI(apiKey, model, sysPrompt, prompt, aspectRatio, numberOfImages, refImage) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+  // Build the full prompt — prepend system prompt as context since not all models support systemInstruction
+  const fullPrompt = sysPrompt ? sysPrompt + '\n\n---\n\nUser request:\n' + prompt : prompt;
 
   const parts = [];
 
@@ -647,19 +647,22 @@ async function callAPI(apiKey, model, sysPrompt, prompt, aspectRatio, resolution
     });
   }
 
-  parts.push({ text: prompt });
+  parts.push({ text: fullPrompt });
 
   const body = {
-    systemInstruction: sysPrompt ? { parts: [{ text: sysPrompt }] } : undefined,
     contents: [{ parts }],
     generationConfig: {
       responseModalities: ["TEXT", "IMAGE"],
-      imageGenerationConfig: {
-        aspectRatio: aspectRatio,
-        outputImageSize: resolution
-      }
     }
   };
+
+  // Add image config — only include supported params
+  const imageConfig = {};
+  if (aspectRatio) imageConfig.aspectRatio = aspectRatio;
+  if (numberOfImages > 1) imageConfig.numberOfImages = numberOfImages;
+  if (Object.keys(imageConfig).length > 0) {
+    body.generationConfig.imageGenerationConfig = imageConfig;
+  }
 
   const resp = await fetch(url, {
     method: 'POST',
@@ -669,12 +672,25 @@ async function callAPI(apiKey, model, sysPrompt, prompt, aspectRatio, resolution
 
   if (!resp.ok) {
     const errData = await resp.json().catch(() => ({}));
-    throw new Error(errData.error?.message || `API error ${resp.status}`);
+    const msg = errData.error?.message || `API error ${resp.status}`;
+    const status = errData.error?.status || '';
+    throw new Error(status ? `${status}: ${msg}` : msg);
   }
 
   const data = await resp.json();
   const images = [];
   let text = '';
+
+  // Check for blocked content
+  if (data.candidates?.[0]?.finishReason === 'SAFETY') {
+    throw new Error('Blocked by safety filter. Try adjusting your prompt — avoid weapons, real people, or violent imagery.');
+  }
+  if (data.candidates?.[0]?.finishReason === 'IMAGE_SAFETY') {
+    throw new Error('Image blocked by safety filter. Try removing references to real people, violence, or sensitive content.');
+  }
+  if (data.promptFeedback?.blockReason) {
+    throw new Error('Prompt blocked: ' + data.promptFeedback.blockReason + '. Try rewording.');
+  }
 
   if (data.candidates) {
     for (const candidate of data.candidates) {
