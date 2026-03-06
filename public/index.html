@@ -2,784 +2,756 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gemini Image Studio</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NB Pro — Image Gen</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0a0a0b;
-    --surface: #141416;
-    --surface-2: #1c1c20;
-    --surface-3: #242428;
-    --border: #2a2a30;
-    --border-hover: #3a3a44;
-    --text: #e8e6e3;
-    --text-dim: #8a8a95;
-    --text-muted: #5a5a65;
-    --accent: #c8ff00;
-    --accent-dim: #a0cc00;
-    --accent-glow: rgba(200, 255, 0, 0.08);
-    --danger: #ff4466;
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --surface3: #222236;
+    --border: #2a2a40;
+    --border-active: #e94560;
+    --red: #e94560;
+    --red-dim: #e9456030;
+    --blue: #4f7df5;
+    --blue-dim: #4f7df520;
+    --green: #22c55e;
+    --green-dim: #22c55e20;
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #606078;
     --radius: 12px;
     --radius-sm: 8px;
   }
 
+  html { font-size: 16px; }
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Outfit', sans-serif;
     background: var(--bg);
     color: var(--text);
-    min-height: 100vh;
+    min-height: 100dvh;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
-
-  /* Ambient background */
-  body::before {
-    content: '';
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(ellipse at 30% 20%, rgba(200, 255, 0, 0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 80%, rgba(100, 120, 255, 0.02) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .app { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
 
   /* Header */
   .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 2.5rem;
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
     border-bottom: 1px solid var(--border);
-    margin-bottom: 2.5rem;
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
-
   .logo {
-    display: flex;
-    align-items: baseline;
-    gap: 0.6rem;
+    display: flex; align-items: center; gap: 8px;
   }
-
-  .logo h1 {
-    font-family: 'Instrument Serif', serif;
-    font-size: 1.75rem;
-    font-weight: 400;
+  .logo-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--red), #ff6b6b);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .logo-text {
+    font-weight: 700; font-size: 17px;
     letter-spacing: -0.02em;
-    color: var(--text);
   }
-
-  .logo .dot {
-    width: 8px;
-    height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-    display: inline-block;
-    animation: pulse-dot 2s ease-in-out infinite;
+  .logo-text span { color: var(--red); }
+  .header-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text2); font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
   }
+  .header-btn:hover { background: var(--surface3); color: var(--text); }
 
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
+  /* Main */
+  .main { padding: 16px; max-width: 600px; margin: 0 auto; padding-bottom: 100px; }
 
-  .api-key-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .api-key-btn:hover { border-color: var(--border-hover); color: var(--text); }
-  .api-key-btn.active { border-color: var(--accent); color: var(--accent); }
-  .api-key-btn .key-icon { font-size: 0.9rem; }
-
-  /* Layout */
-  .layout {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 2rem;
-    align-items: start;
-  }
-
-  @media (max-width: 860px) {
-    .layout { grid-template-columns: 1fr; }
-  }
-
-  /* Sidebar / Controls */
-  .controls {
+  /* Sections */
+  .section {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    position: sticky;
-    top: 2rem;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .section-label {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text3); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-label .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--red);
   }
 
-  .field label {
-    display: block;
-    font-size: 0.7rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-    margin-bottom: 0.5rem;
+  /* API Key */
+  .key-row {
+    display: flex; gap: 8px;
   }
+  .key-input {
+    flex: 1; height: 42px; border-radius: var(--radius-sm);
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; padding: 0 12px;
+    transition: border-color 0.2s;
+  }
+  .key-input:focus { outline: none; border-color: var(--red); }
+  .key-input.saved { border-color: var(--green); }
+  .key-save {
+    height: 42px; padding: 0 16px; border-radius: var(--radius-sm);
+    background: var(--surface3); border: 1px solid var(--border);
+    color: var(--text); font-family: 'Outfit', sans-serif;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .key-save:hover { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+  .key-save.active { background: var(--green-dim); border-color: var(--green); color: var(--green); }
 
+  /* Prompt */
   .prompt-area {
-    width: 100%;
-    min-height: 120px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
+    width: 100%; min-height: 120px; max-height: 300px;
     border-radius: var(--radius-sm);
-    padding: 0.85rem 1rem;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    resize: vertical;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-family: 'Outfit', sans-serif;
+    font-size: 15px; line-height: 1.5;
+    padding: 12px; resize: vertical;
     transition: border-color 0.2s;
-    outline: none;
   }
+  .prompt-area:focus { outline: none; border-color: var(--red); }
+  .prompt-area::placeholder { color: var(--text3); }
 
-  .prompt-area:focus { border-color: var(--accent); }
-  .prompt-area::placeholder { color: var(--text-muted); }
-
-  /* Select & Input shared */
-  .select-wrap {
-    position: relative;
-  }
-
-  .select-wrap::after {
-    content: '▾';
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-    pointer-events: none;
-    font-size: 0.75rem;
-  }
-
-  select, .input-field {
-    width: 100%;
-    padding: 0.6rem 0.85rem;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
+  /* Image Upload */
+  .upload-zone {
+    border: 2px dashed var(--border);
     border-radius: var(--radius-sm);
-    color: var(--text);
-    font-family: inherit;
-    font-size: 0.85rem;
-    outline: none;
-    transition: border-color 0.2s;
-    appearance: none;
-    -webkit-appearance: none;
+    padding: 20px; text-align: center;
+    cursor: pointer; transition: all 0.2s;
+    margin-top: 10px;
   }
-
-  select:focus, .input-field:focus { border-color: var(--accent); }
-  select option { background: var(--surface-2); color: var(--text); }
-
-  /* Row fields */
-  .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+  .upload-zone:hover { border-color: var(--text3); background: var(--surface2); }
+  .upload-zone.has-image { border-color: var(--green); border-style: solid; padding: 8px; }
+  .upload-zone .label { font-size: 13px; color: var(--text3); }
+  .upload-zone .label strong { color: var(--text2); }
+  .upload-preview {
+    max-width: 100%; max-height: 200px; border-radius: 6px;
+    display: none;
   }
+  .upload-zone.has-image .label { display: none; }
+  .upload-zone.has-image .upload-preview { display: block; }
+  .upload-clear {
+    margin-top: 8px; font-size: 12px; color: var(--red);
+    cursor: pointer; display: none;
+  }
+  .upload-zone.has-image ~ .upload-clear { display: block; }
+
+  /* Option Chips */
+  .chip-group {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .chip {
+    height: 36px; padding: 0 14px;
+    border-radius: 18px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text2);
+    font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 4px;
+    user-select: none; -webkit-user-select: none;
+  }
+  .chip:hover { border-color: var(--text3); color: var(--text); }
+  .chip.active {
+    background: var(--red-dim); border-color: var(--red);
+    color: var(--red); font-weight: 600;
+  }
+  .chip .sub { font-size: 10px; color: var(--text3); margin-left: 2px; }
+  .chip.active .sub { color: var(--red); opacity: 0.7; }
+
+  /* Options Grid */
+  .opts-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .opt-col .section-label { margin-bottom: 8px; }
+
+  /* System Prompt Toggle */
+  .sys-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; user-select: none;
+  }
+  .sys-toggle .arrow {
+    font-size: 12px; color: var(--text3);
+    transition: transform 0.2s;
+  }
+  .sys-toggle.open .arrow { transform: rotate(180deg); }
+  .sys-area {
+    display: none; margin-top: 10px;
+  }
+  .sys-area.visible { display: block; }
+  .sys-textarea {
+    width: 100%; min-height: 200px;
+    border-radius: var(--radius-sm);
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--text2); font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; line-height: 1.6;
+    padding: 12px; resize: vertical;
+  }
+  .sys-textarea:focus { outline: none; border-color: var(--border-active); color: var(--text); }
 
   /* Generate Button */
-  .generate-btn {
-    width: 100%;
-    padding: 0.85rem 1.5rem;
-    background: var(--accent);
-    color: #0a0a0b;
-    font-family: inherit;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    border: none;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
+  .gen-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    padding: 12px 16px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: linear-gradient(transparent, var(--bg) 20%);
+    z-index: 100;
+  }
+  .gen-btn {
+    width: 100%; max-width: 600px; margin: 0 auto; display: flex;
+    height: 52px; border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--red), #ff4070);
+    border: none; color: white;
+    font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer; transition: all 0.2s;
+    align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 4px 24px var(--red-dim);
+  }
+  .gen-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 32px var(--red-dim); }
+  .gen-btn:active { transform: scale(0.98); }
+  .gen-btn:disabled {
+    opacity: 0.4; cursor: not-allowed;
+    transform: none; box-shadow: none;
+  }
+  .gen-btn.loading {
+    background: var(--surface3); color: var(--text2);
+    box-shadow: none;
   }
 
-  .generate-btn:hover { background: #d4ff33; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(200, 255, 0, 0.2); }
-  .generate-btn:active { transform: translateY(0); }
-  .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-
-  .generate-btn.loading {
-    color: transparent;
-  }
-
-  .generate-btn.loading::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    margin: -10px 0 0 -10px;
-    border: 2.5px solid rgba(10, 10, 11, 0.3);
-    border-top-color: #0a0a0b;
+  /* Spinner */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid transparent; border-top-color: currentColor;
     border-radius: 50%;
-    animation: spin 0.6s linear infinite;
+    animation: spin 0.8s linear infinite;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Canvas area */
-  .canvas {
-    min-height: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  /* Results */
+  .results {
+    margin-top: 12px;
   }
-
-  /* Empty state */
-  .empty-state {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 500px;
-    border: 1px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 3rem;
-    text-align: center;
+  .results-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
   }
-
-  .empty-state .icon {
-    font-size: 3rem;
-    margin-bottom: 1.5rem;
-    opacity: 0.3;
+  .results-title { font-weight: 600; font-size: 15px; }
+  .results-count { font-size: 12px; color: var(--text3); }
+  .result-grid {
+    display: grid; gap: 10px;
+    grid-template-columns: 1fr;
   }
-
-  .empty-state p {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    line-height: 1.6;
-    max-width: 300px;
-  }
-
-  .empty-state p strong {
-    color: var(--text-dim);
-    font-weight: 500;
-  }
-
-  /* Image result */
+  .result-grid.multi { grid-template-columns: 1fr 1fr; }
   .result-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    animation: fadeUp 0.5s ease;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    position: relative;
   }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
   .result-card img {
-    width: 100%;
-    display: block;
-    background: var(--surface-2);
+    width: 100%; display: block;
   }
-
-  .result-meta {
-    padding: 1rem 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-top: 1px solid var(--border);
-  }
-
-  .result-prompt {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-right: 1rem;
-  }
-
   .result-actions {
-    display: flex;
-    gap: 0.5rem;
+    display: flex; gap: 6px; padding: 8px;
   }
-
-  .icon-btn {
-    padding: 0.4rem 0.7rem;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text-dim);
-    font-size: 0.75rem;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
+  .result-action {
+    flex: 1; height: 34px; border-radius: 6px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text2); font-family: 'Outfit', sans-serif;
+    font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
   }
-
-  .icon-btn:hover { border-color: var(--border-hover); color: var(--text); }
-
-  /* Error state */
-  .error-msg {
-    background: rgba(255, 68, 102, 0.08);
-    border: 1px solid rgba(255, 68, 102, 0.2);
-    border-radius: var(--radius-sm);
-    padding: 0.85rem 1rem;
-    font-size: 0.82rem;
-    color: var(--danger);
-    line-height: 1.5;
-    animation: fadeUp 0.3s ease;
-  }
+  .result-action:hover { background: var(--surface3); color: var(--text); }
+  .result-action.primary { background: var(--red-dim); border-color: var(--red); color: var(--red); }
 
   /* Text response */
   .text-response {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem;
-    font-size: 0.88rem;
-    line-height: 1.7;
-    color: var(--text-dim);
-    animation: fadeUp 0.5s ease;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px;
+    margin-top: 10px;
+    font-size: 14px; line-height: 1.6; color: var(--text2);
+    white-space: pre-wrap; word-break: break-word;
+    max-height: 300px; overflow-y: auto;
   }
 
-  /* Modal overlay */
+  /* Error */
+  .error-msg {
+    background: #1a0a0f; border: 1px solid #e9456040;
+    border-radius: var(--radius-sm); padding: 12px;
+    font-size: 13px; color: var(--red);
+    margin-top: 10px; display: none;
+  }
+  .error-msg.visible { display: block; }
+
+  /* Settings Modal */
   .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 200; display: none;
+    align-items: flex-end; justify-content: center;
     backdrop-filter: blur(4px);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.2s ease;
   }
-
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
+  .modal-overlay.visible { display: flex; }
   .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.75rem;
-    width: 90%;
-    max-width: 420px;
-    animation: scaleIn 0.25s ease;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    width: 100%; max-width: 600px;
+    max-height: 80dvh; overflow-y: auto;
+    padding: 20px 16px 40px;
+    animation: slideUp 0.3s ease;
   }
-
-  @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+  @keyframes slideUp { from { transform: translateY(100%); } }
+  .modal-handle {
+    width: 36px; height: 4px; border-radius: 2px;
+    background: var(--text3); margin: 0 auto 16px;
   }
-
-  .modal h2 {
-    font-family: 'Instrument Serif', serif;
-    font-weight: 400;
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .modal p {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-bottom: 1.25rem;
-    line-height: 1.5;
-  }
-
-  .modal-actions {
-    display: flex;
-    gap: 0.75rem;
-    justify-content: flex-end;
-    margin-top: 1.25rem;
-  }
-
-  .btn-secondary {
-    padding: 0.55rem 1rem;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text-dim);
-    font-family: inherit;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-secondary:hover { border-color: var(--border-hover); color: var(--text); }
-
-  .btn-primary {
-    padding: 0.55rem 1.2rem;
-    background: var(--accent);
-    border: none;
-    border-radius: var(--radius-sm);
-    color: #0a0a0b;
-    font-family: inherit;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-primary:hover { background: #d4ff33; }
+  .modal-title { font-weight: 600; font-size: 17px; margin-bottom: 16px; }
 
   /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* Image upload */
-  .upload-zone {
-    border: 1px dashed var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.75rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.78rem;
-    color: var(--text-muted);
+  /* Quick prompt chips */
+  .quick-prompts { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-top: 10px; }
+  .quick-prompts::-webkit-scrollbar { display: none; }
+  .quick-chip {
+    flex-shrink: 0; height: 30px; padding: 0 10px;
+    border-radius: 15px; background: var(--surface3);
+    border: 1px solid var(--border);
+    color: var(--text3); font-size: 11px; font-weight: 500;
+    cursor: pointer; display: flex; align-items: center;
+    transition: all 0.2s; white-space: nowrap;
   }
-
-  .upload-zone:hover { border-color: var(--border-hover); color: var(--text-dim); }
-  .upload-zone.has-image { border-style: solid; border-color: var(--accent); padding: 0.4rem; }
-  .upload-zone.has-image img { width: 100%; border-radius: 6px; display: block; }
-
-  .upload-zone input { display: none; }
-
-  .clear-upload {
-    display: inline-block;
-    margin-top: 0.4rem;
-    font-size: 0.7rem;
-    color: var(--danger);
-    cursor: pointer;
-    background: none;
-    border: none;
-    font-family: inherit;
-  }
+  .quick-chip:hover { border-color: var(--text3); color: var(--text2); }
 </style>
 </head>
 <body>
 
-<div class="app">
-  <header class="header">
-    <div class="logo">
-      <h1>Gemini Image Studio</h1>
-      <span class="dot"></span>
-    </div>
-    <button class="api-key-btn" id="apiKeyBtn" onclick="showApiModal()">
-      <span class="key-icon">🔑</span>
-      <span id="apiKeyLabel">Set API Key</span>
-    </button>
-  </header>
-
-  <div class="layout">
-    <aside class="controls">
-      <div class="field">
-        <label>Prompt</label>
-        <textarea class="prompt-area" id="prompt" placeholder="Describe the image you want to create…"></textarea>
-      </div>
-
-      <div class="field">
-        <label>Reference Image (optional)</label>
-        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-          <span id="uploadLabel">Click to upload an image</span>
-          <input type="file" id="fileInput" accept="image/*" onchange="handleUpload(event)">
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Model</label>
-        <div class="select-wrap">
-          <select id="model">
-            <option value="gemini-3.1-flash-image-preview">Flash 3.1 — Fast & efficient</option>
-            <option value="gemini-3-pro-image-preview">Pro 3 — Studio quality</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="field-row">
-        <div class="field">
-          <label>Aspect Ratio</label>
-          <div class="select-wrap">
-            <select id="aspectRatio">
-              <option value="">Auto</option>
-              <option value="1:1">1:1 Square</option>
-              <option value="16:9">16:9 Wide</option>
-              <option value="9:16">9:16 Portrait</option>
-              <option value="4:3">4:3</option>
-              <option value="3:4">3:4</option>
-              <option value="4:1">4:1 Ultra Wide</option>
-              <option value="1:4">1:4 Ultra Tall</option>
-            </select>
-          </div>
-        </div>
-        <div class="field">
-          <label>Resolution</label>
-          <div class="select-wrap">
-            <select id="resolution">
-              <option value="1024x1024">1K (default)</option>
-              <option value="512x512">0.5K</option>
-              <option value="2048x2048">2K</option>
-              <option value="4096x4096">4K</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <button class="generate-btn" id="generateBtn" onclick="generate()">Generate Image</button>
-
-      <div id="errorContainer"></div>
-    </aside>
-
-    <main class="canvas" id="canvas">
-      <div class="empty-state">
-        <div class="icon">✦</div>
-        <p>Enter a prompt and hit <strong>Generate</strong> to create an image with Gemini's native image generation.</p>
-      </div>
-    </main>
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🍌</div>
+    <div class="logo-text"><span>NB</span> Pro Studio</div>
   </div>
+  <button class="header-btn" onclick="toggleSettings()" aria-label="Settings">⚙</button>
 </div>
 
-<!-- API Key Modal -->
-<div class="modal-overlay" id="apiModal" style="display:none" onclick="if(event.target===this)hideApiModal()">
+<!-- Main Content -->
+<div class="main">
+
+  <!-- API Key -->
+  <div class="section">
+    <div class="section-label"><div class="dot"></div> API KEY</div>
+    <div class="key-row">
+      <input type="password" class="key-input" id="apiKey" placeholder="Gemini API key" autocomplete="off">
+      <button class="key-save" id="keySave" onclick="saveKey()">Save</button>
+    </div>
+  </div>
+
+  <!-- Prompt -->
+  <div class="section">
+    <div class="section-label"><div class="dot"></div> PROMPT</div>
+    <textarea class="prompt-area" id="prompt" placeholder="Describe your scene...&#10;&#10;e.g. 3D cinematic render of a faceless mannequin figure in a dark suit, standing in a server room filled with blue LED lights. Dramatic volumetric lighting, Octane render style. 16:9"></textarea>
+
+    <div class="quick-prompts">
+      <div class="quick-chip" onclick="appendPrompt('3D cinematic render, Octane style')">🎬 3D Cinematic</div>
+      <div class="quick-chip" onclick="appendPrompt('faceless mannequin figure, dark atmosphere')">🗿 Mannequin</div>
+      <div class="quick-chip" onclick="appendPrompt('volumetric lighting, dramatic chiaroscuro')">💡 Vol. Light</div>
+      <div class="quick-chip" onclick="appendPrompt('desaturated with red accent lighting')">🔴 Red Accent</div>
+      <div class="quick-chip" onclick="appendPrompt('dark void background, cinematic fog')">🌑 Dark Void</div>
+      <div class="quick-chip" onclick="appendPrompt('holographic display, glowing blue')">🔷 Hologram</div>
+    </div>
+
+    <!-- Reference Image Upload -->
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+      <div class="label">📎 <strong>Tap to upload reference image</strong><br>Optional — for style/scene reference</div>
+      <img class="upload-preview" id="uploadPreview">
+    </div>
+    <div class="upload-clear" onclick="clearUpload()">✕ Remove image</div>
+    <input type="file" id="fileInput" accept="image/*" hidden onchange="handleUpload(event)">
+  </div>
+
+  <!-- Options -->
+  <div class="section">
+    <div class="opts-grid">
+      <div class="opt-col">
+        <div class="section-label"><div class="dot"></div> RESOLUTION</div>
+        <div class="chip-group" id="resGroup">
+          <div class="chip active" data-val="1024x1024" onclick="selectChip(this,'resGroup')">1K</div>
+          <div class="chip" data-val="2048x2048" onclick="selectChip(this,'resGroup')">2K</div>
+          <div class="chip" data-val="4096x4096" onclick="selectChip(this,'resGroup')">4K <span class="sub">$$</span></div>
+        </div>
+      </div>
+      <div class="opt-col">
+        <div class="section-label"><div class="dot"></div> IMAGES</div>
+        <div class="chip-group" id="numGroup">
+          <div class="chip active" data-val="1" onclick="selectChip(this,'numGroup')">1</div>
+          <div class="chip" data-val="2" onclick="selectChip(this,'numGroup')">2</div>
+          <div class="chip" data-val="3" onclick="selectChip(this,'numGroup')">3</div>
+          <div class="chip" data-val="4" onclick="selectChip(this,'numGroup')">4</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <div class="section-label"><div class="dot"></div> ASPECT RATIO</div>
+      <div class="chip-group" id="arGroup">
+        <div class="chip" data-val="1:1" onclick="selectChip(this,'arGroup')">1:1</div>
+        <div class="chip active" data-val="16:9" onclick="selectChip(this,'arGroup')">16:9</div>
+        <div class="chip" data-val="9:16" onclick="selectChip(this,'arGroup')">9:16</div>
+        <div class="chip" data-val="4:3" onclick="selectChip(this,'arGroup')">4:3</div>
+        <div class="chip" data-val="3:4" onclick="selectChip(this,'arGroup')">3:4</div>
+        <div class="chip" data-val="3:2" onclick="selectChip(this,'arGroup')">3:2</div>
+        <div class="chip" data-val="21:9" onclick="selectChip(this,'arGroup')">21:9</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Prompt -->
+  <div class="section">
+    <div class="sys-toggle" id="sysToggle" onclick="toggleSys()">
+      <div class="section-label" style="margin:0"><div class="dot"></div> SYSTEM PROMPT</div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="sys-area" id="sysArea">
+      <textarea class="sys-textarea" id="sysPrompt"></textarea>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-msg" id="errorMsg"></div>
+
+  <!-- Results -->
+  <div class="results" id="results"></div>
+</div>
+
+<!-- Generate Button -->
+<div class="gen-bar">
+  <button class="gen-btn" id="genBtn" onclick="generate()">
+    <span id="genLabel">Generate</span>
+  </button>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal" onclick="if(event.target===this)toggleSettings()">
   <div class="modal">
-    <h2>API Key</h2>
-    <p>Enter your Google AI Studio API key. It stays in your browser and is never stored elsewhere.</p>
-    <input class="input-field" type="password" id="apiKeyInput" placeholder="AIza...">
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="hideApiModal()">Cancel</button>
-      <button class="btn-primary" onclick="saveApiKey()">Save Key</button>
+    <div class="modal-handle"></div>
+    <div class="modal-title">Settings</div>
+    <div class="section" style="background:var(--bg)">
+      <div class="section-label"><div class="dot"></div> MODEL</div>
+      <div class="chip-group" id="modelGroup">
+        <div class="chip active" data-val="gemini-2.5-flash-preview-image-generation" onclick="selectChip(this,'modelGroup')">NB 2 <span class="sub">Flash</span></div>
+        <div class="chip" data-val="gemini-3-pro-image-preview" onclick="selectChip(this,'modelGroup')">NB Pro <span class="sub">$$</span></div>
+      </div>
+    </div>
+    <div class="section" style="background:var(--bg); margin-top: 10px">
+      <div class="section-label"><div class="dot"></div> ABOUT</div>
+      <p style="font-size:13px;color:var(--text3);line-height:1.5">
+        NB Pro Studio calls the Gemini API directly from your browser. Your API key stays on your device. No data is sent to any server except Google's API.
+      </p>
     </div>
   </div>
 </div>
 
 <script>
-  let API_KEY = '';
-  let uploadedImageBase64 = null;
-  let uploadedImageMime = null;
+const DEFAULT_SYS = `You are a professional film trailer director, cinematographer, and storyboard artist specializing in 3D cinematic imagery for documentary-style content.
 
-  function showApiModal() {
-    document.getElementById('apiModal').style.display = 'flex';
-    const input = document.getElementById('apiKeyInput');
-    input.value = API_KEY;
-    setTimeout(() => input.focus(), 100);
-  }
+VISUAL STYLE RULES — apply to EVERY image you generate:
+• 3D cinematic render, Octane render style, hyper-detailed
+• Dark atmospheric environments with volumetric lighting
+• Dramatic chiaroscuro lighting with strong directional light sources
+• Desaturated color palette with vivid accent colors (red = danger, blue = authority/tech, yellow = urgency)
+• Faceless mannequin figures when humans are needed — smooth, featureless faces, realistic body proportions and clothing
+• Deep blacks, rich shadows, cinematic fog/haze
+• Professional-grade composition following rule of thirds
+• Consistent with a high-budget 3D documentary aesthetic
 
-  function hideApiModal() {
-    document.getElementById('apiModal').style.display = 'none';
-  }
+BEFORE generating any image, analyze the prompt and determine:
+1. Subject — what is the focal point
+2. Environment — where is this set
+3. Lighting — what creates drama and mood
+4. Camera — what angle, distance, and lens choice
+5. Color — what accent color serves the narrative
 
-  function saveApiKey() {
-    API_KEY = document.getElementById('apiKeyInput').value.trim();
-    const label = document.getElementById('apiKeyLabel');
-    const btn = document.getElementById('apiKeyBtn');
-    if (API_KEY) {
-      label.textContent = '••••' + API_KEY.slice(-4);
-      btn.classList.add('active');
-    } else {
-      label.textContent = 'Set API Key';
-      btn.classList.remove('active');
+OUTPUT: Generate the highest quality photorealistic 3D rendered image possible. No text, watermarks, or UI elements unless specifically requested.`;
+
+// Init
+document.getElementById('sysPrompt').value = DEFAULT_SYS;
+
+// Load saved key
+const savedKey = (() => { try { return sessionStorage.getItem('nbkey') || ''; } catch(e) { return ''; } })();
+if (savedKey) {
+  document.getElementById('apiKey').value = savedKey;
+  document.getElementById('apiKey').classList.add('saved');
+  document.getElementById('keySave').textContent = '✓';
+  document.getElementById('keySave').classList.add('active');
+}
+
+function saveKey() {
+  const key = document.getElementById('apiKey').value.trim();
+  if (!key) return;
+  try { sessionStorage.setItem('nbkey', key); } catch(e) {}
+  document.getElementById('apiKey').classList.add('saved');
+  document.getElementById('keySave').textContent = '✓';
+  document.getElementById('keySave').classList.add('active');
+  setTimeout(() => {
+    document.getElementById('keySave').textContent = 'Saved';
+  }, 200);
+}
+
+function selectChip(el, groupId) {
+  document.querySelectorAll(`#${groupId} .chip`).forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function getChipVal(groupId) {
+  const active = document.querySelector(`#${groupId} .chip.active`);
+  return active ? active.dataset.val : null;
+}
+
+function appendPrompt(text) {
+  const ta = document.getElementById('prompt');
+  if (ta.value && !ta.value.endsWith(' ') && !ta.value.endsWith('\n')) ta.value += ', ';
+  ta.value += text;
+  ta.focus();
+}
+
+function toggleSys() {
+  const toggle = document.getElementById('sysToggle');
+  const area = document.getElementById('sysArea');
+  toggle.classList.toggle('open');
+  area.classList.toggle('visible');
+}
+
+function toggleSettings() {
+  document.getElementById('settingsModal').classList.toggle('visible');
+}
+
+let uploadedImage = null;
+function handleUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    uploadedImage = { data: ev.target.result.split(',')[1], mime: file.type };
+    document.getElementById('uploadPreview').src = ev.target.result;
+    document.getElementById('uploadZone').classList.add('has-image');
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearUpload() {
+  uploadedImage = null;
+  document.getElementById('uploadZone').classList.remove('has-image');
+  document.getElementById('uploadPreview').src = '';
+  document.getElementById('fileInput').value = '';
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 8000);
+}
+
+async function generate() {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  if (!apiKey) { showError('Enter your Gemini API key first'); return; }
+
+  const prompt = document.getElementById('prompt').value.trim();
+  if (!prompt) { showError('Enter a prompt'); return; }
+
+  const sysPrompt = document.getElementById('sysPrompt').value.trim();
+  const model = getChipVal('modelGroup');
+  const resolution = getChipVal('resGroup');
+  const numImages = parseInt(getChipVal('numGroup'));
+  const aspectRatio = getChipVal('arGroup');
+
+  const btn = document.getElementById('genBtn');
+  const label = document.getElementById('genLabel');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  label.innerHTML = '<div class="spinner"></div> Generating...';
+
+  document.getElementById('errorMsg').classList.remove('visible');
+
+  try {
+    const allImages = [];
+    const allText = [];
+    const requests = [];
+
+    for (let i = 0; i < numImages; i++) {
+      requests.push(callAPI(apiKey, model, sysPrompt, prompt, aspectRatio, resolution, uploadedImage));
     }
-    hideApiModal();
-  }
 
-  function handleUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    const results = await Promise.allSettled(requests);
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const base64Full = e.target.result;
-      uploadedImageBase64 = base64Full.split(',')[1];
-      uploadedImageMime = file.type;
-
-      const zone = document.getElementById('uploadZone');
-      zone.classList.add('has-image');
-      zone.innerHTML = `<img src="${base64Full}" alt="uploaded"><button class="clear-upload" onclick="clearUpload(event)">✕ Remove</button>`;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function clearUpload(e) {
-    e.stopPropagation();
-    uploadedImageBase64 = null;
-    uploadedImageMime = null;
-    const zone = document.getElementById('uploadZone');
-    zone.classList.remove('has-image');
-    zone.innerHTML = `<span id="uploadLabel">Click to upload an image</span><input type="file" id="fileInput" accept="image/*" onchange="handleUpload(event)">`;
-  }
-
-  function showError(msg) {
-    document.getElementById('errorContainer').innerHTML = `<div class="error-msg">${msg}</div>`;
-    setTimeout(() => {
-      const el = document.getElementById('errorContainer');
-      if (el) el.innerHTML = '';
-    }, 8000);
-  }
-
-  async function generate() {
-    const prompt = document.getElementById('prompt').value.trim();
-    if (!prompt) return showError('Please enter a prompt.');
-    if (!API_KEY) return showError('Please set your API key first.');
-
-    const model = document.getElementById('model').value;
-    const aspectRatio = document.getElementById('aspectRatio').value;
-    const btn = document.getElementById('generateBtn');
-
-    btn.disabled = true;
-    btn.classList.add('loading');
-    document.getElementById('errorContainer').innerHTML = '';
-
-    // Build parts
-    const parts = [];
-
-    if (uploadedImageBase64) {
-      parts.push({
-        inlineData: {
-          mimeType: uploadedImageMime,
-          data: uploadedImageBase64
-        }
-      });
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value) {
+        if (result.value.images) allImages.push(...result.value.images);
+        if (result.value.text) allText.push(result.value.text);
+      } else if (result.status === 'rejected') {
+        console.error(result.reason);
+      }
     }
 
-    parts.push({ text: prompt });
-
-    // Build request
-    const requestBody = {
-      contents: [{ role: "user", parts }],
-      generationConfig: {
-        responseModalities: ["TEXT", "IMAGE"],
-      }
-    };
-
-    if (aspectRatio) {
-      requestBody.generationConfig.aspectRatio = aspectRatio;
+    if (allImages.length === 0 && allText.length === 0) {
+      showError('No images returned. The prompt may have been blocked by safety filters. Try rewording.');
+      resetBtn();
+      return;
     }
 
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+    renderResults(allImages, allText);
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-      });
+  } catch (err) {
+    showError('Error: ' + (err.message || 'Unknown error'));
+    console.error(err);
+  }
 
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        const errMsg = errData?.error?.message || `HTTP ${response.status}`;
-        throw new Error(errMsg);
+  resetBtn();
+}
+
+function resetBtn() {
+  const btn = document.getElementById('genBtn');
+  const label = document.getElementById('genLabel');
+  btn.disabled = false;
+  btn.classList.remove('loading');
+  label.textContent = 'Generate';
+}
+
+async function callAPI(apiKey, model, sysPrompt, prompt, aspectRatio, resolution, refImage) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+  const parts = [];
+
+  if (refImage) {
+    parts.push({
+      inlineData: { mimeType: refImage.mime, data: refImage.data }
+    });
+  }
+
+  parts.push({ text: prompt });
+
+  const body = {
+    systemInstruction: sysPrompt ? { parts: [{ text: sysPrompt }] } : undefined,
+    contents: [{ parts }],
+    generationConfig: {
+      responseModalities: ["TEXT", "IMAGE"],
+      imageGenerationConfig: {
+        aspectRatio: aspectRatio,
+        outputImageSize: resolution
       }
-
-      const data = await response.json();
-
-      // Parse response
-      const candidates = data.candidates || [];
-      if (candidates.length === 0) throw new Error('No response from model. The prompt may have been blocked.');
-
-      const parts_out = candidates[0].content?.parts || [];
-      let imageData = null;
-      let textData = '';
-
-      for (const part of parts_out) {
-        if (part.inlineData) {
-          imageData = part.inlineData;
-        }
-        if (part.text) {
-          textData += part.text;
-        }
-      }
-
-      // Render
-      const canvas = document.getElementById('canvas');
-
-      // Remove empty state
-      const emptyState = canvas.querySelector('.empty-state');
-      if (emptyState) emptyState.remove();
-
-      if (imageData) {
-        const card = document.createElement('div');
-        card.className = 'result-card';
-
-        const imgSrc = `data:${imageData.mimeType};base64,${imageData.data}`;
-
-        card.innerHTML = `
-          <img src="${imgSrc}" alt="${prompt}">
-          <div class="result-meta">
-            <span class="result-prompt">${escapeHtml(prompt)}</span>
-            <div class="result-actions">
-              <button class="icon-btn" onclick="downloadImage('${imgSrc}', 'gemini-image.png')">⬇ Save</button>
-              <button class="icon-btn" onclick="openFullscreen('${imgSrc}')">⛶ Full</button>
-            </div>
-          </div>
-        `;
-
-        canvas.insertBefore(card, canvas.firstChild);
-      }
-
-      if (textData && !imageData) {
-        const textEl = document.createElement('div');
-        textEl.className = 'text-response';
-        textEl.textContent = textData;
-        canvas.insertBefore(textEl, canvas.firstChild);
-      }
-
-    } catch (err) {
-      showError(escapeHtml(err.message));
-    } finally {
-      btn.disabled = false;
-      btn.classList.remove('loading');
     }
-  }
+  };
 
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  function downloadImage(dataUrl, filename) {
-    const a = document.createElement('a');
-    a.href = dataUrl;
-    a.download = filename;
-    a.click();
-  }
-
-  function openFullscreen(dataUrl) {
-    const w = window.open();
-    w.document.write(`<html><head><title>Image</title><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh}img{max-width:100%;max-height:100vh;object-fit:contain}</style></head><body><img src="${dataUrl}"></body></html>`);
-  }
-
-  // Enter key to generate
-  document.getElementById('prompt').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-      generate();
-    }
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
   });
-</script>
 
+  if (!resp.ok) {
+    const errData = await resp.json().catch(() => ({}));
+    throw new Error(errData.error?.message || `API error ${resp.status}`);
+  }
+
+  const data = await resp.json();
+  const images = [];
+  let text = '';
+
+  if (data.candidates) {
+    for (const candidate of data.candidates) {
+      if (candidate.content?.parts) {
+        for (const part of candidate.content.parts) {
+          if (part.inlineData) {
+            images.push({
+              data: part.inlineData.data,
+              mime: part.inlineData.mimeType || 'image/png'
+            });
+          }
+          if (part.text) {
+            text += part.text + '\n';
+          }
+        }
+      }
+    }
+  }
+
+  return { images, text: text.trim() };
+}
+
+function renderResults(images, texts) {
+  const container = document.getElementById('results');
+
+  let html = `
+    <div class="results-header">
+      <div class="results-title">Results</div>
+      <div class="results-count">${images.length} image${images.length !== 1 ? 's' : ''}</div>
+    </div>
+    <div class="result-grid${images.length > 1 ? ' multi' : ''}">
+  `;
+
+  images.forEach((img, i) => {
+    const src = `data:${img.mime};base64,${img.data}`;
+    html += `
+      <div class="result-card">
+        <img src="${src}" alt="Generated image ${i + 1}" loading="lazy">
+        <div class="result-actions">
+          <button class="result-action primary" onclick="downloadImage('${src}', 'nb_${Date.now()}_${i}.png')">↓ Save</button>
+          <button class="result-action" onclick="useAsRef('${src}')">📎 Use as ref</button>
+        </div>
+      </div>
+    `;
+  });
+
+  html += '</div>';
+
+  if (texts.length > 0 && texts.join('').trim()) {
+    html += `<div class="text-response">${texts.join('\n\n').replace(/</g, '&lt;')}</div>`;
+  }
+
+  container.innerHTML = html;
+  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function downloadImage(src, filename) {
+  const a = document.createElement('a');
+  a.href = src;
+  a.download = filename;
+  a.click();
+}
+
+function useAsRef(src) {
+  fetch(src)
+    .then(r => r.blob())
+    .then(blob => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        uploadedImage = { data: ev.target.result.split(',')[1], mime: blob.type };
+        document.getElementById('uploadPreview').src = ev.target.result;
+        document.getElementById('uploadZone').classList.add('has-image');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      reader.readAsDataURL(blob);
+    });
+}
+</script>
 </body>
 </html>
